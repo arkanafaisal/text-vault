@@ -59,65 +59,65 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
-    <div id="notification-container" class="fixed top-4 right-4 space-y-3 z-300 max-w-sm md:max-w-md"></div>
+    <div id="notification-container" class="fixed top-4 right-4 space-y-3 z-300 max-w-sm"></div>
     <div id="notification-node" class="hidden bg-gray-900 text-white rounded-lg shadow-elevated px-4 py-3 translate-x-[200%] transition-all duration-300 linear opacity-100 text-sm font-medium"></div>
 
     <div id="sign-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-101 transition-all duration-200">
-        <div id="sign-up-card" class="hidden glass-card rounded-2xl shadow-elevated p-4 sm:p-6 lg:p-8 w-full max-w-md mx-auto transition-smooth">
-            <div class="flex items-center justify-center mb-4 sm:mb-6">
-                <i class="fa-solid fa-box-open text-2xl sm:text-3xl text-blue-600 mr-2 sm:mr-3"></i>
-                <h1 id="sign-up-title" class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Create Account</h1>
+        <div id="sign-up-card" class="hidden glass-card rounded-2xl shadow-elevated p-6 lg:p-8 w-full max-w-md mx-auto transition-smooth">
+            <div class="flex items-center justify-center mb-6">
+                <i class="fa-solid fa-box-open text-3xl text-blue-600 mr-3"></i>
+                <h1 id="sign-up-title" class="text-2xl lg:text-3xl font-bold text-gray-900">Create Account</h1>
             </div>
-            <form id="sign-up-form" method="POST" class="space-y-3 sm:space-y-4">
+            <form id="sign-up-form" method="POST" class="space-y-4">
                 <div>
                     <input name="usernameInput" type="text" maxlength="32" required placeholder="Username"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <div>
                     <input name="emailInput" type="text" maxlength="64" placeholder="Email (optional)"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <div>
                     <input name="passwordInput" type="password" maxlength="128" required placeholder="Password"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <div>
                     <input name="confirmPasswordInput" type="password" maxlength="128" required placeholder="Confirm Password"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <h4 id="error-message" class="text-sm h-6 text-red-600 font-medium text-center"></h4>
                 <button name="submitBtn" type="submit" 
-                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 sm:py-3 px-4 rounded-lg transition-all duration-300 hover-lift shadow-md text-sm sm:text-base">
+                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift shadow-md">
                     Create Account
                 </button>
-                <div class="text-center pt-3 sm:pt-4 border-t border-gray-200">
-                    <p class="text-gray-600 text-xs sm:text-sm">Already have an account?
+                <div class="text-center pt-4 border-t border-gray-200">
+                    <p class="text-gray-600 text-sm">Already have an account?
                         <button type="button" class="text-blue-600 hover:text-blue-800 font-semibold ml-1 transition-colors" onclick="toggleSignBox()">Sign In</button>
                     </p>
                 </div>
             </form>
         </div>
-        <div id="sign-in-card" class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 lg:p-8 w-full max-w-md mx-auto transition-smooth">
-            <div class="flex items-center justify-center mb-4 sm:mb-6">
-                <i class="fa-solid fa-box-open text-2xl sm:text-3xl text-blue-600 mr-2 sm:mr-3"></i>
-                <h1 id="sign-in-title" class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Welcome Back</h1>
+        <div id="sign-in-card" class="glass-card rounded-2xl shadow-elevated p-6 lg:p-8 w-full max-w-md mx-auto transition-smooth">
+            <div class="flex items-center justify-center mb-6">
+                <i class="fa-solid fa-box-open text-3xl text-blue-600 mr-3"></i>
+                <h1 id="sign-in-title" class="text-2xl lg:text-3xl font-bold text-gray-900">Welcome Back</h1>
             </div>
-            <form id="sign-in-form" method="POST" class="space-y-3 sm:space-y-4">
+            <form id="sign-in-form" method="POST" class="space-y-4">
                 <div>
                     <input name="identifierInput" type="text" maxlength="32" required placeholder="Username or Email"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <div>
                     <input name="passwordInput" type="password" maxlength="128" required placeholder="Password"
-                           class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring text-sm sm:text-base">
+                           class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth focus-ring">
                 </div>
                 <h4 id="error-message" class="text-sm h-6 text-red-600 font-medium text-center"></h4>
                 <button name="submitBtn" type="submit" 
-                        class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 sm:py-3 px-4 rounded-lg transition-all duration-300 hover-lift shadow-md text-sm sm:text-base">
+                        class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift shadow-md">
                     Sign In
                 </button>
-                <div class="text-center pt-3 sm:pt-4 border-t border-gray-200">
-                    <p class="text-gray-600 text-xs sm:text-sm">Don't have an account?
+                <div class="text-center pt-4 border-t border-gray-200">
+                    <p class="text-gray-600 text-sm">Don't have an account?
                         <button type="button" class="text-blue-600 hover:text-blue-800 font-semibold ml-1 transition-colors" onclick="toggleSignBox()">Sign Up</button>
                     </p>
                 </div>
@@ -127,28 +127,28 @@
 
     <!-- Edit Modals -->
     <ul>
-        <div id="edit-username-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200 transition-all duration-200">
-            <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-md mx-auto">
-                <div class="flex items-center justify-center mb-4 sm:mb-6">
-                    <i class="fa-solid fa-user-edit text-xl sm:text-2xl text-blue-600 mr-2 sm:mr-3"></i>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Edit Username</h1>
+        <div id="edit-username-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200 transition-all duration-200">
+            <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-md mx-auto">
+                <div class="flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-user-edit text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">Edit Username</h1>
                 </div>
-                <form id="edit-username-form" method="POST" class="space-y-3 sm:space-y-4">
+                <form id="edit-username-form" method="POST" class="space-y-4">
                     <div>
                         <input type="text" name="newUsername" placeholder="New Username" maxlength="32" required 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
                     <div>
                         <input type="password" name="password" placeholder="Password" maxlength="255" required 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
-                    <div class="flex gap-2 sm:gap-3 pt-2">
+                    <div class="flex gap-3 pt-2">
                         <button onclick="toggleEditUsernameLayer(false)" type="button" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                             Cancel
                         </button>
                         <button name="submitBtn" type="submit" 
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                             Update
                         </button>
                     </div>
@@ -156,28 +156,28 @@
             </div>
         </div>
 
-        <div id="edit-email-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200 transition-all duration-200">
-            <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-md mx-auto">
-                <div class="flex items-center justify-center mb-4 sm:mb-6">
-                    <i class="fa-solid fa-envelope text-xl sm:text-2xl text-blue-600 mr-2 sm:mr-3"></i>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Edit Email</h1>
+        <div id="edit-email-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200 transition-all duration-200">
+            <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-md mx-auto">
+                <div class="flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-envelope text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">Edit Email</h1>
                 </div>
-                <form id="edit-email-form" method="POST" class="space-y-3 sm:space-y-4">
+                <form id="edit-email-form" method="POST" class="space-y-4">
                     <div>
                         <input type="text" name="newEmail" placeholder="New Email" maxlength="64" required 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
                     <div>
                         <input type="password" name="password" placeholder="Password" maxlength="255" required 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
-                    <div class="flex gap-2 sm:gap-3 pt-2">
+                    <div class="flex gap-3 pt-2">
                         <button onclick="toggleEditEmailLayer(false)" type="button" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                             Cancel
                         </button>
                         <button name="submitBtn" type="submit" 
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                             Update
                         </button>
                     </div>
@@ -185,21 +185,21 @@
             </div>
         </div>
 
-        <div id="edit-password-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200 transition-all duration-200">
-            <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-md mx-auto">
-                <div class="flex items-center justify-center mb-4 sm:mb-6">
-                    <i class="fa-solid fa-key text-xl sm:text-2xl text-blue-600 mr-2 sm:mr-3"></i>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Reset Password</h1>
+        <div id="edit-password-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200 transition-all duration-200">
+            <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-md mx-auto">
+                <div class="flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-key text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">Reset Password</h1>
                 </div>
-                <p class="text-gray-600 mb-4 sm:mb-6 text-center text-sm sm:text-base">We'll send a password reset link to your registered email. The link is valid for 15 minutes.</p>
+                <p class="text-gray-600 mb-6 text-center">We'll send a password reset link to your registered email. The link is valid for 15 minutes.</p>
                 <form id="edit-password-form" method="POST">
-                    <div class="flex gap-2 sm:gap-3">
+                    <div class="flex gap-3">
                         <button onclick="toggleEditPasswordLayer(false)" type="button" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                             Cancel
                         </button>
                         <button name="submitBtn" type="submit" 
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                             Send Reset Link
                         </button>
                     </div>
@@ -207,24 +207,24 @@
             </div>
         </div>
 
-        <div id="edit-public-key-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200 transition-all duration-200">
-            <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-md mx-auto">
-                <div class="flex items-center justify-center mb-4 sm:mb-6">
-                    <i class="fa-solid fa-lock text-xl sm:text-2xl text-blue-600 mr-2 sm:mr-3"></i>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Edit Public Key</h1>
+        <div id="edit-public-key-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200 transition-all duration-200">
+            <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-md mx-auto">
+                <div class="flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-lock text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-900">Edit Public Key</h1>
                 </div>
-                <form id="edit-public-key-form" method="POST" class="space-y-3 sm:space-y-4">
+                <form id="edit-public-key-form" method="POST" class="space-y-4">
                     <div>
                         <input type="text" name="newPublicKey" placeholder="New Public Key" maxlength="32" required 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
-                    <div class="flex gap-2 sm:gap-3 pt-2">
+                    <div class="flex gap-3 pt-2">
                         <button onclick="toggleEditPublicKeyLayer(false)" type="button" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                             Cancel
                         </button>
                         <button name="submitBtn" type="submit" 
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                             Update
                         </button>
                     </div>
@@ -234,76 +234,76 @@
     </ul>
     
     <header id="header" class="sticky top-0 z-50 bg-gradient-to-r from-blue-700 to-blue-800 text-white shadow-lg">
-        <div class="container mx-auto px-3 sm:px-4 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition-opacity">
-                <i class="fa-solid fa-box-open text-2xl sm:text-3xl"></i>
-                <h1 class="font-bold text-xl sm:text-2xl tracking-tight">DataBox</h1>
+        <div class="container mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                <i class="fa-solid fa-box-open text-3xl"></i>
+                <h1 class="font-bold text-2xl tracking-tight">DataBox</h1>
             </a>
 
-            <div class="flex items-center gap-3 sm:gap-6">
+            <div class="flex items-center gap-6">
                 <button id="search-button" onclick="searchSection()" 
-                        class="flex items-center gap-1 sm:gap-2 hover:bg-blue-600 px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-lg sm:text-xl"></i>
+                        class="flex items-center gap-2 hover:bg-blue-600 px-3 py-2 rounded-lg transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
                     <span class="hidden lg:inline text-lg font-medium">Search</span>
                 </button>
 
                 <div class="relative">
                     <button id="account-details-button" onclick="toggleAccountDetails()" 
-                            class="flex items-center gap-1 sm:gap-2 hover:bg-blue-600 px-2 sm:px-3 py-1 sm:py-2 rounded-lg transition-colors">
-                        <i class="fa-solid fa-user-circle text-lg sm:text-xl"></i>
+                            class="flex items-center gap-2 hover:bg-blue-600 px-3 py-2 rounded-lg transition-colors">
+                        <i class="fa-solid fa-user-circle text-xl"></i>
                         <span class="hidden lg:inline text-lg font-medium">Account</span>
                     </button>
-                    <div id="account-card" class="hidden absolute top-full right-0 mt-2 w-72 sm:w-80 bg-white rounded-xl shadow-elevated border border-gray-200 z-100">
-                        <div class="p-3 sm:p-4 border-b border-gray-100">
-                            <h2 class="text-base sm:text-lg font-bold text-gray-900">Account Details</h2>
+                    <div id="account-card" class="hidden absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-elevated border border-gray-200 z-100">
+                        <div class="p-4 border-b border-gray-100">
+                            <h2 class="text-lg font-bold text-gray-900">Account Details</h2>
                         </div>
-                        <div class="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                        <div class="p-4 space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-medium text-sm sm:text-base">Username</span>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <span id="profile-username" class="font-semibold text-gray-900 text-sm sm:text-base"></span>
+                                <span class="text-gray-600 font-medium">Username</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="profile-username" class="font-semibold text-gray-900"></span>
                                     <button onclick="toggleEditUsernameLayer(true)" class="text-blue-600 hover:text-blue-800">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-medium text-sm sm:text-base">Password</span>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <span id="profile-password" class="font-semibold text-gray-400 text-sm sm:text-base"></span>
+                                <span class="text-gray-600 font-medium">Password</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="profile-password" class="font-semibold text-gray-400"></span>
                                     <button onclick="toggleEditPasswordLayer(true)" class="text-blue-600 hover:text-blue-800">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-medium text-sm sm:text-base">Email</span>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <span id="profile-email" class="font-semibold text-gray-900 text-sm sm:text-base"></span>
+                                <span class="text-gray-600 font-medium">Email</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="profile-email" class="font-semibold text-gray-900"></span>
                                     <button onclick="toggleEditEmailLayer(true)" class="text-blue-600 hover:text-blue-800">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-medium text-sm sm:text-base">Public Key</span>
-                                <div class="flex items-center gap-1 sm:gap-2">
-                                    <span id="profile-public-key" class="font-semibold text-gray-900 text-sm sm:text-base"></span>
+                                <span class="text-gray-600 font-medium">Public Key</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="profile-public-key" class="font-semibold text-gray-900"></span>
                                     <button onclick="toggleEditPublicKeyLayer(true)" class="text-blue-600 hover:text-blue-800">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-3 sm:p-4 border-t border-gray-100 flex justify-between items-center">
-                            <button id="share-profile-button" class="hidden text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm">
+                        <div class="p-4 border-t border-gray-100 flex justify-between items-center">
+                            <button id="share-profile-button" class="hidden text-blue-600 hover:text-blue-800 font-medium text-sm">
                                 <i class="fa-solid fa-share-nodes mr-1"></i> Share Profile
                             </button>
                             <div id="sign-options" class="ml-auto">
-                                <a id="logout-btn" class="hidden text-red-600 hover:text-red-800 font-medium text-xs sm:text-sm cursor-pointer" onclick="LogoutBtnHandler()">
+                                <a id="logout-btn" class="hidden text-red-600 hover:text-red-800 font-medium text-sm cursor-pointer" onclick="LogoutBtnHandler()">
                                     <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
                                 </a>
-                                <a id="login-btn" class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm cursor-pointer" onclick="loginBtnHandler()">
+                                <a id="login-btn" class="text-blue-600 hover:text-blue-800 font-medium text-sm cursor-pointer" onclick="loginBtnHandler()">
                                     <i class="fa-solid fa-right-to-bracket mr-1"></i> Login
                                 </a>
                             </div>
@@ -314,81 +314,81 @@
         </div>
     </header>
 
-    <div id="account-warning" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4">
-        <div class="container mx-auto px-3 sm:px-4 flex items-center justify-between">
-            <h3 id="account-warning-text" class="text-yellow-800 text-xs sm:text-sm flex-1"></h3>
-            <button onclick="closeAccountWarning()" class="text-yellow-800 hover:text-yellow-900 ml-2 sm:ml-4">
+    <div id="account-warning" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <h3 id="account-warning-text" class="text-yellow-800 text-sm flex-1"></h3>
+            <button onclick="closeAccountWarning()" class="text-yellow-800 hover:text-yellow-900 ml-4">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
     </div>
 
-    <main id="main" class="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
+    <main id="main" class="container mx-auto px-4 lg:px-8 py-8">
         <div id="home-section" class="max-w-6xl mx-auto">
-            <div class="text-center mb-8 sm:mb-12">
-                <h1 class="text-2xl sm:text-3xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">Welcome to DataBox</h1>
-                <p class="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto px-2 sm:px-0">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Welcome to DataBox</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
                     Securely store and access your data across all devices. No more hassle with app switching or login delays.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12 lg:mb-16">
-                <div class="bg-white rounded-2xl shadow-subtle p-4 sm:p-6 lg:p-8">
-                    <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-user-lock text-xl sm:text-2xl text-blue-600"></i>
+            <div class="grid lg:grid-cols-2 gap-12 mb-16">
+                <div class="bg-white rounded-2xl shadow-subtle p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-user-lock text-2xl text-blue-600"></i>
                         </div>
-                        <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Personal Account</h2>
+                        <h2 class="text-2xl font-bold text-gray-900">Personal Account</h2>
                     </div>
-                    <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+                    <p class="text-gray-600 mb-6">
                         Login to your account and manage all your data in one place. Keep everything organized and accessible whenever you need it.
                     </p>
                     <button onclick="loginBtnHandler()" 
-                            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                            class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-lift">
                         Login to Your Account
                     </button>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-subtle p-4 sm:p-6 lg:p-8">
-                    <div class="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i class="fa-solid fa-globe text-xl sm:text-2xl text-green-600"></i>
+                <div class="bg-white rounded-2xl shadow-subtle p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-globe text-2xl text-green-600"></i>
                         </div>
-                        <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Public Access</h2>
+                        <h2 class="text-2xl font-bold text-gray-900">Public Access</h2>
                     </div>
-                    <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+                    <p class="text-gray-600 mb-6">
                         Access public data using public keys. Share specific data with others without sharing your account credentials.
                     </p>
-                    <button onclick="searchSection('arkanafaisal')" 
-                       class=" inline-block w-full text-center bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                    <a onclick="searchSection('arkanafaisal')" 
+                       class="inline-block bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-lift">
                         Try Public Access
-                    </button>
+                    </a>
                 </div>
             </div>
 
-            <div class="mb-8 sm:mb-12">
-                <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8 text-center">Example Data Preview</h2>
-                <div id="edit-dummy-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200">
-                    <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-2xl mx-auto">
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Edit Data</h1>
-                        <form id="edit-dummy-data-form" method="POST" class="space-y-3 sm:space-y-4">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Example Data Preview</h2>
+                <div id="edit-dummy-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200">
+                    <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-2xl mx-auto">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Data</h1>
+                        <form id="edit-dummy-data-form" method="POST" class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Title</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
                                 <input id="edit-dummy-data-title" type="text" name="title" placeholder="Data title" maxlength="16" required 
-                                       class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                                       class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Content</label>
-                                <textarea id="edit-dummy-data-body" name="body" placeholder="Data content" rows="3" required 
-                                          class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none text-sm sm:text-base"></textarea>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                                <textarea id="edit-dummy-data-body" name="body" placeholder="Data content" rows="4" required 
+                                          class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none"></textarea>
                             </div>
-                            <div class="flex gap-2 sm:gap-3 pt-2">
+                            <div class="flex gap-3 pt-2">
                                 <button onclick="closeEditDummyDataLayer()" type="button" 
-                                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                                     Cancel
                                 </button>
                                 <button name="submitBtn" type="submit" 
-                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                                     Save Changes
                                 </button>
                             </div>
@@ -397,79 +397,79 @@
                 </div>
                 
                 <div class="bg-white rounded-2xl shadow-subtle overflow-hidden">
-                    <div class="grid grid-cols-12 bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold text-xs sm:text-sm">
-                        <div class="col-span-1 md:col-span-1 p-2 sm:p-3 lg:p-4 text-center">#</div>
-                        <div class="col-span-4 md:col-span-3 p-2 sm:p-3 lg:p-4 border-l border-gray-700">Title</div>
-                        <div class="col-span-4 md:col-span-6 p-2 sm:p-3 lg:p-4 border-l border-gray-700">Content</div>
-                        <div class="col-span-3 md:col-span-2 p-2 sm:p-3 lg:p-4 border-l border-gray-700 text-center">Actions</div>
+                    <div class="grid grid-cols-12 bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold text-sm">
+                        <div class="col-span-1 p-4 text-center">#</div>
+                        <div class="col-span-3 p-4 border-l border-gray-700">Title</div>
+                        <div class="col-span-6 p-4 border-l border-gray-700">Content</div>
+                        <div class="col-span-2 p-4 border-l border-gray-700 text-center">Actions</div>
                     </div>
                     <div id="dummy-data-container" class="divide-y divide-gray-100">
                         <div id="dummy-data-node" data-id="1" class="grid grid-cols-12 hover:bg-gray-50 transition-colors">
-                            <div class="col-span-2 md:col-span-1 p-2 sm:p-3 lg:p-4 flex items-center justify-center">
-                                <span id="dummy-data-id-1" class="font-medium text-gray-600 text-xs sm:text-sm">1</span>
+                            <div class="col-span-1 p-4 flex items-center justify-center">
+                                <span id="dummy-data-id-1" class="font-medium text-gray-600">1</span>
                             </div>
-                            <div class="col-span-4 md:col-span-3 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                                <span id="data-title" class="font-medium text-gray-900 truncate block text-xs sm:text-sm">GitHub PAT Token</span>
+                            <div class="col-span-3 p-4 border-l border-gray-100">
+                                <span id="data-title" class="font-medium text-gray-900 truncate block">GitHub PAT Token</span>
                             </div>
-                            <div class="col-span-4 md:col-span-6 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                                <textarea readonly rows="1" id="data-body" 
-                                          class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-xs sm:text-sm scrollbar-thin">ghp_9XkL2QwE7RzA5MNPcHfU8D4BvJYtSa</textarea>
+                            <div class="col-span-6 p-4 border-l border-gray-100">
+                                <textarea readonly rows="2" id="data-body" 
+                                          class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-sm scrollbar-thin">ghp_9XkL2QwE7RzA5MNPcHfU8D4BvJYtSa</textarea>
                             </div>
-                            <div class="col-span-2 md:col-span-2 p-2 sm:p-3 lg:p-4 border-l border-gray-100 flex items-center justify-center gap-1 sm:gap-2 lg:gap-3">
+                            <div class="col-span-2 p-4 border-l border-gray-100 flex items-center justify-center gap-3">
                                 <button onclick="copyDummyData(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-copy text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
                                 </button>
                                 <div id="access-button" class="relative">
-                                    <button class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
-                                        <i class="fa-solid fa-lock text-xs sm:text-sm"></i>
+                                    <button class="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
+                                        <i class="fa-solid fa-lock"></i>
                                     </button>
-                                    <button class="hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
-                                        <i class="fa-solid fa-lock-open text-xs sm:text-sm"></i>
+                                    <button class="hidden w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
+                                        <i class="fa-solid fa-lock-open"></i>
                                     </button>
                                 </div>
                                 <button onclick="openEditDummyDataLayer(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-pen-to-square text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button onclick="deleteDummyData(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-trash text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
                         </div>
                         
                         <div id="dummy-data-node" data-id="2" class="grid grid-cols-12 hover:bg-gray-50 transition-colors">
-                            <div class="col-span-2 md:col-span-1 p-2 sm:p-3 lg:p-4 flex items-center justify-center">
-                                <span id="dummy-data-id-2" class="font-medium text-gray-600 text-xs sm:text-sm">2</span>
+                            <div class="col-span-1 p-4 flex items-center justify-center">
+                                <span id="dummy-data-id-2" class="font-medium text-gray-600">2</span>
                             </div>
-                            <div class="col-span-4 md:col-span-3 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                                <span id="data-title" class="font-medium text-gray-900 truncate block text-xs sm:text-sm">Presentation PPT</span>
+                            <div class="col-span-3 p-4 border-l border-gray-100">
+                                <span id="data-title" class="font-medium text-gray-900 truncate block">Presentation PPT</span>
                             </div>
-                            <div class="col-span-4 md:col-span-6 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                                <textarea readonly rows="1" id="data-body" 
-                                          class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-xs sm:text-sm scrollbar-thin">https://www.canva.com/design/DAFzX9kQpL8/7xQmP2sA9dK3LwT8R5ZVhB4N0JcE1UoMFaQyGgKpHtW2eV6rX8Y/edit</textarea>
+                            <div class="col-span-6 p-4 border-l border-gray-100">
+                                <textarea readonly rows="2" id="data-body" 
+                                          class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-sm scrollbar-thin">https://www.canva.com/design/DAFzX9kQpL8/7xQmP2sA9dK3LwT8R5ZVhB4N0JcE1UoMFaQyGgKpHtW2eV6rX8Y/edit</textarea>
                             </div>
-                            <div class="col-span-2 md:col-span-2 p-2 sm:p-3 lg:p-4 border-l border-gray-100 flex items-center justify-center gap-1 sm:gap-2 lg:gap-3">
+                            <div class="col-span-2 p-4 border-l border-gray-100 flex items-center justify-center gap-3">
                                 <button onclick="copyDummyData(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-copy text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-copy"></i>
                                 </button>
                                 <div id="access-button" class="relative">
-                                    <button class="hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
-                                        <i class="fa-solid fa-lock text-xs sm:text-sm"></i>
+                                    <button class="hidden w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
+                                        <i class="fa-solid fa-lock"></i>
                                     </button>
-                                    <button class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
-                                        <i class="fa-solid fa-lock-open text-xs sm:text-sm"></i>
+                                    <button class="w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeDummyAccess(this)">
+                                        <i class="fa-solid fa-lock-open"></i>
                                     </button>
                                 </div>
                                 <button onclick="openEditDummyDataLayer(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-pen-to-square text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button onclick="deleteDummyData(this)" 
-                                        class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <i class="fa-solid fa-trash text-xs sm:text-sm"></i>
+                                        class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
                         </div>
@@ -477,56 +477,56 @@
                 </div>
             </div>
 
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 lg:p-8 text-center">
-                <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Ready to Get Started?</h3>
-                <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base max-w-2xl mx-auto">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 text-center">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Ready to Get Started?</h3>
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
                     Start organizing your important data today. All you need is a username and password to begin.
                 </p>
                 <button onclick="loginBtnHandler()" 
-                        class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 lg:px-8 rounded-lg transition-all duration-300 hover-lift shadow-md text-sm sm:text-base">
+                        class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 hover-lift shadow-md">
                     Create Your Account Now
                 </button>
             </div>
         </div>
 
         <div id="dashboard-section" class="hidden max-w-6xl mx-auto">
-            <div class="text-center mb-8 sm:mb-12">
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Data Manager</h1>
-                <p class="text-gray-600 text-sm sm:text-base">Manage all your stored data in one secure location</p>
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Data Manager</h1>
+                <p class="text-gray-600">Manage all your stored data in one secure location</p>
             </div>
 
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6 sm:mb-8">
+            <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Your Data Items</h2>
-                    <p class="text-gray-600 text-xs sm:text-sm mt-1">Total: <span id="data-count" class="font-semibold">0</span> items</p>
+                    <h2 class="text-2xl font-bold text-gray-900">Your Data Items</h2>
+                    <p class="text-gray-600 text-sm mt-1">Total: <span id="data-count" class="font-semibold">0</span> items</p>
                 </div>
                 <button onclick="toggleNewDataLayer(true)" 
-                        class="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 sm:py-3 px-3 sm:px-6 rounded-lg transition-all duration-300 hover-lift flex items-center justify-center gap-2 text-sm sm:text-base">
+                        class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover-lift flex items-center gap-2">
                     <i class="fa-solid fa-plus"></i> Add New Data
                 </button>
             </div>
 
-            <div id="add-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200">
-                <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-2xl mx-auto">
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Create New Data</h1>
-                    <form id="add-data-form" method="POST" class="space-y-3 sm:space-y-4">
+            <div id="add-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200">
+                <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-2xl mx-auto">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-6">Create New Data</h1>
+                    <form id="add-data-form" method="POST" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Title</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
                             <input type="text" name="title" placeholder="Enter data title" maxlength="16" required 
-                                   class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                                   class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Content</label>
-                            <textarea name="body" placeholder="Enter data content" rows="3" required 
-                                      class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none text-sm sm:text-base"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <textarea name="body" placeholder="Enter data content" rows="4" required 
+                                      class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none"></textarea>
                         </div>
-                        <div class="flex gap-2 sm:gap-3 pt-2">
+                        <div class="flex gap-3 pt-2">
                             <button onclick="toggleNewDataLayer(false)" type="button" 
-                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                                 Cancel
                             </button>
                             <button name="submitBtn" type="submit" 
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                                 Add Data
                             </button>
                         </div>
@@ -534,27 +534,27 @@
                 </div>
             </div>
 
-            <div id="edit-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-200">
-                <div class="glass-card rounded-2xl shadow-elevated p-4 sm:p-6 w-full max-w-2xl mx-auto">
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Edit Data</h1>
-                    <form id="edit-data-form" method="POST" class="space-y-3 sm:space-y-4">
+            <div id="edit-data-layer" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-200">
+                <div class="glass-card rounded-2xl shadow-elevated p-6 w-full max-w-2xl mx-auto">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Data</h1>
+                    <form id="edit-data-form" method="POST" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Title</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
                             <input id="edit-data-title" type="text" name="title" placeholder="Enter data title" maxlength="16" required 
-                                   class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                                   class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Content</label>
-                            <textarea id="edit-data-body" name="body" placeholder="Enter data content" rows="3" required 
-                                      class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none text-sm sm:text-base"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <textarea id="edit-data-body" name="body" placeholder="Enter data content" rows="4" required 
+                                      class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth resize-none"></textarea>
                         </div>
-                        <div class="flex gap-2 sm:gap-3 pt-2">
+                        <div class="flex gap-3 pt-2">
                             <button onclick="toggleEditDataLayer(false)" type="button" 
-                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 text-sm sm:text-base">
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all duration-300">
                                 Cancel
                             </button>
                             <button name="submitBtn" type="submit" 
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all duration-300 hover-lift text-sm sm:text-base">
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover-lift">
                                 Save Changes
                             </button>
                         </div>
@@ -562,113 +562,113 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-subtle overflow-hidden mb-6 sm:mb-8">
-                <div class="grid grid-cols-12 bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold text-xs sm:text-sm">
-                    <div class="col-span-1 md:col-span-1 p-2 sm:p-3 lg:p-4 text-center">#</div>
-                    <div class="col-span-4 md:col-span-3 p-2 sm:p-3 lg:p-4 border-l border-gray-700">Title</div>
-                    <div class="col-span-4 md:col-span-6 p-2 sm:p-3 lg:p-4 border-l border-gray-700">Content</div>
-                    <div class="col-span-3 md:col-span-2 p-2 sm:p-3 lg:p-4 border-l border-gray-700 text-center">Actions</div>
+            <div class="bg-white rounded-2xl shadow-subtle overflow-hidden mb-8">
+                <div class="grid grid-cols-12 bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold text-sm">
+                    <div class="col-span-1 p-4 text-center">#</div>
+                    <div class="col-span-3 p-4 border-l border-gray-700">Title</div>
+                    <div class="col-span-6 p-4 border-l border-gray-700">Content</div>
+                    <div class="col-span-2 p-4 border-l border-gray-700 text-center">Actions</div>
                 </div>
-                <div id="data-container" class="divide-y divide-gray-100">
+                <div id="data-container" class="divide-y divide-gray-100 min-h-[200px]">
                     <div id="data-node" class="hidden grid grid-cols-12 hover:bg-gray-50 transition-colors">
-                        <div class="col-span-1 md:col-span-1 p-2 sm:p-3 lg:p-4 flex items-center justify-center">
-                            <span class="font-medium text-gray-600 text-xs sm:text-sm">1</span>
+                        <div class="col-span-1 p-4 flex items-center justify-center">
+                            <span class="font-medium text-gray-600">1</span>
                         </div>
-                        <div class="col-span-4 md:col-span-3 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                            <span id="data-title" class="font-medium text-gray-900 truncate block text-xs sm:text-sm"></span>
+                        <div class="col-span-3 p-4 border-l border-gray-100">
+                            <span id="data-title" class="font-medium text-gray-900 truncate block"></span>
                         </div>
-                        <div class="col-span-4 md:col-span-6 p-2 sm:p-3 lg:p-4 border-l border-gray-100">
-                            <textarea readonly rows="1" id="data-body" 
-                                      class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-xs sm:text-sm scrollbar-thin"></textarea>
+                        <div class="col-span-6 p-4 border-l border-gray-100">
+                            <textarea readonly rows="2" id="data-body" 
+                                      class="w-full bg-transparent border-none text-gray-600 resize-none focus:outline-none text-sm scrollbar-thin"></textarea>
                         </div>
-                        <div class="col-span-3 md:col-span-2 p-2 sm:p-3 lg:p-4 border-l border-gray-100 flex items-center justify-center gap-0 sm:gap-2 lg:gap-3">
+                        <div class="col-span-2 p-4 border-l border-gray-100 flex items-center justify-center gap-3">
                             <button onclick="copyData(this)" 
-                                    class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                <i class="fa-solid fa-copy text-xs sm:text-sm"></i>
+                                    class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                <i class="fa-solid fa-copy"></i>
                             </button>
                             <div id="access-button" class="relative">
-                                <button class="hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeAccess(this)">
-                                    <i class="fa-solid fa-lock text-xs sm:text-sm"></i>
+                                <button class="hidden w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" onclick="changeAccess(this)">
+                                    <i class="fa-solid fa-lock"></i>
                                 </button>
-                                <button class="hidden w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeAccess(this)">
-                                    <i class="fa-solid fa-lock-open text-xs sm:text-sm"></i>
+                                <button class="hidden w-8 h-8 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-lg transition-colors" onclick="changeAccess(this)">
+                                    <i class="fa-solid fa-lock-open"></i>
                                 </button>
                             </div>
                             <button onclick="toggleEditDataLayer(true, this)" 
-                                    class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
-                                <i class="fa-solid fa-pen-to-square text-xs sm:text-sm"></i>
+                                    class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <button onclick="deleteData(this)" 
-                                    class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                <i class="fa-solid fa-trash text-xs sm:text-sm"></i>
+                                    class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="null-data-text" class="hidden text-center py-8 sm:py-12">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-4 sm:mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    <i class="fa-solid fa-inbox text-2xl sm:text-3xl lg:text-4xl text-gray-400"></i>
+            <div id="null-data-text" class="hidden text-center py-12">
+                <div class="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-inbox text-4xl text-gray-400"></i>
                 </div>
-                <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">No Data Yet</h3>
-                <p class="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base max-w-md mx-auto">Start by adding your first data item. Click the "Add New Data" button above.</p>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">No Data Yet</h3>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">Start by adding your first data item. Click the "Add New Data" button above.</p>
             </div>
         </div>
 
         <div id="public-data-section" class="hidden max-w-6xl mx-auto">
-            <div class="text-center mb-8 sm:mb-12">
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Public Data Access</h1>
-                <p class="text-gray-600 text-sm sm:text-base">Access public data using username and public key</p>
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Public Data Access</h1>
+                <p class="text-gray-600">Access public data using username and public key</p>
             </div>
 
-            <div id="search-username-card" class="bg-white rounded-2xl shadow-subtle p-4 sm:p-6 lg:p-8 mb-8 sm:mb-12">
+            <div id="search-username-card" class="bg-white rounded-2xl shadow-subtle p-8 mb-12">
                 <form id="search-username-form" class="max-w-2xl mx-auto">
-                    <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 text-center">Find User's Public Data</h2>
-                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Find User's Public Data</h2>
+                    <div class="flex flex-col sm:flex-row gap-4">
                         <div class="flex-1">
                             <input name="username" type="text" placeholder="Enter username" required maxlength="32" 
-                                   class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                                   class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                         </div>
                         <button name="submitBtn" type="submit" 
-                                class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 sm:py-3 px-3 sm:px-6 lg:px-8 rounded-lg transition-all duration-300 hover-lift whitespace-nowrap text-sm sm:text-base">
+                                class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 hover-lift whitespace-nowrap">
                             Search User
                         </button>
                     </div>
                 </form>
             </div>
 
-            <div id="public-data-owner" class="hidden text-center mb-6 sm:mb-8">
-                <div class="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 sm:px-6 py-3 sm:py-4 rounded-xl">
-                    <i class="fa-solid fa-user-circle text-xl sm:text-2xl text-blue-600"></i>
-                    <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900"></h2>
+            <div id="public-data-owner" class="hidden text-center mb-8">
+                <div class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 rounded-xl">
+                    <i class="fa-solid fa-user-circle text-2xl text-blue-600"></i>
+                    <h2 class="text-2xl font-bold text-gray-900"></h2>
                 </div>
             </div>
 
-            <form id="public-data-form" class="hidden bg-white rounded-2xl shadow-subtle p-4 sm:p-6 lg:p-8 mb-8 sm:mb-12 max-w-2xl mx-auto">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Enter Public Key</h3>
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <form id="public-data-form" class="hidden bg-white rounded-2xl shadow-subtle p-8 mb-12 max-w-2xl mx-auto">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 text-center">Enter Public Key</h3>
+                <div class="flex flex-col sm:flex-row gap-4">
                     <div class="flex-1">
                         <input type="password" placeholder="Enter public key" name="publicKeyInput" id="public-key-input" required maxlength="255" 
-                               class="w-full py-2 sm:py-3 px-3 sm:px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth text-sm sm:text-base">
+                               class="w-full py-3 px-4 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-smooth">
                     </div>
                     <button name="submitBtn" type="submit" 
-                            class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 sm:py-3 px-3 sm:px-6 lg:px-8 rounded-lg transition-all duration-300 hover-lift whitespace-nowrap text-sm sm:text-base">
+                            class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 hover-lift whitespace-nowrap">
                         Verify & View Data
                     </button>
                 </div>
             </form>
 
-            <h2 id="null-public-data-text" class="hidden text-center text-gray-600 text-lg sm:text-xl py-8 sm:py-12">This user doesn't have any public data available</h2>
+            <h2 id="null-public-data-text" class="hidden text-center text-gray-600 text-xl py-12">This user doesn't have any public data available</h2>
             
-            <div id="public-data-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div id="public-data-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div id="public-data-node" class="hidden bg-white rounded-xl shadow-subtle border border-gray-200 overflow-hidden hover:shadow-elevated transition-all duration-300">
-                    <div class="p-4 sm:p-5">
-                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
-                            <h3 id="public-data-title" class="font-bold text-gray-900 text-base sm:text-lg truncate flex-1"></h3>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <h3 id="public-data-title" class="font-bold text-gray-900 text-lg truncate flex-1"></h3>
                             <button onclick="copyPublicData(this)" 
-                                    class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1 sm:py-2 px-3 sm:px-4 rounded-lg transition-colors flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                                <i class="fa-solid fa-copy text-xs sm:text-sm"></i>
+                                    class="ml-3 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-copy text-sm"></i>
                                 Copy
                             </button>
                         </div>
@@ -994,7 +994,7 @@ async function fetching(endpoint, method, body = null){
 
     const developmentIP = "http://127.0.0.1:3000/"
     const productionIP = "https://databox-server.arkanafaisal.my.id/"
-    const ip = productionIP
+    const ip = developmentIP
 
     const response = await fetch(ip + endpoint, options)
     const result = await response.json()

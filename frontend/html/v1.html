@@ -1,0 +1,384 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Box</title>
+    <link href="./css/output.css" rel="stylesheet">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> -->
+    <script src="https://kit.fontawesome.com/33aaf20e7f.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="notification-container" class="fixed top-14 right-4 space-y-4 z-300"></div>
+    <div id="notification-node" class="hidden bg-gray-800 text-white rounded shadow-lg px-4 py-2 translate-x-[200%] transition-all duration-200 linear opacity-100"></div>
+
+    <div id="sign-layer" class="hidden absolute w-full h-full bg-black/25 flex justify-center pt-20 z-101">
+        <div id="sign-up-card" class="hidden absolute py-4 lg:py-6 px-6 bg-white rounded-xl shadow-md">
+            <h1 id="sign-up-title" class=" text-2xl lg:text-3xl font-bold text-center">create new account</h1>
+            <form id="sign-up-form" method="POST" class="mt-5 lg:mt-8 flex flex-col gap-1 text-sm lg:text-base">
+                <input name="usernameInput" type="text" maxlength="32" required placeholder="username" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+                <input name="emailInput" type="text" maxlength="64" placeholder="email (optional)" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+                <input name="passwordInput" type="password" maxlength="128" required placeholder="password" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+                <input name="confirmPasswordInput" type="password" maxlength="128" required placeholder="confirm password" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+
+                <h4 id="error-message" class="text-xs h-5 text-red-500"></h4>
+                <input name="submitBtn" type="submit" value="Create Account" class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-base lg:text-lg py-1 px-3 mt-2 lg:mt-4 rounded-xl text-white">
+
+                <div class="flex gap-2 items-center text-xs lg:text-sm pl-2">
+                    <p>have account already?</p>
+                    <a class="text-blue-600 cursor-pointer hover:text-blue-900" onclick="toggleSignBox()">login</a>
+                </div>
+            </form>
+        </div>
+        <div id="sign-in-card" class=" absolute py-4 lg:py-6 px-6 bg-white rounded-xl shadow-md">
+            <h1 id="sign-in-title" class="text-2xl lg:text-3xl font-bold text-center">welcome back! login</h1>
+            <form id="sign-in-form" method="POST" class="mt-5 lg:mt-8 flex flex-col gap-1 text-sm lg:text-base">
+                <input name="identifierInput" type="text" maxlength="32" required placeholder="username or email" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+                <input name="passwordInput" type="password" maxlength="128" required placeholder="password" class="w-full py-1 px-2 shadow-md border-1 border-black/20 rounded-lg">
+                
+                <h4 id="error-message" class="text-xs h-5 text-red-500"></h4>
+                <input name="submitBtn" type="submit" value="Enter Account" class="bg-green-600 hover:bg-green-700 cursor-pointer text-base lg:text-lg py-1 px-3 mt-2 lg:mt-4 rounded-xl text-white">
+
+                <div class="flex gap-2 items-center text-xs lg:text-sm pl-2">
+                    <p>don't have account?</p>
+                    <a class="text-blue-600 cursor-pointer hover:text-blue-900" onclick="toggleSignBox()">signup</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <ul>
+        <div id="edit-username-layer" class="hidden fixed h-screen w-full bg-black/40 top-0 left-0 z-200">
+            <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-80">
+                <h1 class="text-2xl lg:text-3xl text-center">edit username</h1>
+                <form id="edit-username-form" method="POST" class="mt-6 flex flex-col gap-2 text-base">
+                    <input type="text" name="newUsername" placeholder="new username" maxlength="32" required class="border-1 rounded-lg px-2 py-1 w-full">
+                    <input type="password" name="password" placeholder="password" maxlength="255" required class="border-1 rounded-lg px-2 py-1 w-full">
+                    <div class="flex justify-between mt-4 text-base lg:text-lg">
+                        <button onclick="toggleEditUsernameLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                        <input name="submitBtn" type="submit" value="confirm" class="bg-blue-500 hover:bg-blue-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-email-layer" class="hidden fixed h-screen w-full bg-black/40 top-0 left-0 z-200">
+            <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-80">
+                <h1 class="text-2xl lg:text-3xl text-center">edit email</h1>
+                <form id="edit-email-form" method="POST" class="mt-6 flex flex-col gap-2 text-base">
+                    <input type="text" name="newEmail" placeholder="new email" maxlength="64" required class="border-1 rounded-lg px-2 py-1 w-full">
+                    <input type="password" name="password" placeholder="password" maxlength="255" required class="border-1 rounded-lg px-2 py-1 w-full">
+                    <div class="flex justify-between mt-4 text-base lg:text-lg">
+                        <button onclick="toggleEditEmailLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                        <input name="submitBtn" type="submit" value="confirm" class="bg-blue-500 hover:bg-blue-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-password-layer" class="hidden fixed h-screen w-full bg-black/40 top-0 left-0 z-200">
+            <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-100">
+                <h1 class="text-2xl lg:text-3xl text-center">reset password</h1>
+                <p class="text-sm mt-2">We will send a password reset link to your registered email. The link is valid for 15 minutes, please check your email and click the link to reset your password.</p>
+                <form id="edit-password-form" method="POST" class="mt-4 flex flex-col gap-2 text-base">
+                    <div class="flex justify-between mt-4 text-base lg:text-lg">
+                        <button onclick="toggleEditPasswordLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                        <input name="submitBtn" type="submit" value="send" class="bg-blue-500 hover:bg-blue-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="edit-public-key-layer" class="hidden fixed h-screen w-full bg-black/40 top-0 left-0 z-200">
+            <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-80">
+                <h1 class="text-2xl lg:text-3xl text-center">edit public key</h1>
+                <form id="edit-public-key-form" method="POST" class="mt-6 flex flex-col gap-2 text-base">
+                    <input type="text" name="newPublicKey" placeholder="new public key" maxlength="32" required class="border-1 rounded-lg px-2 py-1 w-full">
+                    <div class="flex justify-between mt-4 text-base lg:text-lg">
+                        <button onclick="toggleEditPublicKeyLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                        <input name="submitBtn" type="submit" value="confirm" class="bg-blue-500 hover:bg-blue-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </ul>
+    
+    <header id="header" class="h-12 lg:px-16 px-6 bg-yellow-300 flex items-center">
+        <a href="" id="" class="flex gap-2 items-center cursor-pointer">
+            <i class="fa-solid fa-box-open text-3xl"></i>
+            <h1 class="font-bold text-xl lg:text-3xl">databox</h1>
+        </a>
+
+        <div class="relative ml-6 lg:ml-12 flex-1">
+            <button id="search-button" onclick="searchSection()" class="flex gap-1 items-center"><i class="fa-solid fa-magnifying-glass text-2xl mt-1"></i><h2 class="text-2xl hidden lg:block">search</h2></button>
+        </div>
+
+        <div class="relative mr-4 lg:mr-16">
+            <button id="account-details-button" onclick="toggleAccountDetails()" class="flex items-center"><i class="fa-solid fa-user text-3xl mt-1"></i><h2 class="text-2xl hidden lg:block">account</h2></button>
+            <div id="account-card" class="hidden absolute top-10 -left-2 lg:-left-15 -translate-x-[50%] lg:-translate-x-0 bg-gray-200 w-40 lg:w-60 px-3 py-2 border-black/40 shadow-md border-1 rounded-xl z-100">
+                <h1 class="text-base lg:text-xl text-center">Account Details</h1>
+                <div class="flex gap-1 text-xs lg:text-base mt-2 lg:mt-4">
+                    <ul class="w-[40%] lg:w-[35%]">
+                        <li>username</li>
+                        <li>password</li>
+                        <li>email</li>
+                        <li>public key</li>
+                    </ul>
+                    <ul class="w-[3%]">
+                        <li>:</li>
+                        <li>:</li>
+                        <li>:</li>
+                        <li>:</li>
+                    </ul>
+                    <ul id="account-details" class="w-[45%] lg:w-[50%]">
+                        <li id="profile-username" class="truncate"></li>
+                        <li id="profile-password" class="">******</li>
+                        <li id="profile-email" class="truncate"></li>
+                        <li id="profile-public-key" class="truncate"></li>
+                    </ul>
+                    <ul id="profile-edit-button" class="w-[5%]">
+                        <li><button onclick="toggleEditUsernameLayer(true)"><i class="text-xs fa-solid fa-pen"></i></button></li>
+                        <li><button onclick="toggleEditPasswordLayer(true)"><i class="text-xs fa-solid fa-pen"></i></button></li>
+                        <li><button onclick="toggleEditEmailLayer(true)"><i class="text-xs fa-solid fa-pen"></i></button></li>
+                        <li><button onclick="toggleEditPublicKeyLayer(true)"><i class="text-xs fa-solid fa-pen"></i></button></li>
+                    </ul>
+                </div>
+                <div id="other" class="flex justify-between text-sm lg:text-xl mt-2 lg:mt-4 lg:px-1">
+                    <button id="share-profile-button" class="hover:text-black/50 hidden"><i class="fa-solid fa-share-from-square"></i> share</button>
+                    <div id="sign-options" class="flex justify-center ">
+                        <a id="logout-btn" class="hidden cursor-pointer hover:text-black/50" onclick="LogoutBtnHandler()"><i class="fa-solid fa-right-to-bracket"></i> logout</a>
+                        <a id="login-btn" class="cursor-pointer hover:text-black/50" onclick="loginBtnHandler()"><i class="fa-solid fa-right-to-bracket"></i> login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+
+    </header>
+
+
+    <div id="account-warning" class="hidden bg-red-300 text-black px-4 lg:px-20 py-1 flex">
+        <h3 id="account-warning-text" class="flex-1 text-xs lg:text-base"></h3>
+        <button onclick="closeAccountWarning()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <main id="main" class="flex flex-col px-2 lg:px-4 lg:px-15">
+        <div id="home-section" class="px-3 lg:px-12 text-sm lg:text-xl mb-16">
+            <h1 class="text-2xl lg:text-4xl font-bold mt-10">Welcome to databox</h1>
+            <p class="mt-6">
+                Have you ever been in a situation where you must get a text / text data from your phone while you're currently in another device? <br>
+                Oh right! you can connect your Whatsapp Web or Discord account even if its just for a single line of text, no problem! <br> <br>
+                Oh noo... your luck is bad today, Whatsapp Web is taking longer than ever to load, your discord got hacked, or this is a public device and it doesn't have the app! <br>
+                Nahh, its just that you're too lazy to connect it because you've stored it to me before, you're smart! I love it!
+            </p>
+            <p class="mt-10">
+                Come on! copy your data now! you can get your data in <b>2 ways!</b> <br>
+                you can <b>login</b> to your account in the top right corner and copy it from this data manager
+            </p>
+            <div id="edit-dummy-data-layer" class="hidden fixed top-0 left-0 w-full min-h-screen bg-black/30 ">
+                <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-100">
+                    <h1 class="text-2xl lg:text-3xl text-center">edit data</h1>
+                    <form id="edit-dummy-data-form" method="POST" class="mt-6 flex flex-col gap-2">
+                        <input id="edit-dummy-data-title" type="text" name="title" placeholder="title" maxlength="16" required class="border-1 rounded-lg px-2 py-1 w-2/3 lg:w-1/2">
+                        <textarea id="edit-dummy-data-body" name="body" placeholder="body" rows="3" cols="1024" required class="border-1 rounded-xl px-2 py-1 text-xs lg:text-base"></textarea>
+                        <div class="flex justify-between mt-4 text-base lg:text-lg">
+                            <button onclick="closeEditDummyDataLayer()" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                            <input name="submitBtn" type="submit" value="save changes" class="bg-green-500 hover:bg-green-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <ul class="w-full mt-2 border-collapse grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] bg-black border-1 text-sm lg:text-2xl rounded-lg py-1  text-white text-center">
+                <li class="">No</li>
+                <li class="border-l-1 border-r-1 border-white pl-[2px] lg:pl-2 text-left">Title</li>
+                <li class="border-r-1 border-white pl-[2px] lg:pl-2 text-left">Body</li>
+                <li class="">Actions</li>
+            </ul>
+            <div id="dummy-data-container" class="w-full flex flex-col gap-2 text-xs lg:text-lg">
+                <ul id="dummy-data-node" data-id="1" class="w-full grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] text-center border-b-1">
+                    <li id="dummy-data-id-1">1</li>
+                    <li id="data-title" class="text-left pl-1 pr-1 lg:px-3 truncate">github PAT token</li>
+                    <li class="w-full overflow-hidden max-h-20">
+                        <textarea readonly rows="2" cols="1024" id="data-body" class="text-left max-w-none pl-1 lg:pl-3">ghp_9XkL2QwE7RzA5MNPcHfU8D4BvJYtSa</textarea>
+                    </li>
+                    <li class="flex mt-2 justify-center">
+                        <button onclick="copyDummyData(this)" class="h-4"><i class="text-gray-600 fa-solid fa-copy"></i></button>
+                        <div id="access-button" class="h-4 flex items-center">
+                            <button class="" onclick="changeDummyAccess(this)"><i class="text-blue-500 fa-solid fa-lock"></i></button>
+                            <button class="hidden" onclick="changeDummyAccess(this)"><i class="text-green-500 fa-solid fa-lock-open"></i></button>
+                        </div>
+                        <button onclick="openEditDummyDataLayer(this)" class="h-4"><i class="text-yellow-400 fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteDummyData(this)" class="h-4 ml-2"><i class="text-red-500 fa-solid fa-trash"></i></button>
+                    </li>
+                </ul>
+                <ul id="dummy-data-node" data-id="2" class="w-full grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] text-center border-b-1">
+                    <li id="dummy-data-id-2">2</li>
+                    <li id="data-title" class="text-left pl-1 pr-1 lg:px-3 truncate">presentation ppt</li>
+                    <li class="w-full overflow-hidden max-h-20">
+                        <textarea readonly rows="2" cols="1024" id="data-body" class="text-left max-w-none pl-1 lg:pl-3">https://www.canva.com/design/DAFzX9kQpL8/7xQmP2sA9dK3LwT8R5ZVhB4N0JcE1UoMFaQyGgKpHtW2eV6rX8Y/edit?utm_content=DAFzX9kQpL8&utm_campaign=designshare&utm_medium=link&utm_source=sharebutton&continuationToken=ABCD1234EFGH5678IJKL9012MNOP3456QRST7890UVWXYZabcdefghijklmnopqrstuvwxyz</textarea>
+                    </li>
+                    <li class="flex mt-2 justify-center">
+                        <button onclick="copyDummyData(this)" class="h-4"><i class="text-gray-600 fa-solid fa-copy"></i></button>
+                        <div id="access-button" class="h-4 flex items-center">
+                            <button class="hidden" onclick="changeDummyAccess(this)"><i class="text-blue-500 fa-solid fa-lock"></i></button>
+                            <button class="" onclick="changeDummyAccess(this)"><i class="text-green-500 fa-solid fa-lock-open"></i></button>
+                        </div>
+                        <button onclick="openEditDummyDataLayer(this)" class="h-4"><i class="text-yellow-400 fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteDummyData(this)" class="h-4 ml-2"><i class="text-red-500 fa-solid fa-trash"></i></button>
+                    </li>
+                </ul>
+                <ul id="dummy-data-node" data-id="3" class="w-full grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] text-center border-b-1">
+                    <li id="dummy-data-id-3">3</li>
+                    <li id="data-title" class="text-left pl-1 pr-1 lg:px-3 truncate">our game pass</li>
+                    <li class="w-full overflow-hidden max-h-20">
+                        <textarea readonly rows="2" cols="1024" id="data-body" class="text-left max-w-none pl-1 lg:pl-3">FunnyDragonLOL!42?</textarea>
+                    </li>
+                    <li class="flex mt-2 justify-center">
+                        <button onclick="copyDummyData(this)" class="h-4"><i class="text-gray-600 fa-solid fa-copy"></i></button>
+                        <div id="access-button" class="h-4 flex items-center">
+                            <button class="hidden" onclick="changeDummyAccess(this)"><i class="text-blue-500 fa-solid fa-lock"></i></button>
+                            <button class="" onclick="changeDummyAccess(this)"><i class="text-green-500 fa-solid fa-lock-open"></i></button>
+                        </div>
+                        <button onclick="openEditDummyDataLayer(this)" class="h-4"><i class="text-yellow-400 fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteDummyData(this)" class="h-4 ml-2"><i class="text-red-500 fa-solid fa-trash"></i></button>
+                    </li>
+                </ul>
+            </div>
+
+            <p class="mt-6">Or you can copy your account data using <b>public key</b> if you <b>unlock</b> or set the <b>access to public</b> like this <a class="text-blue-600 hover:text-blue-900 cursor-pointer" href="https://databox.arkanafaisal.my.id/#/arkanafaisal">here</a> ( the public key is handsome123 )</p>
+
+            <p class="mt-18">
+                you just need username and password for the starter, you can add your email and public key later. Hope you enjoy it!
+            </p>
+        </div>
+        <div id="dashboard-section" class="hidden flex-1 px-2 flex flex-col py-6">
+            <h1 class="lg:text-4xl text-2xl text-center font-bold">Data Manager</h1>
+
+            <button onclick="toggleNewDataLayer(true)" class="mt-10 bg-green-500 hover:bg-green-600 self-end mr-2 lg:mr-6 pl-1 pr-2 text-base lg:text-2xl rounded-lg"><i class="fa-solid fa-plus"></i> new</button>
+            <div id="add-data-layer" class="hidden fixed top-0 left-0 w-full h-screen bg-black/30 ">
+                <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-100">
+                    <h1 class="text-2xl lg:text-3xl text-center">create new data</h1>
+                    <form id="add-data-form" method="POST" class="mt-6 flex flex-col gap-2">
+                        <input type="text" name="title" placeholder="title" maxlength="16" required class="border-1 rounded-lg px-2 py-1 w-2/3 lg:w-1/2">
+                        <textarea name="body" placeholder="body" rows="3" required class="border-1 rounded-xl px-2 py-1 text-xs lg:text-base"></textarea>
+                        <div class="flex justify-between mt-4 text-base lg:text-lg">
+                            <button onclick="toggleNewDataLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                            <input name="submitBtn" type="submit" value="add now" class="bg-green-500 hover:bg-green-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="edit-data-layer" class="hidden fixed top-0 left-0 w-full h-screen bg-black/30 ">
+                <div class="mt-30 px-3 lg:px-6 py-3 bg-white rounded-xl border-1 mx-6 lg:mx-auto lg:w-100">
+                    <h1 class="text-2xl lg:text-3xl text-center">edit data</h1>
+                    <form id="edit-data-form" method="POST" class="mt-6 flex flex-col gap-2">
+                        <input id="edit-data-title" type="text" name="title" placeholder="title" maxlength="16" required class="border-1 rounded-lg px-2 py-1 w-2/3 lg:w-1/2">
+                        <textarea id="edit-data-body" name="body" placeholder="body" rows="3" cols="1024" required class="border-1 rounded-xl px-2 py-1 text-xs lg:text-base"></textarea>
+                        <div class="flex justify-between mt-4 text-base lg:text-lg">
+                            <button onclick="toggleEditDataLayer(false)" type="button" class="bg-red-500 hover:bg-red-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl h-fit">cancel</button>
+                            <input name="submitBtn" type="submit" value="save changes" class="bg-green-500 hover:bg-green-600 px-3 lg:px-5 py-[2px] lg:py-1 rounded-xl cursor-pointer">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            
+            <ul class="w-full border-collapse grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] bg-black border-1 text-sm lg:text-2xl rounded-lg py-1  text-white text-center">
+                <li class="">No</li>
+                <li class="border-l-1 border-r-1 border-white pl-[2px] lg:pl-2 text-left">Title</li>
+                <li class="border-r-1 border-white pl-[2px] lg:pl-2 text-left">Body</li>
+                <li class="">Actions</li>
+            </ul>
+
+            <div id="data-container" class="w-full flex flex-col gap-2 text-xs lg:text-lg">
+                <ul id="data-node" class="w-full hidden grid grid-cols-[10%_20%_45%_25%] lg:grid-cols-[5%_20%_60%_15%] text-center border-b-1">
+                    <li>1</li>
+                    <li id="data-title" class="text-left pl-1 pr-1 lg:px-3 truncate">abcdefghijklmnop \n ggdddd</li>
+                    <li class="w-full overflow-hidden max-h-20">
+                        <textarea readonly rows="2" cols="1024" id="data-body" class="text-left max-w-none pl-1 lg:pl-3"></textarea>
+                    </li>
+                    <li class="flex mt-2 justify-center">
+                        <button onclick="copyData(this)" class="h-4"><i class="text-gray-600 fa-solid fa-copy"></i></button>
+                        <div id="access-button" class="h-4 flex items-center">
+                            <button class="hidden" onclick="changeAccess(this)"><i class="text-blue-500 fa-solid fa-lock"></i></button>
+                            <button class="hidden" onclick="changeAccess(this)"><i class="text-green-500 fa-solid fa-lock-open"></i></button>
+                        </div>
+                        <button onclick="toggleEditDataLayer(true, this)" class="h-4"><i class="text-yellow-400 fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteData(this)" class="h-4 ml-2"><i class="text-red-500 fa-solid fa-trash"></i></button>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="public-data-section" class="hidden flex-1 px-2 flex flex-col py-6 items-center">
+            <form id="search-username-form" class="lg:mt-10">
+                <h1 class="text-2xl lg:text-4xl text-center font-bold">Find the username</h1>
+
+                <div class="flex flex-col lg:flex-row gap-2 mt-12 lg:mt-18">
+                    <input name="username" type="text" placeholder="username" required maxlength="32" class="border-1 rounded-md text-lg py-1 px-2">
+                    <input name="submitBtn" type="submit" value="search" class="w-fit border-1 rounded-lg bg-blue-500 hover:bg-blue-600 cursor-pointer px-2 py-1 text-xl lg:text-xl text-white">
+                </div>
+            </form>
+
+            <h1 id="public-data-owner" class="hidden lg:text-4xl text-2xl text-center font-bold lg:mt-10"></h1>
+
+
+            <form id="public-data-form" class="hidden mt-10 lg:mt-18 text-base lg:text-xl items-center">
+                <div class="flex flex-col lg:flex-row gap-2">
+                    <input type="password" placeholder="public key" name="publicKeyInput" id="public-key-input" required maxlength="255" class="border-1 text-lg rounded-md px-2 py-1">
+                    <input name="submitBtn" type="submit" value="verify" class="w-fit bg-blue-500 border-1 rounded-lg text-xl px-2 py-1 cursor-pointer text-white">
+                </div>
+            </form>
+
+            <h2 id="null-public-data-text" class="hidden text-xl text-center mt-18">this user doesn't have any public data</h2>
+            <div id="public-data-container" class="hidden w-full mt-10 lg:mt-18 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div id="public-data-node" class="hidden bg-green-400 rounded-xl flex justify-between items-center ">
+                    <h2 id="public-data-title" class="text-lg py-1 px-2 bg-yellow-300 py-2 border-1 rounded-xl flex-1">asede kontol</h2>
+                    <button onclick="copyPublicData(this)" class=" px-3 h-full  ">copy</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="./js/UI-function.js"></script>
+    <script src="./js/fetching.js"></script>
+    <script src="./js/sign.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/publicData.js"></script>
+</body>
+</html>
