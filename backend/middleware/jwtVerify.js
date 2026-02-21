@@ -6,7 +6,7 @@ export default async function verifyToken(req, res, next) {
     if (!accessToken) {return response(res, false, "token invalid", null, 40101)}
 
     try{
-        const decoded = await jwt.verify(accessToken, process.env.JWT_SECRET)
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET)
         req.user = decoded
         next();
     } catch(err){

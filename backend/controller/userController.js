@@ -62,9 +62,10 @@ userController.editUsername = async (req, res) => {
         await redisHelper.del('cache', `profileData:${req.user.id}`)
         await redisHelper.del('cache', `publicData:${req.user.id}`)
 
+        await redis.incrBy(`databox:rl:editUsername:${req.ip}`, 5)
         return response(res, true, 'username changed', userRequest.newUsername)
     } catch(err){
-        if(err.msg === 'duplicate'){return response(res, false, 'username taken')}
+        if(err.message === 'duplicate'){return response(res, false, 'username taken')}
         return response(res, false, 'server error', null, 500)
     }
 }
@@ -81,6 +82,7 @@ userController.editPublicKey = async (req, res) => {
         await redisHelper.del('cache', `profileData:${req.user.id}`)
         await redisHelper.del('cache', `publicData:${req.user.id}`)
         
+        await redis.incrBy(`databox:rl:editPublicKey:${req.ip}`, 10)
         return response(res, true, 'public key changed', newPublicKey)
     } catch(err) {
         console.log(err)
@@ -112,6 +114,7 @@ userController.editEmail = async (req, res) => {
 
         await sendMail.verifyEmail({newEmail: userRequest.newEmail, token})
 
+        await redis.incrBy(`databox:rl:editEmail:${req.ip}`, 10)
         return response(res, true, "verification email has been sent to " + userRequest.newEmail)
     } catch(err){
         console.log(err)
@@ -135,9 +138,10 @@ userController.verifyEmail = async (req, res) => {
         await redisHelper.del('cache', `profileData:${tokenPayload.user_id}`)
         await redisHelper.del('verify_email', tokenHash)
 
+        await redis.incrBy(`databox:rl:verifyEmail:${req.ip}`, 5)
         return response(res, true, "success, your account email changed to " + tokenPayload.new_email)
     } catch(err){
-        if(err.msg === 'duplicate'){return response(res, false, "email already taken")}
+        if(err.message === 'duplicate'){return response(res, false, "email already taken")}
         console.log(err)
         return response(res, false, "server error", null, 500)
     }
@@ -157,6 +161,7 @@ userController.resetPassword = async (req, res) => {
 
         await sendMail.resetPassword({email: user.email, token})
 
+        await redis.incrBy(`databox:rl:resetPassword:${req.ip}`, 5)
         return response(res, true, "verification email has been sent to " + user.email)
     } catch(err) {
         console.log(err)
@@ -182,6 +187,7 @@ userController.verifyResetPassword = async (req, res) => {
 
         await redisHelper.del('reset_password', tokenHash)
 
+        await redis.incrBy(`databox:rl:verifyResetPassword:${req.ip}`, 5)
         return response(res, true, "password changed")
 
     } catch(err) {

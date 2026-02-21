@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 
 export async function register({username, email, password}) {
     try {
-
+        email = email || null
         const hash = await bcrypt.hash(password, 10)
         const [{insertId}] = await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hash])
         return insertId

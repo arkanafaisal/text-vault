@@ -7,6 +7,7 @@ import * as redisHelper from '../utils/redis-helper.js'
 
 import { response } from '../utils/response.js';
 import { validate } from '../utils/validate.js';
+import redis from '../config/redis.js';
 
 const authController = {}
 const sameSite = process.env.NODE_ENV === "development"? 'none' : 'Lax'
@@ -36,9 +37,11 @@ authController.register = async (req, res)=>{
     try{
         const insertId = await UserModel.register(userRequest)
         if(!insertId){return response(res, false, "register failed")}
+
+        await redis.incrBy(`databox:rl:register:${req.ip}`, 15)
         return response(res, true, 'register success')
     } catch(err) {
-        if(err.msg === "duplicate"){return response(res, false, "username or email is already taken")}
+        if(err.message === "duplicate"){return response(res, false, "username or email is already taken")}
         console.log(err)
         return response(res, false, 'server error', null, 500)
     }
@@ -61,6 +64,7 @@ authController.login = async (req, res)=>{
         res.cookie('accessToken', accessToken, cookieOptions.accessToken)
         res.cookie('refreshToken', refreshToken, cookieOptions.refreshToken)
 
+        await redis.incrBy(`databox:rl:login:${req.ip}`, 5)
         return response(res, true, 'login success')
     } catch(err) {
         console.log(err)
@@ -72,11 +76,13 @@ authController.logout = async (req, res) => {
     const refreshToken = req.cookies.refreshToken
     if(refreshToken){
         (async () => {
-            for(let i = 0; i < 3; i++){
-                const {ok} = await redisHelper.del('tokens', refreshToken)
-                if(ok) break
-                await new Promise(r => setTimeout(r, 500))
-            }
+            try {
+                for(let i = 0; i < 3; i++){
+                    const {ok} = await redisHelper.del('tokens', refreshToken)
+                    if(ok) break
+                    await new Promise(r => setTimeout(r, 500))
+                }
+            } catch (err) { console.error("Logout background cleanup failed", err) }
         })()
     }
 

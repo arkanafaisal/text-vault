@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kenangan dan perjalanan kelas XII IPA 3 SMA Negeri 2 Jakarta angkatan 2024.">
+    <title>Kelasku XII IPA 3 | Kenangan Abadi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600&display=swap');
+        * { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; }
+        .handwritten { font-family: 'Dancing Script', cursive; }
+        .sticky-header { transition: all 0.3s ease; }
+        .pin-rotate { transform: rotate(3deg); }
+        .pin-rotate-neg { transform: rotate(-2deg); }
+        .memory-item { transition: transform 0.3s ease; }
+        .memory-item:hover { transform: translateY(-5px) scale(1.02); }
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .student-card { flex: 0 0 auto; scroll-snap-align: start; }
+        .carousel-container { scroll-snap-type: x mandatory; }
+        .modal-open { overflow: hidden; }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800">
+    <!-- Header Navigation -->
+    <header class="sticky-header bg-white/90 backdrop-blur-sm shadow-sm py-3 px-4 lg:py-4 lg:px-8 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-amber-500 rounded-full"></div>
+                <h1 class="text-xl font-bold text-gray-800">XII IPA 3<span class="text-amber-600">'24</span></h1>
+            </div>
+            <nav class="hidden lg:flex items-center gap-8">
+                <a href="#kenangan" class="hover:text-amber-600 transition-colors font-medium">Kenangan</a>
+                <a href="#anggota" class="hover:text-amber-600 transition-colors font-medium">Anggota</a>
+                <a href="#galeri" class="hover:text-amber-600 transition-colors font-medium">Galeri</a>
+                <a href="#kontak" class="hover:text-amber-600 transition-colors font-medium">Kontak</a>
+            </nav>
+            <button id="menuBtn" class="lg:hidden text-gray-700 text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="lg:hidden hidden absolute top-full left-0 right-0 bg-white shadow-lg px-6 py-4">
+            <div class="flex flex-col gap-4">
+                <a href="#kenangan" class="py-2 hover:text-amber-600 transition-colors">Kenangan</a>
+                <a href="#anggota" class="py-2 hover:text-amber-600 transition-colors">Anggota</a>
+                <a href="#galeri" class="py-2 hover:text-amber-600 transition-colors">Galeri</a>
+                <a href="#kontak" class="py-2 hover:text-amber-600 transition-colors">Kontak</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10"></div>
+        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+             alt="Gedung Sekolah"
+             class="w-full h-full object-cover">
+        <div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center text-white px-4">
+            <h2 class="text-4xl md:text-6xl font-bold mb-4 slide-up">XII IPA 3</h2>
+            <p class="text-xl md:text-2xl handwritten mb-2 fade-in">Angkatan 2024</p>
+            <p class="text-lg md:text-xl max-w-2xl mt-4 fade-in">Tiga tahun penuh cerita, tawa, dan kenangan yang takkan terlupakan.</p>
+        </div>
+    </section>
+
+    <!-- Student Carousel -->
+    <section id="anggota" class="py-12 md:py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">Teman-Teman Kita</h2>
+            <div class="carousel-container flex overflow-x-auto pb-6 gap-4 md:gap-6 scrollbar-hide">
+                <!-- Student Cards -->
+                <div class="student-card w-64 h-80 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer" onclick="openStudentModal('Budi Santoso', 'Bud', 'Ketua Kelas')">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Budi Santoso"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Budi Santoso</h3>
+                            <p class="text-amber-300">"Bud"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-card w-64 h-80 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer" onclick="openStudentModal('Sari Dewi', 'Sari', 'Bendahara')">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Sari Dewi"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Sari Dewi</h3>
+                            <p class="text-amber-300">"Sari"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-card w-64 h-80 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer" onclick="openStudentModal('Ahmad Fauzi', 'Ahmad', 'Sekretaris')">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Ahmad Fauzi"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Ahmad Fauzi</h3>
+                            <p class="text-amber-300">"Ahmad"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-card w-64 h-80 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer" onclick="openStudentModal('Maya Indah', 'Maya', 'Anggota')">
+                    <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Maya Indah"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Maya Indah</h3>
+                            <p class="text-amber-300">"Maya"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-card w-64 h-80 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer" onclick="openStudentModal('Rizky Pratama', 'Kiki', 'Anggota')">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Rizky Pratama"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Rizky Pratama</h3>
+                            <p class="text-amber-300">"Kiki"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-gray-600 mt-6">Klik foto untuk meninggalkan pesan</p>
+        </div>
+    </section>
+
+    <!-- Memory Board -->
+    <section id="kenangan" class="py-12 md:py-16 px-4 bg-gradient-to-b from-amber-50 to-amber-100">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Papan Kenangan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <!-- Memory Items -->
+                <div class="memory-item md:col-span-2 h-64 md:h-80 rounded-xl overflow-hidden shadow-xl relative pin-rotate">
+                    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Study Tour"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl md:text-3xl font-bold">Study Tour ke Bali</h3>
+                            <p class="text-amber-200">2023 - Petualangan tak terlupakan</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="memory-item h-64 rounded-xl overflow-hidden shadow-xl relative pin-rotate-neg">
+                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Pensi"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Pentas Seni</h3>
+                            <p class="text-amber-200">Penampilan terbaik kita</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="memory-item h-64 rounded-xl overflow-hidden shadow-xl relative pin-rotate">
+                    <img src="https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Kelulusan"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Hari Kelulusan</h3>
+                            <p class="text-amber-200">Tangis bahagia dan haru</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="memory-item md:col-span-2 h-64 md:h-80 rounded-xl overflow-hidden shadow-xl relative pin-rotate-neg">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Kerja Kelompok"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl md:text-3xl font-bold">Kerja Kelompok Akhir</h3>
+                            <p class="text-amber-200">Begadang bersama sampai pagi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="memory-item h-64 rounded-xl overflow-hidden shadow-xl relative pin-rotate">
+                    <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Olahraga"
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end p-6">
+                        <div>
+                            <h3 class="text-white text-2xl font-bold">Lomba Olahraga</h3>
+                            <p class="text-amber-200">Juara basket antar kelas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="galeri" class="py-12 md:py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">Momen Spesial</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                <div class="col-span-2 row-span-2">
+                    <div class="relative h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1524178239883-269a632bb546?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                             alt="Kelas"
+                             class="w-full h-full object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <p class="text-white font-medium">Foto kelas terakhir</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative h-40 md:h-48 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1519326844852-704caea5679e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Belajar"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-sm">Sesi belajar bersama</p>
+                    </div>
+                </div>
+                <div class="relative h-40 md:h-48 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1535982337051-8ed2e6e4c49f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Liburan"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-sm">Liburan akhir tahun</p>
+                    </div>
+                </div>
+                <div class="relative h-40 md:h-48 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1519861531473-920034658307?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Perpisahan"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-sm">Acara perpisahan</p>
+                    </div>
+                </div>
+                <div class="relative h-40 md:h-48 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                         alt="Ekskul"
+                         class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <p class="text-white text-sm">Kegiatan ekskul</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="kontak" class="py-12 md:py-16 px-4 bg-gradient-to-b from-amber-100 to-amber-50">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">Tetap Terhubung</h2>
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-10">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 handwritten">Mari jaga silaturahmi</h3>
+                        <p class="text-gray-600 mb-6">Meski kita telah berpisah, kenangan kita tetap hidup. Mari tetap terhubung melalui media sosial dan pertemuan alumni.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-amber-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Grup WhatsApp</p>
+                                    <p class="text-sm text-gray-500">Tetap update info terbaru</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-amber-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">Reuni Tahunan</p>
+                                    <p class="text-sm text-gray-500">Pertemuan setiap tahun</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-xl">
+                        <h4 class="text-xl font-bold mb-4">Kirim Pesan Kenangan</h4>
+                        <div class="space-y-4">
+                            <textarea id="memoryMessage" placeholder="Tulis kenangan atau pesan untuk teman-teman..." class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"></textarea>
+                            <button onclick="submitMemory()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 rounded-lg transition-colors">Simpan Pesan</button>
+                            <p class="text-sm text-gray-500 text-center">Pesan akan disimpan di browser Anda (simulasi)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10 px-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h3 class="text-2xl font-bold mb-2">XII IPA 3 <span class="text-amber-400">2024</span></h3>
+                    <p class="text-gray-400">SMA Negeri 2 Jakarta</p>
+                </div>
+                <div class="flex gap-6 text-2xl">
+                    <a href="#" class="text-gray-400 hover:text-amber-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-amber-400 transition-colors"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-amber-400 transition-colors"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-amber-400 transition-colors"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2024 Kenangan Kelas XII IPA 3. Dibuat dengan penuh kenangan.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Student Modal -->
+    <div id="studentModal" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center p-4 modal-overlay">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white px-6 py-4 border-b flex justify-between items-center">
+                <h3 id="modalName" class="text-xl font-bold"></h3>
+                <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <p id="modalRole" class="text-amber-600 font-medium"></p>
+                    <p class="text-gray-600 mt-2">Tinggalkan pesan atau kenangan untuk temanmu:</p>
+                </div>
+                <div class="space-y-4">
+                    <textarea id="studentMessage" placeholder="Tulis pesan anonim atau kenangan..." class="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"></textarea>
+                    <button onclick="submitStudentMessage()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 rounded-lg transition-colors">Kirim Pesan</button>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-bold mb-2">Pesan Terakhir:</h4>
+                        <p id="lastMessage" class="text-gray-600 italic">Belum ada pesan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuBtn.innerHTML = mobileMenu.classList.contains('hidden') 
+                ? '<i class="fas fa-bars"></i>' 
+                : '<i class="fas fa-times"></i>';
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Sticky header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.sticky-header');
+            if (window.scrollY > 100) {
+                header.classList.add('shadow-md', 'bg-white/95');
+            } else {
+                header.classList.remove('shadow-md', 'bg-white/95');
+            }
+        });
+
+        // Student modal functions
+        let currentStudent = '';
+        
+        function openStudentModal(name, nickname, role) {
+            currentStudent = name;
+            document.getElementById('studentModal').classList.remove('hidden');
+            document.body.classList.add('modal-open');
+            document.getElementById('modalName').textContent = `${name} "${nickname}"`;
+            document.getElementById('modalRole').textContent = `Peran: ${role}`;
+            
+            // Load saved message from localStorage
+            const savedMsg = localStorage.getItem(`msg_${name}`) || 'Belum ada pesan.';
+            document.getElementById('lastMessage').textContent = savedMsg;
+        }
+        
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+        
+        function submitStudentMessage() {
+            const message = document.getElementById('studentMessage').value;
+            if (message.trim()) {
+                localStorage.setItem(`msg_${currentStudent}`, message);
+                document.getElementById('lastMessage').textContent = message;
+                document.getElementById('studentMessage').value = '';
+                alert('Pesan berhasil disimpan (simulasi)!');
+            } else {
+                alert('Silakan tulis pesan terlebih dahulu.');
+            }
+        }
+        
+        // Memory message function
+        function submitMemory() {
+            const message = document.getElementById('memoryMessage').value;
+            if (message.trim()) {
+                localStorage.setItem('class_memory', message);
+                alert('Kenangan berhasil disimpan!');
+                document.getElementById('memoryMessage').value = '';
+            } else {
+                alert('Silakan tulis kenangan terlebih dahulu.');
+            }
+        }
+        
+        // Close modal on overlay click
+        document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeStudentModal();
+            }
+        });
+        
+        // Section reveal animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Load saved memory on page load
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('class_memory');
+            if (saved) {
+                console.log('Kenangan tersimpan:', saved);
+            }
+        });
+    </script>
+</body>
+</html>
