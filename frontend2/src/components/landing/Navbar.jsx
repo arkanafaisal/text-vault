@@ -1,18 +1,17 @@
 // src/components/landing/Navbar.jsx
-import React, { useState } from 'react';
+import React from 'react';
 import { Zap, Moon, Sun } from 'lucide-react';
 import AuthModal from './AuthModal';
 
-export default function Navbar({ isDarkMode, toggleTheme }) {
-  const [authModal, setAuthModal] = useState({ isOpen: false, type: 'login' });
-
+export default function Navbar({ isDarkMode, toggleTheme, authModal, setAuthModal }) {
+  // Fungsi kontrol modal sekarang menggunakan state dari props
   const openModal = (type) => setAuthModal({ isOpen: true, type });
   const closeModal = () => setAuthModal(prev => ({ ...prev, isOpen: false }));
   const setModalType = (type) => setAuthModal(prev => ({ ...prev, type }));
 
   return (
     <>
-      <header className="w-full sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md border-b border-zinc-300 dark:border-zinc-800 shadow-sm">
+      <header className="w-full sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--border)] shadow-sm">
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-3.5 md:py-4 flex justify-between items-center">
           <a href="/" className="flex items-center gap-1.5 md:gap-2 font-bold text-lg md:text-xl tracking-tight cursor-pointer hover:opacity-80 transition-opacity">
             <Zap className="w-5 h-5 md:w-6 md:h-6 text-[var(--primary)]" />
@@ -36,7 +35,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </button>
             <button 
               onClick={() => openModal('signup')}
-              className="whitespace-nowrap bg-[var(--foreground)] text-[var(--background)] px-3 md:px-4 py-1.5 md:py-2 rounded-[var(--radius)] text-xs md:text-sm font-medium hover:opacity-90 transition-all shadow-md cursor-pointer border border-zinc-800 dark:border-zinc-200"
+              className="whitespace-nowrap bg-[var(--foreground)] text-[var(--background)] px-3 md:px-4 py-1.5 md:py-2 rounded-[var(--radius)] text-xs md:text-sm font-bold hover:opacity-90 transition-all shadow-md cursor-pointer border border-[var(--border)]"
             >
               Sign Up
             </button>

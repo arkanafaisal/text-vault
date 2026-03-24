@@ -7,7 +7,6 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
   const [formData, setFormData] = useState({ identifier: '', password: '', confirmPassword: '' });
   const [errors, setErrors] = useState({});
 
-  // Membersihkan error dan input saat modal ditutup atau ganti tipe (Login <-> Signup)
   useEffect(() => {
     setFormData({ identifier: '', password: '', confirmPassword: '' });
     setErrors({});
@@ -23,7 +22,12 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
     e.preventDefault();
     const { isValid, errors: validationErrors } = validateAuthForm(type, formData);
     if (isValid) {
-      console.log(`Action: ${type}`, formData);
+      const isEmail = type === 'login' && formData.identifier.includes('@');
+      const body = {
+        password: formData.password.trim(),
+        [isEmail ? 'email' : 'username']: formData.identifier.trim()
+      };
+      console.log(`Action: ${type}`, body);
     } else {
       setErrors(validationErrors);
     }
@@ -32,7 +36,6 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
   if (!isOpen) return null;
 
   const inputWrapperClass = (error) => `flex items-center bg-[var(--background)] px-4 py-2 rounded-xl border transition-all duration-300 shadow-inner ${error ? 'border-[var(--destructive)] ring-1 ring-[var(--destructive)]' : 'border-zinc-200 dark:border-zinc-800 focus-within:ring-2 focus-within:ring-[var(--ring)]'}`;
-  
   const inputClass = "w-full bg-transparent outline-none text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] [box-shadow:0_0_0_30px_var(--background)_inset!important] [-webkit-text-fill-color:var(--foreground)!important]";
 
   return (
@@ -64,10 +67,19 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5 relative">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">Identifier</label>
+            <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+              {type === 'login' ? 'Username or Email' : 'Username'}
+            </label>
             <div className={inputWrapperClass(errors.identifier)}>
               <User className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.identifier ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-              <input type="text" name="identifier" value={formData.identifier} onChange={handleInputChange} placeholder="arkana or email" className={inputClass} />
+              <input 
+                type="text" 
+                name="identifier" 
+                value={formData.identifier} 
+                onChange={handleInputChange} 
+                placeholder={type === 'login' ? "arkana or email" : "arkana_dev"} 
+                className={inputClass} 
+              />
             </div>
             {errors.identifier && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>}
           </div>
