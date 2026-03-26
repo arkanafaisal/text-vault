@@ -1,15 +1,14 @@
 import Joi from "joi"
 
-export const username = Joi.string().trim().max(32).pattern(/^[a-zA-Z0-9]+$/)
-export const email = Joi.string().trim().lowercase().email().max(64)
-export const password = Joi.string().max(255).trim().required()
+export const username = Joi.string().trim().max(30).pattern(/^[a-zA-Z0-9]+$/)
+export const email = Joi.string().trim().lowercase().email().max(255)
+export const password = Joi.string().trim().min(6).max(255).required()
 export const publicKey = Joi.string().trim().max(255).required()
 
 export const token = Joi.string().trim().lowercase().length(64).hex().required()
 
-export const register = Joi.object({
+export const insert = Joi.object({
     username: username.required(),
-    email: email.allow('', null),
     password
 })
 
@@ -21,11 +20,10 @@ export const login = Joi.object({
     password
 })
 
-export const editUsername = Joi.object({
-    newUsername: username.required(),
-    password
-})
-export const editEmail = Joi.object({
-    newEmail: email.required(),
-    password
-})
+export const updateUsername = Joi.object({ username: username.required() })
+export const updateEmail = Joi.object({email: email.required()})
+export const updatePassword = Joi.object({oldPassword: password, newPassword: password})
+export const updatePublicKey = Joi.object({ publicKey })
+export const tokenParams = Joi.object({ token })
+export const forgotPassword = Joi.object({ email: email.required() })
+export const resetPassword = Joi.object({ password })

@@ -1,11 +1,9 @@
 import db from "../config/db.js"
 import bcrypt from 'bcrypt'
 
-export async function register({username, email, password}) {
+export async function insert({ display_name, username, password }) {
     try {
-        email = email || null
-        const hash = await bcrypt.hash(password, 10)
-        const [{insertId}] = await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hash])
+        const [{insertId}] = await db.query('INSERT INTO users (display_name, username, password) VALUES (?, ?, ?)', [display_name, username, password])
         return insertId
     } catch(err) {
         if(err.code === 'ER_DUP_ENTRY'){throw new Error('duplicate')}
@@ -13,19 +11,74 @@ export async function register({username, email, password}) {
     }
 }
 
-export async function authenticateUser({identifier, password}){
+export async function authenticateUser({ identifier, password }){
     const [[user]] = await db.query('SELECT id, username, password FROM users WHERE (username = ? OR email = ?)', [identifier, identifier])
     if(!user){return null}
 
     const ok = await bcrypt.compare(password, user.password)
     if(!ok){return null}
-    return user
+    return user.id
 }
 
-export async function validateUserId({id}){
+export async function validateUserId({ id }){
     const [[row]] = await db.query('SELECT 1 FROM users WHERE id = ?', [id])
     return !!row
 }
+
+
+
+
+
+export async function getUserById({ id }) {
+    const [[user]] = await db.query('SELECT display_name, email, publicKey FROM users WHERE id = ?', [id])
+    return user
+}
+
+
+export async function updateUsername({ id, display_name, username }) {
+    try {
+        const [{affectedRows, changedRows}] = await db.query('UPDATE users SET display_name = ?, username = ? WHERE id = ?', [display_name, username, id])
+        return {affectedRows, changedRows}
+    } catch(err) {
+        if(err.code === 'ER_DUP_ENTRY'){throw new Error('duplicate')}
+        throw err
+    }
+}
+
+export async function getPasswordById({ id }) {
+    const [[user]] = await db.query('SELECT password FROM users WHERE id = ?', [id])
+    return user 
+}
+
+
+export async function updatePublicKey({publicKey, id}) {
+    const [{affectedRows, changedRows}] = await db.query("UPDATE users SET publicKey = ? WHERE id = ?", [publicKey, id])
+    return {affectedRows, changedRows}
+}
+
+
+export async function validateEmail({ email }) {
+    const [[row]] = await db.query("SELECT 1 FROM users WHERE email = ?", [email])
+    return !!row
+}
+
+export async function getIdByEmail({ email }) {
+    const [[user]] = await db.query("SELECT id FROM users WHERE email = ?", [email])
+    return user.id
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export async function validateUsername({username}) {
     const [[row]] = await db.query("SELECT 1 FROM users WHERE username = ?", [username])
@@ -39,11 +92,6 @@ export async function getUserByUsername({username}) {
     return {id, publicKey}
 }
 
-export async function getMyProfile({id}) {
-    const [[user]] = await db.query('SELECT username, email, publicKey FROM users WHERE id = ?', [id])
-    return user
-}
-
 export async function getUsernamePasswordById({id}) {
     const [[user]] =  await db.query('SELECT username, password FROM users WHERE id = ?', [id])
     return user
@@ -53,39 +101,21 @@ export async function getEmailPasswordById({id}) {
     return user
 }
 
-export async function updateUsername({newUsername, id}) {
+
+
+
+export async function updateEmail({email, id}) {
     try {
-        const [{affectedRows, changedRows}] = await db.query('UPDATE users SET username = ? WHERE id = ?', [newUsername, id])
+        const [{affectedRows, changedRows}] = await db.query("UPDATE users SET email = ? WHERE id = ?", [email, id])
         return {affectedRows, changedRows}
-    } catch(err) {
-        if(err.code === 'ER_DUP_ENTRY'){throw new Error('duplicate')}
-        throw err
-    }
-}
-
-export async function updatePublicKey({newPublicKey, id}) {
-    const [{affectedRows, changedRows}] = await db.query("UPDATE users SET publicKey = ? WHERE id = ?", [newPublicKey, id])
-    return {affectedRows, changedRows}
-}
-
-export async function validateEmail({newEmail}) {
-    const [[row]] = await db.query("SELECT 1 FROM users WHERE email = ?", [newEmail])
-    return !!row
-}
-
-export async function updateEmail({newEmail, userId}) {
-    try {
-        const [{changedRows}] = await db.query("UPDATE users SET email = ? WHERE id = ?", [newEmail, userId])
-        return changedRows
     } catch(err) {
         if(err.code === "ER_DUP_ENTRY"){throw new Error('duplicate')}
         throw err
     }
 }
-export async function updatePassword({newPassword, userId}) {
-    const hash = await bcrypt.hash(newPassword, 10)
-    const [{changedRows}] = await db.query("UPDATE users SET password = ? WHERE id = ?", [hash, userId])
-    return changedRows
+export async function updatePassword({ id, password }) {
+    const [{affectedRows}] = await db.query("UPDATE users SET password = ? WHERE id = ?", [password, id])
+    return affectedRows
 }
 
 export async function getEmailById(id) {

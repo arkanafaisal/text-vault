@@ -1,15 +1,14 @@
-// src/components/landing/HeroSection.jsx
 import React, { useState } from 'react';
 import { Search, Zap, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function HeroSection() {
+  const { t } = useTranslation();
   const [searchUsername, setSearchUsername] = useState('');
 
-  // Simulasi API-Ready
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchUsername.trim()) return;
-    // TODO: Trigger Toast & Redirect
     console.log(`Searching for: ${searchUsername}`);
   };
 
@@ -18,15 +17,15 @@ export default function HeroSection() {
       
       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--secondary)] text-[var(--secondary-foreground)] text-xs md:text-sm font-medium mb-8 md:mb-8 border border-zinc-300 dark:border-zinc-700 shadow-sm">
         <Zap className="w-4 h-4 text-[var(--primary)]" />
-        <span>Stop waiting for WhatsApp Web to load.</span>
+        <span>{t('hero.badge')}</span>
       </div>
       
       <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl leading-tight md:leading-[1.1] mb-4 md:mb-6 drop-shadow-sm">
-        Transfer text & links to any device, <span className="text-[var(--primary)] drop-shadow-md">Instantly.</span>
+        {t('hero.titleMain')} <span className="text-[var(--primary)] drop-shadow-md">{t('hero.titleHighlight')}</span>
       </h1>
       
       <p className="text-base md:text-xl text-[var(--muted-foreground)] max-w-2xl mb-7 md:mb-10 leading-relaxed">
-        Save presentation links, code snippets, or long texts. Access them privately on your own devices, or open public access with a <span className="font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-zinc-200/80 dark:bg-zinc-800/80 border border-zinc-300 dark:border-zinc-700 px-1.5 py-0.5 rounded-md shadow-sm">publicKey</span> for shared computers.
+        {t('hero.descPart1')} <span className="font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-zinc-200/80 dark:bg-zinc-800/80 border border-zinc-300 dark:border-zinc-700 px-1.5 py-0.5 rounded-md shadow-sm">{t('hero.descCode')}</span> {t('hero.descPart2')}
       </p>
 
       <div className="w-full max-w-md bg-[var(--card)] p-2 rounded-2xl border border-zinc-300 dark:border-zinc-800 shadow-lg flex flex-col md:flex-row gap-2 mb-6 md:mb-10">
@@ -34,7 +33,7 @@ export default function HeroSection() {
           <Search className="w-5 h-5 text-[var(--muted-foreground)] mr-3 flex-shrink-0" />
           <input 
             type="text" 
-            placeholder="Search username..." 
+            placeholder={t('hero.searchPlaceholder')}
             className="w-full bg-transparent outline-none placeholder:text-[var(--muted-foreground)] text-[var(--foreground)]"
             value={searchUsername}
             onChange={(e) => setSearchUsername(e.target.value)}
@@ -44,7 +43,7 @@ export default function HeroSection() {
           type="submit"
           className="bg-[var(--primary)] text-[var(--primary-foreground)] px-6 py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.98] cursor-pointer shadow-md"
         >
-          Public Access
+          {t('hero.btn')}
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

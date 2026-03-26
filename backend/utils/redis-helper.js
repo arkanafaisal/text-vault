@@ -1,11 +1,15 @@
 import redis from "../config/redis.js"
 
-
+const base = process.env.PROJECT_NAME
 const redisType = {
     "cache": {prefix: 'databox:cache:', ttl: 60 * 10},
-    "tokens": {prefix: 'databox:tokens:', ttl: 60 * 60 * 168},
-    "verify_email": {prefix: 'databox:verify_email:', ttl: 60 * 15},
-    "reset_password": {prefix: 'databox:reset_password:', ttl: 60 * 15}
+    "tokens": {prefix: base + ':tokens:', ttl: 60 * 60 * 168},
+    "verify_email": {prefix: base + ':verify_email:', ttl: 60 * 15},
+    "reset_password": {prefix: base + ':reset_password:', ttl: 60 * 15},
+
+    profile: {prefix: base + ':cache:profile:', ttl: 60 * 60},
+    data: {prefix: base + ':cache:data:', ttl: 60 * 10},
+    publicData: {prefix: base + ':cache:public_data:', ttl: 60 * 60 * 6},
 }
 
 export async function get(type, key){

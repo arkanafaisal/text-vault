@@ -1,9 +1,11 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
 import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import VerifyEmail from './pages/VerifyEmail'; // <-- Import komponennya
+import ResetPassword from './pages/ResetPassword';
 
 export default function App() {
-  // Inisialisasi state: Cek localStorage ATAU preferensi sistem OS
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') === 'dark' || 
@@ -12,7 +14,6 @@ export default function App() {
     return false;
   });
 
-  // Terapkan class 'dark' ke <html> setiap state berubah
   useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
@@ -24,9 +25,7 @@ export default function App() {
     }
   }, [isDarkMode]);
 
-  // Fungsi untuk dipassing ke komponen anak
   const toggleTheme = () => setIsDarkMode(prev => !prev);
-
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
@@ -41,32 +40,22 @@ export default function App() {
   }, []);
 
   if (currentPath === '/dashboard') {
-    // return <Dashboard />;
+    return <Dashboard isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
   }
-  
-  if (currentPath.startsWith('/profile/')) {
-    const publicId = currentPath.split('/profile/')[1];
-    if (publicId) {
-      // return <Profile publicId={publicId} />;
+
+  if (currentPath.startsWith('/auth/verify-email/')) {
+    const token = currentPath.split('/verify-email/')[1];
+    if (token) {
+      return <VerifyEmail token={token} />;
     }
   }
 
-  // Routing untuk Verify Email
-  if (currentPath.startsWith('/verify-email/')) {
-    const token = currentPath.split('/verify-email/')[1];
-    // if (token) return <VerifyEmail token={token} />;
-  }
-
-  // Routing untuk Reset Password
-  if (currentPath.startsWith('/reset-password/')) {
+  if (currentPath.startsWith('/auth/reset-password/')) {
     const token = currentPath.split('/reset-password/')[1];
-    // if (token) return <ResetPassword token={token} />;
+    if (token) {
+      return <ResetPassword token={token} />;
+    }
   }
 
-  return (
-    <>
-      <LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      {/* <Toaster /> nantinya akan diletakkan di sini */}
-    </>
-  );
+  return <LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
 }

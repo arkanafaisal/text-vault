@@ -1,10 +1,11 @@
-// src/components/landing/Navbar.jsx
 import React from 'react';
 import { Zap, Moon, Sun } from 'lucide-react';
 import AuthModal from './AuthModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar({ isDarkMode, toggleTheme, authModal, setAuthModal }) {
-  // Fungsi kontrol modal sekarang menggunakan state dari props
+  const { t } = useTranslation();
+  
   const openModal = (type) => setAuthModal({ isOpen: true, type });
   const closeModal = () => setAuthModal(prev => ({ ...prev, isOpen: false }));
   const setModalType = (type) => setAuthModal(prev => ({ ...prev, type }));
@@ -31,13 +32,13 @@ export default function Navbar({ isDarkMode, toggleTheme, authModal, setAuthModa
               onClick={() => openModal('login')}
               className="text-xs md:text-sm font-medium hover:text-[var(--primary)] transition-colors cursor-pointer px-1 md:px-2"
             >
-              Login
+              {t('nav.login')}
             </button>
             <button 
               onClick={() => openModal('signup')}
               className="whitespace-nowrap bg-[var(--foreground)] text-[var(--background)] px-3 md:px-4 py-1.5 md:py-2 rounded-[var(--radius)] text-xs md:text-sm font-bold hover:opacity-90 transition-all shadow-md cursor-pointer border border-[var(--border)]"
             >
-              Sign Up
+              {t('nav.signup')}
             </button>
           </div>
         </div>

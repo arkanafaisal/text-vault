@@ -11,24 +11,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 app.use(cors({
-  origin: process.env.NODE_ENV === "development"? 'http://127.0.0.1:5500' : 'https://databox.arkanafaisal.my.id',
+  origin: process.env.NODE_ENV === "development"? ['http://127.0.0.1:5173', 'http://localhost:5173'] : 'https://databox.arkanafaisal.my.id',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type'],   // opsional, header yg diizinkan
+  allowedHeaders: ['Content-Type', 'accessToken'],   // opsional, header yg diizinkan
   preflightContinue: false,
   optionsSuccessStatus: 204
 }))
 
-const PORT = '3000'
+const PORT = process.env.PORT 
 const server = app.listen(PORT, ()=>{console.log(`Server running on port ${PORT}`)})
 
 
 
   
 
-import userRouter from './router/userRouter.js';
-import authRouter from './router/authRouter.js';
-import dataRouter from './router/dataRouter.js';
-app.use('/users', userRouter);
-app.use('/auth', authRouter);
-app.use('/data', dataRouter);
+import { userRouter } from './router/user-router.js';
+import { authRouter } from './router/auth-router.js';
+import { dataRouter } from './router/data-router.js';
+app.use('/api/users', userRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/data', dataRouter);

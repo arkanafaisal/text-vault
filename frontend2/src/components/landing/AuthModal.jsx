@@ -1,39 +1,101 @@
 // src/components/landing/AuthModal.jsx
 import React, { useState, useEffect } from 'react';
-import { X, User, Lock, ArrowRight, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, User, Lock, ArrowRight, AlertTriangle, ShieldCheck, Loader2, MailCheck } from 'lucide-react';
 import { validateAuthForm } from '../../helpers/authValidation';
+import { useTranslation } from 'react-i18next';
+import api from '../../utils/api';
+import { navigate } from '../../utils/navigation';
 
 export default function AuthModal({ isOpen, onClose, type, setType }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ identifier: '', password: '', confirmPassword: '' });
   const [errors, setErrors] = useState({});
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     setFormData({ identifier: '', password: '', confirmPassword: '' });
     setErrors({});
+    setApiError('');
+    setIsSuccess(false);
   }, [isOpen, type]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+    if (apiError) setApiError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { isValid, errors: validationErrors } = validateAuthForm(type, formData);
+    setApiError('');
+    const { isValid, errors: validationErrors } = validateAuthForm(type, formData, t);
+    
     if (isValid) {
-      const isEmail = type === 'login' && formData.identifier.includes('@');
-      const body = {
-        password: formData.password.trim(),
-        [isEmail ? 'email' : 'username']: formData.identifier.trim()
-      };
-      console.log(`Action: ${type}`, body);
+      setIsLoading(true);
+      
+      try {
+        let res;
+        if (type === 'login') {
+          res = await api.auth.login({
+            identifier: formData.identifier.trim(),
+            password: formData.password.trim()
+          });
+        } else if (type === 'signup') {
+          res = await api.auth.register({
+            username: formData.identifier.trim(),
+            password: formData.password.trim()
+          });
+        } else if (type === 'forgot-password') {
+          // PERBAIKAN: Mengirim { email: ... } sesuai permintaan user dan backend
+          res = await api.auth.forgotPassword({ 
+            email: formData.identifier.trim() 
+          });
+        }
+
+        const { response, result } = res;
+
+        if (response.ok && result.success) {
+          if (type === 'forgot-password') {
+            setIsSuccess(true);
+          } else {
+            if (result.data) {
+              const token = typeof result.data === 'string' ? result.data : result.data.accessToken;
+              if (token) localStorage.setItem('accessToken', token);
+            }
+            setFormData({ identifier: '', password: '', confirmPassword: '' });
+            onClose();
+            navigate('/dashboard');
+          }
+        } else {
+          setApiError(result.message || 'Terjadi kesalahan pada server.');
+        }
+      } catch (err) {
+        setApiError('Gagal memproses permintaan. Periksa koneksi Anda.');
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       setErrors(validationErrors);
     }
   };
 
   if (!isOpen) return null;
+
+  const getTitle = () => {
+    if (type === 'login') return t('auth.loginTitle');
+    if (type === 'signup') return t('auth.signupTitle');
+    return t('auth.forgotPasswordTitle');
+  };
+
+  const getDescription = () => {
+    if (type === 'login') return t('auth.loginDesc');
+    if (type === 'signup') return t('auth.signupDesc');
+    return t('auth.forgotPasswordDesc');
+  };
 
   const inputWrapperClass = (error) => `flex items-center bg-[var(--background)] px-4 py-2 rounded-xl border transition-all duration-300 shadow-inner ${error ? 'border-[var(--destructive)] ring-1 ring-[var(--destructive)]' : 'border-zinc-200 dark:border-zinc-800 focus-within:ring-2 focus-within:ring-[var(--ring)]'}`;
   const inputClass = "w-full bg-transparent outline-none text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] [box-shadow:0_0_0_30px_var(--background)_inset!important] [-webkit-text-fill-color:var(--foreground)!important]";
@@ -47,74 +109,120 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
           <X className="w-5 h-5" />
         </button>
 
-        <div className="mb-5">
-          <h2 className="text-xl md:text-2xl font-bold mb-1">{type === 'login' ? 'Welcome back' : 'Create account'}</h2>
-          <p className="text-[var(--muted-foreground)] text-xs md:text-sm">Access your private vault.</p>
-        </div>
-
-        <button className="w-full flex items-center justify-center gap-3 bg-[var(--background)] border border-zinc-300 dark:border-zinc-800 py-2.5 rounded-xl text-sm font-semibold hover:bg-[var(--secondary)] transition-all cursor-pointer shadow-sm active:scale-[0.98] mb-5">
-          <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-          </svg>
-          Google
-        </button>
-
-        <div className="relative flex items-center mb-5">
-          <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
-          <span className="flex-shrink mx-4 text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-widest">Or</span>
-          <div className="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5 relative">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
-              {type === 'login' ? 'Username or Email' : 'Username'}
-            </label>
-            <div className={inputWrapperClass(errors.identifier)}>
-              <User className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.identifier ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-              <input 
-                type="text" 
-                name="identifier" 
-                value={formData.identifier} 
-                onChange={handleInputChange} 
-                placeholder={type === 'login' ? "arkana or email" : "arkana_dev"} 
-                className={inputClass} 
-              />
-            </div>
-            {errors.identifier && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>}
+        {isSuccess ? (
+          <div className="text-center py-8 animate-in fade-in zoom-in">
+            <MailCheck className="w-16 h-16 mx-auto text-green-500 mb-4" />
+            <h2 className="text-xl font-bold mb-2">{t('auth.successTitle')}</h2>
+            <p className="text-[var(--muted-foreground)] text-sm mb-6">{t('auth.successDesc')}</p>
+            <button 
+              onClick={onClose}
+              className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all duration-300"
+            >
+              {t('auth.btnClose')}
+            </button>
           </div>
-
-          <div className="space-y-1.5 relative">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">Password</label>
-            <div className={inputWrapperClass(errors.password)}>
-              <Lock className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.password ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-              <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="••••••••" className={inputClass} />
+        ) : (
+          <>
+            <div className="mb-6">
+              <h2 className="text-xl md:text-2xl font-bold mb-1">{getTitle()}</h2>
+              <p className="text-[var(--muted-foreground)] text-xs md:text-sm">{getDescription()}</p>
             </div>
-            {errors.password && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.password}</p>}
-          </div>
 
-          <div className={`grid transition-all duration-500 ease-in-out ${type === 'signup' ? 'grid-rows-[1fr] opacity-100 mb-2' : 'grid-rows-[0fr] opacity-0'}`}>
-            <div className="overflow-hidden">
-              <div className="space-y-1.5 pt-2 relative">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">Confirm Password</label>
-                <div className={inputWrapperClass(errors.confirmPassword)}>
-                  <ShieldCheck className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.confirmPassword ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-                  <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} placeholder="••••••••" className={inputClass} />
-                </div>
-                {errors.confirmPassword && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.confirmPassword}</p>}
+            {apiError && (
+              <div className="mb-4 p-3 bg-[var(--destructive)]/10 border border-[var(--destructive)]/20 rounded-xl flex items-start gap-2.5 text-[var(--destructive)] text-xs font-bold animate-in fade-in zoom-in slide-in-from-top-2">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <p className="leading-relaxed">{apiError}</p>
               </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5 relative">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+                  {type === 'login' ? t('auth.labelIdLogin') : (type === 'signup' ? t('auth.labelIdSignup') : t('auth.labelEmail'))}
+                </label>
+                <div className={inputWrapperClass(errors.identifier)}>
+                  <User className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.identifier ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
+                  <input 
+                    type={type === 'forgot-password' ? 'email' : 'text'}
+                    name="identifier" 
+                    value={formData.identifier} 
+                    onChange={handleInputChange} 
+                    placeholder={type === 'login' ? t('auth.placeholderIdLogin') : (type === 'signup' ? t('auth.placeholderIdSignup') : t('auth.placeholderEmail'))}
+                    className={inputClass} 
+                    disabled={isLoading}
+                  />
+                </div>
+                {errors.identifier && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>}
+              </div>
+
+              {type !== 'forgot-password' && (
+                <>
+                  <div className="space-y-1.5 relative">
+                     <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">{t('auth.labelPassword')}</label>
+                      {type === 'login' && (
+                        <button 
+                          type="button"
+                          onClick={() => setType('forgot-password')}
+                          className="text-[10px] font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors pr-1"
+                        >
+                          {t('auth.linkForgotPassword')}
+                        </button>
+                      )}
+                    </div>
+                    <div className={inputWrapperClass(errors.password)}>
+                      <Lock className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.password ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
+                      <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
+                    </div>
+                    {errors.password && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.password}</p>}
+                  </div>
+                </>
+              )}
+
+              <div className={`grid transition-all duration-500 ease-in-out ${type === 'signup' ? 'grid-rows-[1fr] opacity-100 mb-2' : 'grid-rows-[0fr] opacity-0'}`}>
+                <div className="overflow-hidden">
+                  <div className="space-y-1.5 pt-2 relative">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">{t('auth.labelConfirm')}</label>
+                    <div className={inputWrapperClass(errors.confirmPassword)}>
+                      <ShieldCheck className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.confirmPassword ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
+                      <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
+                    </div>
+                    {errors.confirmPassword && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.confirmPassword}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 mt-2 cursor-pointer active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    {type === 'login' ? t('auth.btnLogin') : (type === 'signup' ? t('auth.btnSignup') : t('auth.btnForgotPassword'))}
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center text-xs text-[var(--muted-foreground)] font-medium">
+              <p>
+                {type === 'login' ? t('auth.noAccount') : (type === 'signup' ? t('auth.hasAccount') : t('auth.rememberPassword'))} 
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => setType(type === 'forgot-password' ? 'login' : (type === 'login' ? 'signup' : 'login'))} 
+                  className="text-[var(--foreground)] ml-1 font-bold cursor-pointer hover:underline decoration-[var(--primary)] underline-offset-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-transparent border-none p-0"
+                >
+                  {type === 'login' ? t('auth.linkSignup') : t('auth.linkLogin')}
+                </button>
+              </p>
             </div>
-          </div>
-
-          <button type="submit" className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center gap-2 mt-2 cursor-pointer active:scale-[0.98] text-sm">
-            {type === 'login' ? 'Sign In' : 'Create Account'}
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-
-        <div className="mt-6 text-center text-xs text-[var(--muted-foreground)] font-medium">
-          <p>{type === 'login' ? "Don't have an account?" : "Already have an account?"} <span onClick={() => setType(type === 'login' ? 'signup' : 'login')} className="text-[var(--foreground)] ml-1 font-bold cursor-pointer hover:underline decoration-[var(--primary)] underline-offset-4 transition-all">{type === 'login' ? 'Sign up' : 'Log in'}</span></p>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
