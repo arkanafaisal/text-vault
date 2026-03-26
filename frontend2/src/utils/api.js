@@ -143,8 +143,25 @@ const api = {
     updateEmail: ({ email }) => coreFetch('users/me/email', { method: 'PATCH', body: { email } }),
     updatePassword: ({ oldPassword, newPassword }) => coreFetch('users/me/password', { method: 'PATCH', body: { oldPassword, newPassword } }),
     updatePublicKey: ({ publicKey }) => coreFetch('users/me/public-key', { method: 'PATCH', body: { publicKey } }),
-
-    getMyDatas: () => coreFetch('/datas/me', { method: 'GET' }),
+  },
+  data: {
+    getAll: () => coreFetch('data/me', { method: 'GET' }),
+    create: ({ title, content, tags = null }) => 
+      coreFetch('data', { 
+        method: 'POST', 
+        body: { title, content, tags } 
+      }),
+    updateCommon: (id, { title, content, tags }) => 
+      coreFetch(`data/${id}`, { 
+        method: 'PUT', 
+        body: { title, content, tags } 
+      }),
+    updateIsLocked: (id, { isLocked = null, expiredAt = null }) =>
+      coreFetch(`data/${id}/status`, { 
+        method: 'PATCH', 
+        body: { isLocked, expiredAt } 
+    }),
+    delete: ({ id }) => coreFetch(`data/${id}`, { method: 'DELETE' }),
   },
   
   public: {

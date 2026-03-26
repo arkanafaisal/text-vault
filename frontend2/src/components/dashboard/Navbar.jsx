@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Zap, Moon, Sun, User, LogOut } from 'lucide-react';
 import ProfileModal from './ProfileModal';
 
-export default function DashboardNavbar({ isDarkMode, toggleTheme, user, onLogout, onUpdateUser }) {
+export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpdateUser }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
