@@ -100,7 +100,7 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
     // Optimistic update
     handleDataUpdated(updatedItem);
 
-    const { response } = await api.data.updateIsLocked(itemToToggle.id, {
+    const { response } = await api.data.updateStatus(itemToToggle.id, {
       isLocked: !itemToToggle.isLocked,
       expiresAt: itemToToggle.expiresAt,
     });

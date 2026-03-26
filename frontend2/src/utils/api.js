@@ -156,7 +156,7 @@ const api = {
         method: 'PUT', 
         body: { title, content, tags } 
       }),
-    updateIsLocked: (id, { isLocked = null, expiredAt = null }) =>
+    updateStatus: (id, { isLocked = null, expiredAt = null }) =>
       coreFetch(`data/${id}/status`, { 
         method: 'PATCH', 
         body: { isLocked, expiredAt } 

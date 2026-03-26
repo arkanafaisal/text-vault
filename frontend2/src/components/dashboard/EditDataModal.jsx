@@ -42,7 +42,7 @@ const EditDataModal = ({ item, onClose, onDataUpdated }) => {
 
     if (expiresAtChanged) {
       const statusPayload = { isLocked: item.isLocked, expiresAt: expiresAt || null };
-      promises.push(api.data.updateIsLocked(item.id, statusPayload));
+      promises.push(api.data.updateStatus(item.id, statusPayload));
       updatedData = { ...updatedData, ...statusPayload };
     }
 
