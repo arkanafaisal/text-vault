@@ -1,0 +1,24 @@
+CREATE TABLE data (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  userId BIGINT UNSIGNED NOT NULL,
+
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+
+  isLocked BOOLEAN NOT NULL DEFAULT FALSE,
+  tags JSON NULL,
+
+  expiresAt TIMESTAMP NULL,
+
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+    ON UPDATE CURRENT_TIMESTAMP,
+
+  INDEX idx_user (userId),
+  INDEX idx_user_updated (userId, updatedAt DESC),
+  INDEX idx_expires (expiresAt),
+
+  CONSTRAINT fk_data_user
+    FOREIGN KEY (userId) REFERENCES users(id)
+    ON DELETE CASCADE
+);

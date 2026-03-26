@@ -9,3 +9,5 @@ CREATE TABLE users (
 );
 
 ALTER TABLE USERS DROP COLUMN google_id, MODIFY publicKey VARCHAR(255);
+
+-- SOURCE D:/arkana/project/1.dataBox/backend/migrations/super.sql;
