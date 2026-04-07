@@ -27,3 +27,6 @@ export const updatePublicKey = Joi.object({ publicKey })
 export const tokenParams = Joi.object({ token })
 export const forgotPassword = Joi.object({ email: email.required() })
 export const resetPassword = Joi.object({ password })
+export const checkUsername = Joi.object({ username: username.required() })
+
+export const publicData = Joi.object({ username: username.required(), publicKey })

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authController } from '../controller/auth-controller.js';
+import { authController } from '../controller/auth.controller.js';
 import { limit } from '../middleware/rate-limiting.js';
 
 

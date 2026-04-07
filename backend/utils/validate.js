@@ -12,7 +12,7 @@ export function validate(schema, body){
                 break
             case d.type === 'string.empty':
                 message = `${field} cannot be empty`
-                break
+            break
             case d.type === 'number.base':
                 message = `${field} must be a number`
                 break
@@ -25,6 +25,8 @@ export function validate(schema, body){
             default:
                 message = `${field} is invalid`
         }
+
+        console.log(message)
 
 
         return { ok:false, message }

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { userController } from '../controller/user-controller.js';
+import { userController } from '../controller/user.controller.js';
 import jwtVerify from '../middleware/jwt-verify.js';
 import { limit } from '../middleware/rate-limiting.js';
 

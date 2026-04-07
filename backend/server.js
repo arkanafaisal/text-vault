@@ -25,9 +25,15 @@ const server = app.listen(PORT, ()=>{console.log(`Server running on port ${PORT}
 
   
 
-import { userRouter } from './router/user-router.js';
-import { authRouter } from './router/auth-router.js';
-import { dataRouter } from './router/data-router.js';
+import { userRouter } from './router/user.router.js';
+import { authRouter } from './router/auth.router.js';
+import { dataRouter } from './router/data.router.js';
+import { publicRouter } from './router/public.router.js';
+
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/data', dataRouter);
+app.use('/api/public', publicRouter);
+
+import { errorHandler } from './middleware/errorHandler.js';
+app.use(errorHandler)
