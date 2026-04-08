@@ -27,13 +27,15 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
   useEffect(() => {
     if (item?.id) {
       let isMounted = true;
+      
       const fetchDetails = async () => {
         setIsLoadingData(true);
+        
         try {
           const result = await api.data.getById(item.id);
           
           if (isMounted) {
-            // CEGAH 404
+            // Penanganan 404 & 403 (Sesuai update sebelumnya)
             if (result.httpCode === 404) {
               toast.error(result.message || 'Record not found.');
               if (onForceRefresh) onForceRefresh();
@@ -53,6 +55,11 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 tags: data.tags ? data.tags.join(', ') : '',
                 isLocked: isLockedBool
               });
+
+              // === TAMBAHKAN BARIS INI UNTUK SINKRONISASI OTOMATIS ===
+              // Ini akan mengupdate judul dan warna kartu di Dashboard secara realtime
+              if (onDataUpdated) onDataUpdated(data);
+              // =====================================================
             } else {
               toast.error(result.message || 'Failed to load record details.');
               onClose(); 
@@ -75,13 +82,11 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
       
       fetchDetails();
       
-      return () => {
-        isMounted = false;
-      };
+      return () => { isMounted = false; };
     } else {
       setDetailedItem(null);
     }
-  }, [item?.id, onClose]);
+  }, [item?.id]);
 
   if (!item) {
     return null;
