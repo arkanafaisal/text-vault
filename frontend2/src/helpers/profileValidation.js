@@ -3,7 +3,7 @@
 export const validateProfileField = (field, value) => {
   const errors = {};
 
-  if (field === 'display_name' || field === 'username') {
+  if (field === 'displayName' || field === 'username') {
     const cleanValue = value ? value.trim() : '';
     if (!cleanValue) {
       errors[field] = 'Username is required.';

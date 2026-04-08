@@ -15,7 +15,7 @@ export const insert = Joi.object({
 export const login = Joi.object({
     identifier: Joi.alternatives().try(
       email,
-      username
+      username.lowercase()
     ).required(),
     password
 })
@@ -29,4 +29,4 @@ export const forgotPassword = Joi.object({ email: email.required() })
 export const resetPassword = Joi.object({ password })
 export const checkUsername = Joi.object({ username: username.required() })
 
-export const publicData = Joi.object({ username: username.required(), publicKey })
+export const publicData = Joi.object({ username: username.lowercase().required(), publicKey })

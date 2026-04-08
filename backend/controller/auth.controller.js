@@ -31,10 +31,10 @@ authController.register = asyncHandler(async (req, res)=>{
     const body = validateRequest({ schema: UserSchema.insert, target: req.body, res })
     if(!body){return}
 
-    const display_name = body.username
+    const displayName = body.username
     const username = body.username.toLowerCase()
     const hashed = await bcrypt.hash(body.password, 10)
-    const insertId = await UserModel.insert({ display_name, username, password: hashed })
+    const insertId = await UserModel.insert({ displayName, username, password: hashed })
     if(!insertId){return res.sendStatus(500)} 
 
     const accessToken = jwt.sign({ id: insertId }, process.env.JWT_SECRET, {expiresIn: "10m"})

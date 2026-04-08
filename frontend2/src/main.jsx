@@ -5,7 +5,7 @@ import './css/index.css'
 import './i18n' // <-- Import konfigurasi i18n
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  // <StrictMode>
+    <App />,
+  {/* </StrictMode>, */}
 )

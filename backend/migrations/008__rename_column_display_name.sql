@@ -1,2 +1,2 @@
-ALTER TABLE data
+ALTER TABLE users
 RENAME COLUMN display_name TO displayName;

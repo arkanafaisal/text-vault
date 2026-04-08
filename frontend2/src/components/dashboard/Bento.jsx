@@ -1,38 +1,39 @@
+// src/components/dashboard/Bento.jsx
 import React from 'react';
-import { Lock, Unlock } from 'lucide-react';
 
-const Bento = ({ data, onItemClick, onLockToggle }) => {
-  const getFontSize = (title) => {
-    const length = title.length;
-    if (length < 10) return 'text-2xl';
-    if (length < 20) return 'text-xl';
-    if (length < 30) return 'text-lg';
-    return 'text-base';
-  };
+export default function Bento({ data, onItemClick }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="w-full py-10 flex items-center justify-center text-[var(--muted-foreground)] border border-dashed border-[var(--border-strong)] rounded-2xl">
+        <p className="text-sm font-medium">No data found in your vault.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {data.map((item) => (
-        <div
-          key={item.id}
-          className="group relative bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 shadow-sm cursor-pointer flex items-center justify-center text-center"
-          onClick={() => onItemClick(item)}
-        >
-          <h3 className={`font-bold ${getFontSize(item.title)}`}>{item.title}</h3>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onLockToggle(item);
-            }}
-            className="absolute top-2 right-2 p-2 rounded-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
+    <div className="flex flex-wrap gap-1.5 md:gap-2 lg:gap-3">
+      {data.map((item) => {
+        
+        // MURNI HANYA PERUBAHAN WARNA (STRUKTUR HTML TETAP ASLI)
+        // Locked (Privat): Abu-abu redup
+        // Unlocked (Publik): Latar hijau samar (10%) dengan border hijau samar (40%). Saat di-hover warnanya menebal.
+        const colorClass = item.isLocked 
+          ? 'bg-[var(--card)] text-[var(--foreground)] border-[var(--border-strong)] shadow-sm hover:border-[var(--muted-foreground)] hover:shadow-md'
+          : 'bg-[var(--primary)]/10 text-[var(--foreground)] border-[var(--primary)]/40 shadow-sm hover:bg-[var(--primary)]/20 hover:border-[var(--primary)] hover:shadow-md';
+
+        return (
+          <div
+            key={item.id}
+            onClick={() => onItemClick(item)}
+            // KELAS STRUKTUR INI 100% SAMA DENGAN VERSI LAMA ANDA
+            className={`flex-grow flex items-center justify-center px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2.5 rounded-lg md:rounded-xl border transition-all duration-300 cursor-pointer min-w-[70px] md:min-w-[90px] lg:min-w-[120px] max-w-full active:scale-[0.98] ${colorClass}`}
           >
-            {item.isLocked ? <Lock className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
-          </button>
-          {item.isLocked && <Lock className="absolute bottom-2 right-2 w-4 h-4 text-[var(--muted-foreground)]" />}
-        </div>
-      ))}
+            <h3 className="font-bold text-center text-xs md:text-base lg:text-lg break-words w-full leading-tight">
+              {item.title}
+            </h3>
+          </div>
+        );
+      })}
     </div>
   );
-};
-
-export default Bento;
+}

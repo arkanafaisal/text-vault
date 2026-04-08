@@ -73,7 +73,12 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     if(!body){return}
 
     const {affectedRows, changedRows, isLocked} = await DataModel.updateCommon({  ...body, id: req.params.id, userId: req.user.id })
-    if(affectedRows === 0){return res.sendStatus(401)}
+    if(affectedRows === 0){
+        const exists = await DataModel.isExist({ id: req.params.id })
+        
+        if(!exists){return res.sendStatus(404)}
+        return res.sendStatus(403)
+    }
     if(changedRows === 0){return res.status(400).json({error: "there's nothing to change"})}
     
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
@@ -92,7 +97,12 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
     if(!body){return}
 
     const {affectedRows, changedRows} = await DataModel.updateStatus({ ...body, id: req.params.id, userId: req.user.id })
-    if(affectedRows === 0){return res.sendStatus(401)}
+    if(affectedRows === 0){
+        const exists = await DataModel.isExist({ id: req.params.id })
+        
+        if(!exists){return res.sendStatus(404)}
+        return res.sendStatus(403)
+    }
     if(changedRows === 0){return res.sendStatus(200)}
 
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
@@ -107,7 +117,7 @@ dataController.delete = asyncHandler(async (req, res)=>{
     logging('/data/:id')
 
     const {affectedRows, isLocked} = await DataModel.del({ id: req.params.id, userId: req.user.id })
-    if(affectedRows === 0){return res.status(400).json({error: "data not found, please try refresh"})}
+    if(affectedRows === 0){return res.sendStatus(404)}
 
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     await redisHelper.delPattern('allData', req.user.id)

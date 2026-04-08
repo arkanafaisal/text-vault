@@ -13,21 +13,41 @@ export default function LandingPage({ isDarkMode, toggleTheme }) {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { response, result } = await api.users.getMe();
-      
-      if (response && response.ok && result && result.success) {
-        navigate('/dashboard');
-        return;
-      } else {
-        // Opsional: Bersihkan token yang tidak valid agar tidak nyangkut
-        localStorage.removeItem('accessToken');
-      }
+    let isMounted = true;
 
-      setIsCheckingAuth(false);
+    // Di dalam src/pages/LandingPage.jsx (Fokus pada fungsi checkAuth)
+
+    const checkAuth = async () => {
+      try {
+        // Cukup ambil 'success' dari objek kembalian
+        const { success } = await api.users.getMe();
+        
+        if (!isMounted) {
+          return;
+        }
+
+        // Pengecekan menjadi jauh lebih bersih
+        if (success) {
+          navigate('/dashboard');
+          return; 
+        } else {
+          localStorage.removeItem('accessToken');
+        }
+      } catch (error) {
+        // Abaikan error jaringan saat pengecekan di background
+      } finally {
+        if (isMounted) {
+          setIsCheckingAuth(false);
+        }
+      }
     };
 
+    // Langsung panggil tanpa pengecekan token lokal
     checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const openAuthModal = (type) => {

@@ -1,7 +1,8 @@
 // src/components/landing/AuthModal.jsx
 import React, { useState, useEffect } from 'react';
-import { X, User, Lock, ArrowRight, AlertTriangle, ShieldCheck, Loader2, MailCheck } from 'lucide-react';
+import { X, User, Lock, ArrowRight, AlertTriangle, ShieldCheck, Loader2, MailCheck, CheckCircle2 } from 'lucide-react';
 import { validateAuthForm } from '../../helpers/authValidation';
+import apiMessages from '../../helpers/apiMessages';
 import { useTranslation } from 'react-i18next';
 import api from '../../utils/api';
 import { navigate } from '../../utils/navigation';
@@ -12,69 +13,81 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
   const [errors, setErrors] = useState({});
   
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  
+  // State tunggal untuk pesan balikan dari backend (Sukses / Error)
+  const [feedback, setFeedback] = useState({ text: '', isSuccess: false });
+  const [isForgotPasswordSuccess, setIsForgotPasswordSuccess] = useState(false);
 
   useEffect(() => {
     setFormData({ identifier: '', password: '', confirmPassword: '' });
     setErrors({});
-    setApiError('');
-    setIsSuccess(false);
+    setFeedback({ text: '', isSuccess: false });
+    setIsForgotPasswordSuccess(false);
   }, [isOpen, type]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-    if (apiError) setApiError('');
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    if (feedback.text) {
+      setFeedback({ text: '', isSuccess: false });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiError('');
+    setFeedback({ text: '', isSuccess: false });
     const { isValid, errors: validationErrors } = validateAuthForm(type, formData, t);
     
     if (isValid) {
       setIsLoading(true);
       
       try {
-        let res;
+        let result;
+
+        // 1. Eksekusi API sesuai tipe form (Semuanya sekarang mengembalikan Service Object)
         if (type === 'login') {
-          res = await api.auth.login({
+          result = await api.auth.login({
             identifier: formData.identifier.trim(),
             password: formData.password.trim()
           });
         } else if (type === 'signup') {
-          res = await api.auth.register({
+          result = await api.auth.register({
             username: formData.identifier.trim(),
             password: formData.password.trim()
           });
         } else if (type === 'forgot-password') {
-          // PERBAIKAN: Mengirim { email: ... } sesuai permintaan user dan backend
-          res = await api.auth.forgotPassword({ 
+          result = await api.auth.forgotPassword({ 
             email: formData.identifier.trim() 
           });
         }
 
-        const { response, result } = res;
+        // 2. Tampilkan pesan feedback langsung dari objek result
+        setFeedback({ text: result.message, isSuccess: result.success });
 
-        if (response.ok && result.success) {
+        // 3. Tangani aksi setelah sukses
+        if (result.success) {
           if (type === 'forgot-password') {
-            setIsSuccess(true);
+            setIsForgotPasswordSuccess(true);
           } else {
-            if (result.data) {
-              const token = typeof result.data === 'string' ? result.data : result.data.accessToken;
-              if (token) localStorage.setItem('accessToken', token);
+            // Token diambil dari result.data (Berlaku untuk login maupun register)
+            const token = result.data?.accessToken || (typeof result.data === 'string' ? result.data : null);
+
+            if (token) {
+              localStorage.setItem('accessToken', token);
             }
-            setFormData({ identifier: '', password: '', confirmPassword: '' });
-            onClose();
-            navigate('/dashboard');
+            
+            setTimeout(() => {
+              setFormData({ identifier: '', password: '', confirmPassword: '' });
+              onClose();
+              navigate('/dashboard');
+            }, 500);
           }
-        } else {
-          setApiError(result.message || 'Terjadi kesalahan pada server.');
         }
       } catch (err) {
-        setApiError('Gagal memproses permintaan. Periksa koneksi Anda.');
+        setFeedback({ text: 'Failed to process request. Please check your connection.', isSuccess: false });
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +96,9 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   const getTitle = () => {
     if (type === 'login') return t('auth.loginTitle');
@@ -109,7 +124,7 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
           <X className="w-5 h-5" />
         </button>
 
-        {isSuccess ? (
+        {isForgotPasswordSuccess ? (
           <div className="text-center py-8 animate-in fade-in zoom-in">
             <MailCheck className="w-16 h-16 mx-auto text-green-500 mb-4" />
             <h2 className="text-xl font-bold mb-2">{t('auth.successTitle')}</h2>
@@ -128,10 +143,19 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
               <p className="text-[var(--muted-foreground)] text-xs md:text-sm">{getDescription()}</p>
             </div>
 
-            {apiError && (
-              <div className="mb-4 p-3 bg-[var(--destructive)]/10 border border-[var(--destructive)]/20 rounded-xl flex items-start gap-2.5 text-[var(--destructive)] text-xs font-bold animate-in fade-in zoom-in slide-in-from-top-2">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <p className="leading-relaxed">{apiError}</p>
+            {/* FEEDBACK BANNER (Bisa Berwarna Merah atau Hijau Tergantung response.ok) */}
+            {feedback.text && (
+              <div className={`mb-4 p-3 border rounded-xl flex items-start gap-2.5 text-xs font-bold animate-in fade-in zoom-in slide-in-from-top-2 ${
+                feedback.isSuccess 
+                  ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400' 
+                  : 'bg-[var(--destructive)]/10 border-[var(--destructive)]/20 text-[var(--destructive)]'
+              }`}>
+                {feedback.isSuccess ? (
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                )}
+                <p className="leading-relaxed">{feedback.text}</p>
               </div>
             )}
 
@@ -152,7 +176,9 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                     disabled={isLoading}
                   />
                 </div>
-                {errors.identifier && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>}
+                {errors.identifier && (
+                  <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>
+                )}
               </div>
 
               {type !== 'forgot-password' && (
@@ -174,7 +200,9 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                       <Lock className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.password ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
                       <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
                     </div>
-                    {errors.password && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.password}</p>}
+                    {errors.password && (
+                      <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.password}</p>
+                    )}
                   </div>
                 </>
               )}
@@ -187,7 +215,9 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                       <ShieldCheck className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.confirmPassword ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
                       <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
                     </div>
-                    {errors.confirmPassword && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && (
+                      <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.confirmPassword}</p>
+                    )}
                   </div>
                 </div>
               </div>

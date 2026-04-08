@@ -1,171 +1,286 @@
-// ==========================================
-// src/utils/api.js
-// ==========================================
-import { navigate } from './navigation';
+import { fetcher } from "./fetcher";
+import apiMessages from "../helpers/apiMessages";
 
-const devUrl = "http://localhost:3001/api/";
-const prodUrl = "https://databox.arkanafaisal.my.id/api/";
-
-const isDevelopment = true;
-const BASE_URL = isDevelopment ? devUrl : prodUrl;
-
-// ==========================================
-// 1. FUNGSI FETCH TERPUSAT
-// ==========================================
-const coreFetch = async (endpoint, options = {}, requireAuth = true) => {
-  let token = localStorage.getItem('accessToken');
-  const url = `${BASE_URL}${endpoint}`;
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
-  
-  if (requireAuth && token) {
-    headers['accesstoken'] = token;
-  }
-
-  let body = options.body;
-  
-  if (body && typeof body === 'object') {
-    body = JSON.stringify(body);
-  }
-
-  try {
-    // credentials: 'include' DIHAPUS dari default, akan diambil dari ...options jika ada
-    let response = await fetch(url, { ...options, headers, body });
-    let result = await response.json().catch(() => {
-      return { success: false, message: 'Format response tidak valid dari server.' };
-    });
-
-    if (requireAuth) {
-      if (response.status === 401) {
-        console.warn("Access Token tidak valid (401). Mencoba silent refresh...");
-        
-        // Endpoint /refresh WAJIB pakai credentials: 'include' untuk mengirim cookie
-        const refreshRes = await fetch(`${BASE_URL}auth/refresh`, {
-          method: 'POST', 
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include' 
-        });
-
-        if (refreshRes.ok) {
-          const refreshResult = await refreshRes.json();
-          
-          if (refreshResult.success && refreshResult.data) {
-            token = refreshResult.data;
-            localStorage.setItem('accessToken', token);
-            
-            headers['accesstoken'] = token;
-            // Retry request asli setelah refresh sukses
-            response = await fetch(url, { ...options, headers, body });
-            result = await response.json().catch(() => {
-              return {};
-            });
-            return { response, result };
-          }
-        }
-        
-        response = { ...response, status: 403 }; 
-      }
-
-      if (response.status === 403) {
-        console.error("Refresh Token tidak valid (403). Force Logout.");
-        
-        // --- IMPLEMENTASI FORCE LOGOUT KE BACKEND ---
-        try {
-          await fetch(`${BASE_URL}auth/logout`, {
-            method: 'POST',
-            credentials: 'include' // Wajib include agar backend bisa menghapus cookie refresh token
-          });
-        } catch (logoutError) {
-          console.error("Gagal menembak API logout saat force logout:", logoutError);
-        }
-        // --------------------------------------------
-
-        localStorage.removeItem('accessToken');
-        navigate('/');
-        return { response, result };
-      }
-    }
-
-    if (response.status >= 500) {
-      alert("Terjadi masalah pada server kami. Mohon coba lagi dalam beberapa menit.");
-    }
-    
-    if (response.status === 429) {
-      alert("Anda melakukan permintaan terlalu cepat. Mohon tunggu sebentar lalu coba lagi.");
-    }
-
-    return { response, result };
-
-  } catch (error) {
-    console.error("Network Error:", error);
-    alert("Koneksi gagal. Pastikan Anda terhubung ke internet dan backend aktif.");
-    return { response: { ok: false, status: 0 }, result: { success: false, message: 'Gagal terhubung ke server.' } };
-  }
-};
-
-// ==========================================
-// 2. OBJEK API
-// ==========================================
 const api = {
   auth: {
-    // WAJIB credentials: 'include' agar browser menyimpan cookie dari server
-    login: ({ identifier, password }) => coreFetch('auth/login', { 
-      method: 'POST', 
-      body: { identifier, password },
-      credentials: 'include' 
-    }, false),
+    login: async ({ identifier, password }) => {
+      const response = await fetcher('auth/login', { 
+        method: 'POST', 
+        body: { identifier, password },
+        credentials: 'include' 
+      }, false);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.login(response);
+      
+      let data = null;
+      if (success) {
+        // Ekstraksi JSON (accessToken) langsung di sini
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
     
-    register: ({ username, password }) => coreFetch('auth/register', { 
-      method: 'POST', 
-      body: { username, password },
-      credentials: 'include' 
-    }, false),
+    register: async ({ username, password }) => {
+      const response = await fetcher('auth/register', { 
+        method: 'POST', 
+        body: { username, password },
+        credentials: 'include' 
+      }, false);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.register(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      return { success, message, data, httpCode };
+    },
     
-    // WAJIB credentials: 'include' agar server bisa menghapus cookie
-    logout: () => coreFetch('auth/logout', { 
-      method: 'POST',
-      credentials: 'include'
-    }, true),
+    logout: async () => {
+      const response = await fetcher('auth/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      }, true);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.logout(response);
+      
+      return { success, message, data: null, httpCode };
+    },
     
-    // Fitur reset/verify tidak berhubungan dengan cookie sesi, jadi tidak perlu include
-    verifyEmail: (token) => coreFetch(`auth/verify-email/${token}`, { method: 'POST' }, false),
-    resetPassword: (token, { password }) => coreFetch(`auth/reset-password/${token}`, { method: 'POST', body: { password } }, false),
-    forgotPassword: ({ email }) => coreFetch('auth/forgot-password', { method: 'POST', body: { email } }, false),
+    verifyEmail: async (token) => {
+      const response = await fetcher(`auth/verify-email/${token}`, { method: 'POST' }, false);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.verifyEmail(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    resetPassword: async (token, { password }) => {
+      const response = await fetcher(`auth/reset-password/${token}`, { 
+        method: 'POST', 
+        body: { password } 
+      }, false);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.resetPassword(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    forgotPassword: async ({ email }) => {
+      const response = await fetcher('auth/forgot-password', { 
+        method: 'POST', 
+        body: { email } 
+      }, false);
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.auth.forgotPassword(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      return { success, message, data, httpCode };
+    },  
   },
   
   users: {
-    // Request biasa sekarang BERSIH dari pengiriman cookie yang tidak perlu
-    getMe: () => coreFetch('users/me', { method: 'GET' }),
-    updateUsername: ({ username }) => coreFetch('users/me/username', { method: 'PATCH', body: { username } }),
-    updateEmail: ({ email }) => coreFetch('users/me/email', { method: 'PATCH', body: { email } }),
-    updatePassword: ({ oldPassword, newPassword }) => coreFetch('users/me/password', { method: 'PATCH', body: { oldPassword, newPassword } }),
-    updatePublicKey: ({ publicKey }) => coreFetch('users/me/public-key', { method: 'PATCH', body: { publicKey } }),
+    getMe: async () => {
+      const response = await fetcher('users/me', { method: 'GET' });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.users.getMe(response);
+      
+      // Ekstrak data JSON HANYA jika request sukses
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      // Kembalikan objek yang konsisten dan rapi
+      return { success, message, data, httpCode };
+    },
+    
+    updateUsername: async ({ username }) => {
+      const response = await fetcher('users/me/username', { method: 'PATCH', body: { username } });
+      const success = response.ok;
+      const message = await apiMessages.users.updateUsername(response);
+      let data = null;
+      if (success) data = await response.clone().json().catch(() => null);
+      return { success, message, data, httpCode: response.status };
+    },
+    
+    updateEmail: async ({ email }) => {
+      const response = await fetcher('users/me/email', { method: 'PATCH', body: { email } });
+      const success = response.ok;
+      const message = await apiMessages.users.updateEmail(response);
+      let data = null;
+      if (success) data = await response.clone().json().catch(() => null);
+      return { success, message, data, httpCode: response.status };
+    },
+    
+    updatePassword: async ({ oldPassword, newPassword }) => {
+      const response = await fetcher('users/me/password', { method: 'PATCH', body: { oldPassword, newPassword } });
+      const success = response.ok;
+      const message = await apiMessages.users.updatePassword(response);
+      let data = null;
+      if (success) data = await response.clone().json().catch(() => null);
+      return { success, message, data, httpCode: response.status };
+    },
+
+    updatePublicKey: async ({ publicKey }) => {
+      const response = await fetcher('users/me/public-key', { method: 'PATCH', body: { publicKey } });
+      const success = response.ok;
+      const message = await apiMessages.users.updatePublicKey(response);
+      let data = null;
+      if (success) data = await response.clone().json().catch(() => null);
+      return { success, message, data, httpCode: response.status };
+    }
   },
+
   data: {
-    getAll: () => coreFetch('data/me', { method: 'GET' }),
-    create: ({ title, content, tags = null }) => 
-      coreFetch('data', { 
+    getAll: async (paramsObj = {}) => {
+      const { search, isLocked, sort } = paramsObj;
+      const params = new URLSearchParams();
+
+      if (search) params.append('search', search);
+      // Pengecekan ketat agar string kosong tidak terkirim, namun boolean/string 'true'/'false' tetap masuk
+      if (isLocked !== undefined && isLocked !== '') params.append('isLocked', isLocked);
+      if (sort) params.append('sort', sort);
+
+      const queryString = params.toString();
+      const endpoint = queryString ? `data/me?${queryString}` : 'data/me';
+
+      const response = await fetcher(endpoint, { method: 'GET' });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.getAll(response);
+      
+      let data = [];
+      if (success) {
+        const parsedData = await response.clone().json().catch(() => []);
+        data = Array.isArray(parsedData) ? parsedData : [];
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    getById: async (id) => {
+      const response = await fetcher(`data/${id}`, { method: 'GET' });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.getById(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    create: async ({ title, content, tags }) => {
+      const response = await fetcher('data', { 
         method: 'POST', 
         body: { title, content, tags } 
-      }),
-    updateCommon: (id, { title, content, tags }) => 
-      coreFetch(`data/${id}`, { 
+      });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.create(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    updateCommon: async (id, { title, content, tags }) => {
+      const response = await fetcher(`data/${id}`, { 
         method: 'PUT', 
         body: { title, content, tags } 
-      }),
-    updateStatus: (id, { isLocked = null, expiredAt = null }) =>
-      coreFetch(`data/${id}/status`, { 
+      });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.updateCommon(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    updateStatus: async (id, { isLocked }) => {
+      const response = await fetcher(`data/${id}/status`, { 
         method: 'PATCH', 
-        body: { isLocked, expiredAt } 
-    }),
-    delete: ({ id }) => coreFetch(`data/${id}`, { method: 'DELETE' }),
+        body: { isLocked } 
+      });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.updateStatus(response);
+      
+      let data = null;
+      if (success) {
+        data = await response.clone().json().catch(() => null);
+      }
+      
+      return { success, message, data, httpCode };
+    },
+    delete: async (id) => {
+      const response = await fetcher(`data/${id}`, { method: 'DELETE' });
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.data.delete(response);
+      
+      return { success, message, data: null, httpCode };
+    },
   },
   
   public: {
-    // Ruang untuk endpoint data publik nanti
+    getData: async ({ username, publicKey }) => {
+      const response = await fetcher('public/data', { 
+        method: 'POST', 
+        body: { username, publicKey } 
+      }, false); // <-- false: Tidak butuh accessToken
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const message = await apiMessages.public.getData(response);
+      
+      let data = [];
+      if (success) {
+        const parsedData = await response.clone().json().catch(() => null);
+        // Sesuaikan dengan struktur JSON backend Anda, asumsikan data ada di dalam array atau properti .data
+        data = Array.isArray(parsedData) ? parsedData : (parsedData?.data || []);
+      }
+      
+      return { success, message, data, httpCode };
+    }
   }
 };
 

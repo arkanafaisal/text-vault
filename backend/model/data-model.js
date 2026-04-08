@@ -60,3 +60,8 @@ export async function getPublicData({ userId }) {
     const [rows] = await db.query('SELECT title, content from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
     return rows
 }
+
+export async function isExist({ id }) {
+    const [[row]] = await db.query('SELECT 1 FROM data WHERE id = ?', [id])
+    return !!row
+}

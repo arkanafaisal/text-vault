@@ -36,8 +36,8 @@ userController.updateUsername = asyncHandler(async (req, res) => {
     if(!body){return}
     const { username } = body
 
-    const display_name = username
-    const {affectedRows, changedRows} = await UserModel.updateUsername({display_name, username: username.toLowerCase(), id: req.user.id})
+    const displayName = username
+    const {affectedRows, changedRows} = await UserModel.updateUsername({displayName, username: username.toLowerCase(), id: req.user.id})
     if(affectedRows === 0){return res.sendStatus(401)}
 
     await incrbyRateLimit('updateUsername', req.ip)

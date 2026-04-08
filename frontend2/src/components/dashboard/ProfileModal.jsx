@@ -74,7 +74,6 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
       return;
     }
 
-    // Intercept untuk Email agar memunculkan modal
     if (field === 'email') {
       if (!user?.email) {
         setConfirmModal({ isOpen: true, type: 'set_new_email', targetEmail: editValue });
@@ -87,40 +86,35 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
     setIsSaving(true);
     setErrors({});
     setSuccessMsg({});
-    let responseData;
-
+    
     try {
-      if (field === 'display_name' || field === 'username') {
-        responseData = await api.users.updateUsername({ username: editValue });
+      let result;
+
+      // 1. Panggil API sesuai field (Semua mengembalikan format yang sama!)
+      if (field === 'displayName' || field === 'username') {
+        result = await api.users.updateUsername({ username: editValue });
       } else if (field === 'password') {
-        responseData = await api.users.updatePassword({ 
+        result = await api.users.updatePassword({ 
           oldPassword: editValue.oldPassword, 
           newPassword: editValue.newPassword 
         });
       } else if (field === 'publicKey') {
-        responseData = await api.users.updatePublicKey({ publicKey: editValue });
+        result = await api.users.updatePublicKey({ publicKey: editValue });
       }
 
-      if (responseData && responseData.response && responseData.response.ok && responseData.result.success) {
-        // KITA BIARKAN EDITING FIELD TERBUKA AGAR PESAN SUKSES TERLIHAT
-        setSuccessMsg({ 
-          [field]: responseData.result.message || 'Successfully updated.' 
-        });
+      // 2. Evaluasi yang sangat bersih berkat Service Layer
+      if (result && result.success) {
+        // Kita biarkan field terbuka agar user bisa membaca pesan sukses
+        setSuccessMsg({ [field]: result.message });
         
-        if (onUpdateUser) {
-          if (field !== 'password') {
-            onUpdateUser(field, editValue);
-          }
+        if (onUpdateUser && field !== 'password') {
+          onUpdateUser(field, editValue);
         }
       } else {
-        setErrors({ 
-          [field]: responseData?.result?.message || 'Failed to update data.' 
-        });
+        setErrors({ [field]: result.message });
       }
     } catch (error) {
-      setErrors({ 
-        [field]: 'Network error occurred.' 
-      });
+      setErrors({ [field]: 'A network error occurred while updating profile.' });
     } finally {
       setIsSaving(false);
     }
@@ -129,36 +123,37 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
   const executeConfirmAction = async () => {
     setIsSaving(true);
     try {
+      let result;
+
       if (confirmModal.type === 'edit_email' || confirmModal.type === 'set_new_email') {
-        const { response, result } = await api.users.updateEmail({ email: confirmModal.targetEmail });
+        result = await api.users.updateEmail({ email: confirmModal.targetEmail });
         
-        if (response && response.ok && result && result.success) {
-          setSuccessMsg({ email: result.message || 'Verification link sent to your email.' });
+        if (result && result.success) {
+          setSuccessMsg({ email: result.message });
           setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
         } else {
-          setErrors({ email: result?.message || 'Failed to send verification.' });
+          setErrors({ email: result.message });
           setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
         }
+        
       } else if (confirmModal.type === 'forgot_password') {
+        // Perbaikan: auth.forgotPassword kini juga mengembalikan Service Object
+        result = await api.auth.forgotPassword({ email: confirmModal.targetEmail });
         
-        // PANGGILAN API FORGOT PASSWORD YANG NYATA
-        const { response, result } = await api.auth.forgotPassword({ email: confirmModal.targetEmail });
-        
-        if (response && response.ok && result && result.success) {
-          setSuccessMsg({ password: result.message || 'Password reset link sent to your email.' });
+        if (result && result.success) {
+          setSuccessMsg({ password: result.message });
           setErrors({});
           setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
         } else {
-          setErrors({ password: result?.message || 'Failed to send reset link. Please try again.' });
+          setErrors({ password: result.message });
           setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
         }
-        
       }
     } catch (error) {
       if (confirmModal.type === 'edit_email' || confirmModal.type === 'set_new_email') {
-        setErrors({ email: 'Network error occurred.' });
+        setErrors({ email: 'A network error occurred while updating email.' });
       } else {
-        setErrors({ password: 'Network error occurred.' });
+        setErrors({ password: 'A network error occurred while requesting reset link.' });
       }
       setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
     } finally {
@@ -196,7 +191,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
         </div>
         
         <div className="px-6 py-2 overflow-y-auto custom-scrollbar flex-1 divide-y divide-zinc-200 dark:divide-zinc-800">
-          <ProfileRow field="display_name" label="Username" icon={User} value={user?.display_name} {...sharedProps} />
+          <ProfileRow field="displayName" label="Username" icon={User} value={user?.displayName} {...sharedProps} />
           <ProfileRow field="email" label="Email" icon={Mail} value={user?.email} {...sharedProps} />
           <ProfileRow field="password" label="Password" icon={Lock} value={null} isPassword={true} {...sharedProps} />
           

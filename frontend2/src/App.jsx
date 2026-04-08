@@ -1,9 +1,13 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
+
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import VerifyEmail from './pages/VerifyEmail'; // <-- Import komponennya
 import ResetPassword from './pages/ResetPassword';
+
+import ToastContainer from './components/common/ToastContainer';
+import PublicPage from './pages/PublicPage';
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -39,23 +43,34 @@ export default function App() {
     };
   }, []);
 
-  if (currentPath === '/dashboard') {
-    return <Dashboard isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
-  }
+  const renderPage = () => {
+    if (currentPath === '/dashboard') {
+      return <Dashboard isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
+    }
 
-  if (currentPath.startsWith('/auth/verify-email/')) {
-    const token = currentPath.split('/verify-email/')[1];
-    if (token) {
+    if (currentPath.startsWith('/public')) {
+      // Sangat bersih, tidak ada lagi split URL di sini!
+      return <PublicPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
+    }
+
+    if (currentPath.startsWith('/auth/verify-email/')) {
+      const token = currentPath.split('/verify-email/')[1];
       return <VerifyEmail token={token} />;
     }
-  }
 
-  if (currentPath.startsWith('/auth/reset-password/')) {
-    const token = currentPath.split('/reset-password/')[1];
-    if (token) {
+    if (currentPath.startsWith('/auth/reset-password/')) {
+      const token = currentPath.split('/reset-password/')[1];
       return <ResetPassword token={token} />;
     }
-  }
 
-  return <LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+    // Default route
+    return <LandingPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
+  };
+
+  return (
+    <>
+      <ToastContainer />
+      {renderPage()}
+    </>
+  );
 }

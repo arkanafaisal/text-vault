@@ -1,13 +1,12 @@
 import db from "../config/db.js"
 import bcrypt from 'bcrypt'
 
-export async function insert({ display_name, username, password }) {
-    const [{insertId}] = await db.query('INSERT INTO users (display_name, username, password) VALUES (?, ?, ?)', [display_name, username, password])
+export async function insert({ displayName, username, password }) {
+    const [{insertId}] = await db.query('INSERT INTO users (displayName, username, password) VALUES (?, ?, ?)', [displayName, username, password])
     return insertId
 }
 
 export async function authenticateUser({ identifier, password }){
-    console.log(identifier)
     const [[user]] = await db.query('SELECT id, username, password FROM users WHERE (username = ? OR email = ?)', [identifier, identifier])
     if(!user){return null}
 
@@ -26,13 +25,13 @@ export async function validateUserId({ id }){
 
 
 export async function getUserById({ id }) {
-    const [[user]] = await db.query('SELECT display_name, email, publicKey FROM users WHERE id = ?', [id])
+    const [[user]] = await db.query('SELECT displayName, email, publicKey FROM users WHERE id = ?', [id])
     return user
 }
 
 
-export async function updateUsername({ id, display_name, username }) {
-    const [{affectedRows, changedRows}] = await db.query('UPDATE users SET display_name = ?, username = ? WHERE id = ?', [display_name, username, id])
+export async function updateUsername({ id, displayName, username }) {
+    const [{affectedRows, changedRows}] = await db.query('UPDATE users SET displayName = ?, username = ? WHERE id = ?', [displayName, username, id])
     return {affectedRows, changedRows}
 }
 

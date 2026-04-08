@@ -18,7 +18,7 @@ publicController.getData = asyncHandler(async (req, res)=>{
     if(!body){return}
 
 
-    const userId = await getIdByUsernamePublickey({ ...body, username: body.username.toLowerCase() })
+    const userId = await getIdByUsernamePublickey(body)
     if(!userId){return res.status(400).json({ error: "wrong username or public key" })}
     
     const {ok, data} = await redisHelper.get('publicData', userId)

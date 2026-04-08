@@ -25,7 +25,7 @@ const rl = {
     getMyProfile: { ttl: 1, limit: 60 }, // High limit for UI navigation.
     
     updateUsername: { ttl: 60, limit: 10, increaseBy: 10 }, // Rare action. 1 success per hour to prevent name squatting/confusion.
-    updatePassword: { ttl: 60, limit: 5, increaseBy: 5 }, // Security sensitive. 1 success per hour.
+    updatePassword: { ttl: 60, limit: 10, increaseBy: 5 }, // Security sensitive. 1 success per hour.
     updatePublicKey: { ttl: 5, limit: 20, increaseBy: 5 }, // Users might toggle this on/off to test their public link.
 
     sendEmailVerification: { ttl: 60, limit: 5, increaseBy: 5 }, // Strict. 1 success per hour to prevent third-party email spam.
