@@ -1,165 +1,31 @@
 // src/components/dashboard/ProfileModal.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { X, User, Mail, Lock, Key, Loader2 } from 'lucide-react';
-import { validateProfileField } from '../../helpers/profileValidation';
-import api from '../../utils/api';
 import ProfileRow from './ProfileRow';
+import { useProfile } from '../../hooks/useProfile'; // <-- IMPORT HOOK
 
 export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
-  const [editingField, setEditingField] = useState(null);
-  const [editValue, setEditValue] = useState('');
-  const [errors, setErrors] = useState({});
-  const [successMsg, setSuccessMsg] = useState({});
-  const [isSaving, setIsSaving] = useState(false);
   
-  // State untuk Confirmation Modal
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: '', targetEmail: '' });
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Escape hanya bekerja jika tidak sedang ada proses save DAN tidak sedang buka confirm modal
-      if (e.key === 'Escape' && isOpen && !isSaving && !confirmModal.isOpen) {
-        if (editingField) {
-          setEditingField(null);
-          setSuccessMsg({});
-        } else {
-          onClose();
-        }
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose, editingField, isSaving, confirmModal.isOpen]);
+  // Panggil hook di sini
+  const {
+    editingField,
+    editValue,
+    setEditValue,
+    errors,
+    successMsg,
+    isSaving,
+    confirmModal,
+    setConfirmModal,
+    handleCancelEdit,
+    handleSave,
+    handleEditClick,
+    handleForgotPasswordClick,
+    executeConfirmAction
+  } = useProfile({ isOpen, onClose, user, onUpdateUser });
 
   if (!isOpen) {
     return null;
   }
-
-  const handleEditClick = (field, currentValue) => {
-    setEditingField(field);
-    setErrors({});
-    setSuccessMsg({});
-    
-    if (field === 'password') {
-      setEditValue({ oldPassword: '', newPassword: '' });
-    } else {
-      setEditValue(currentValue || '');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingField(null);
-    setErrors({});
-    setSuccessMsg({});
-  };
-
-  const handleForgotPasswordClick = () => {
-    if (!user?.email) {
-      setConfirmModal({ isOpen: true, type: 'no_email_forgot_password', targetEmail: '' });
-    } else {
-      setConfirmModal({ isOpen: true, type: 'forgot_password', targetEmail: user.email });
-    }
-  };
-
-  const handleSave = async (field) => {
-    const { isValid, errors: validationErrors } = validateProfileField(field, editValue);
-    
-    if (!isValid) {
-      setErrors(validationErrors);
-      setSuccessMsg({});
-      return;
-    }
-
-    if (field === 'email') {
-      if (!user?.email) {
-        setConfirmModal({ isOpen: true, type: 'set_new_email', targetEmail: editValue });
-      } else {
-        setConfirmModal({ isOpen: true, type: 'edit_email', targetEmail: editValue });
-      }
-      return; 
-    }
-    
-    setIsSaving(true);
-    setErrors({});
-    setSuccessMsg({});
-    
-    try {
-      let result;
-
-      // 1. Panggil API sesuai field (Semua mengembalikan format yang sama!)
-      if (field === 'displayName' || field === 'username') {
-        result = await api.users.updateUsername({ username: editValue });
-      } else if (field === 'password') {
-        result = await api.users.updatePassword({ 
-          oldPassword: editValue.oldPassword, 
-          newPassword: editValue.newPassword 
-        });
-      } else if (field === 'publicKey') {
-        result = await api.users.updatePublicKey({ publicKey: editValue });
-      }
-
-      // 2. Evaluasi yang sangat bersih berkat Service Layer
-      if (result && result.success) {
-        // Kita biarkan field terbuka agar user bisa membaca pesan sukses
-        setSuccessMsg({ [field]: result.message });
-        
-        if (onUpdateUser && field !== 'password') {
-          onUpdateUser(field, editValue);
-        }
-      } else {
-        setErrors({ [field]: result.message });
-      }
-    } catch (error) {
-      setErrors({ [field]: 'A network error occurred while updating profile.' });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const executeConfirmAction = async () => {
-    setIsSaving(true);
-    try {
-      let result;
-
-      if (confirmModal.type === 'edit_email' || confirmModal.type === 'set_new_email') {
-        result = await api.users.updateEmail({ email: confirmModal.targetEmail });
-        
-        if (result && result.success) {
-          setSuccessMsg({ email: result.message });
-          setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
-        } else {
-          setErrors({ email: result.message });
-          setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
-        }
-        
-      } else if (confirmModal.type === 'forgot_password') {
-        // Perbaikan: auth.forgotPassword kini juga mengembalikan Service Object
-        result = await api.auth.forgotPassword({ email: confirmModal.targetEmail });
-        
-        if (result && result.success) {
-          setSuccessMsg({ password: result.message });
-          setErrors({});
-          setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
-        } else {
-          setErrors({ password: result.message });
-          setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
-        }
-      }
-    } catch (error) {
-      if (confirmModal.type === 'edit_email' || confirmModal.type === 'set_new_email') {
-        setErrors({ email: 'A network error occurred while updating email.' });
-      } else {
-        setErrors({ password: 'A network error occurred while requesting reset link.' });
-      }
-      setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const sharedProps = {
     editingField,
@@ -203,7 +69,7 @@ export default function ProfileModal({ isOpen, onClose, user, onUpdateUser }) {
           </div>
         </div>
 
-        {/* MODAL KONFIRMASI OVERLAY (Berada di atas Profile Modal) */}
+        {/* MODAL KONFIRMASI OVERLAY */}
         {confirmModal.isOpen && (
           <div className="absolute inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm rounded-[2rem]">
             <div className="bg-[var(--card)] w-full max-w-sm rounded-2xl border border-zinc-300 dark:border-zinc-600 shadow-xl p-6 flex flex-col animate-in zoom-in-95 duration-200">
