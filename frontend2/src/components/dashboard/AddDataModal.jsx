@@ -1,62 +1,18 @@
 // src/components/dashboard/AddDataModal.jsx
-import React, { useState } from 'react';
+import React from 'react';
 import { X, Loader2, AlertTriangle, FileText, Tag, AlignLeft, Plus } from 'lucide-react';
-import api from '../../utils/api';
-import { toast } from '../../utils/toast';
+import { useAddData } from '../../hooks/useAddData';
 
 export default function AddDataModal({ onClose, onDataAdded }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    tags: ''
-  });
   
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiError, setApiError] = useState('');
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-    if (apiError) {
-      setApiError('');
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setApiError('');
-    setIsSubmitting(true);
-    
-    const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-    const payload = { 
-      title: formData.title.trim(), 
-      content: formData.content 
-    };
-
-    if (tagsArray.length > 0) {
-      payload.tags = tagsArray;
-    }
-
-    try {
-      const result = await api.data.create(payload);
-
-      if (result && result.success) {
-        toast.success(result.message); // <-- 2. Panggil toast di sini
-        
-        if (onDataAdded && result.data) {
-          onDataAdded(result.data, result.message);
-        }
-        onClose();
-      } else {
-        setApiError(result.message || 'Failed to add data.');
-      }
-    } catch (error) {
-      console.log(error)
-      setApiError('A network error occurred. Please check your connection.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // Panggil hook di sini
+  const { 
+    formData, 
+    isSubmitting, 
+    apiError, 
+    handleInputChange, 
+    handleSubmit 
+  } = useAddData({ onClose, onDataAdded });
 
   const typography = {
     label: "text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2",
