@@ -1,193 +1,25 @@
 // src/pages/Dashboard.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../utils/api';
-import { navigate } from '../utils/navigation';
 import { Loader2, Search, Plus, ChevronDown } from 'lucide-react'; 
-import { toast } from '../utils/toast'; 
 
 import Navbar from '../components/dashboard/Navbar';
 import Bento from '../components/dashboard/Bento';
 import AddDataModal from '../components/dashboard/AddDataModal';
 import DataDetailsModal from '../components/dashboard/DataDetailsModal';
+import { useDashboard } from '../hooks/useDashboard'; // <-- IMPORT HOOK
 
 export default function Dashboard({ isDarkMode, toggleTheme }) {
   const { t } = useTranslation();
-  const [user, setUser] = useState(null);
-  const [data, setData] = useState([]);
   
-  // STATE LOADING DIBAGI DUA:
-  const [isLoading, setIsLoading] = useState(true); // Untuk Full Screen (User Auth)
-  const [isFetchingData, setIsFetchingData] = useState(true); // Untuk Area Bento Grid
-
-  const [selectedItem, setSelectedItem] = useState(null); 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  const [searchInput, setSearchInput] = useState('');
-  const [queryParams, setQueryParams] = useState({ search: '', isLocked: '', sort: '' });
-  const [isRefreshing, setIsRefreshing] = useState(false); 
-  const [typingProgress, setTypingProgress] = useState(false);
-  const isFirstRender = useRef(true);
-
-  // 1. FETCH BERURUTAN (User Dulu -> Buka Layar -> Data Kemudian)
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchDashboardData = async () => {
-      setIsLoading(true);
-      
-      try {
-        // --- TAHAP 1: VALIDASI USER ---
-        const userResult = await api.users.getMe();
-
-        if (!isMounted) return;
-
-        if (userResult.success && userResult.data) {
-          setUser(userResult.data);
-          toast.success(userResult.message); 
-          
-          // Matikan loading full screen SEKARANG! UI Dashboard langsung muncul.
-          setIsLoading(false); 
-          
-          // --- TAHAP 2: AMBIL DATA (Background / Area Khusus) ---
-          setIsFetchingData(true);
-          const dataResult = await api.data.getAll(queryParams);
-
-          if (!isMounted) return;
-
-          if (dataResult.success) {
-            setData(dataResult.data);
-          } else {
-            toast.error(dataResult.message);
-          }
-          // Matikan loading area khusus
-          setIsFetchingData(false);
-
-        } else {
-          toast.error(userResult.message);
-          navigate('/');
-          return;
-        }
-      } catch (error) {
-        if (isMounted) {
-          toast.error('Failed to connect to the server.');
-          setIsLoading(false);
-          setIsFetchingData(false);
-        }
-      }
-    };
-
-    fetchDashboardData();
-
-    return () => { isMounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
-
-  // 2. DEBOUNCE & PROGRESS BAR LOGIC
-  useEffect(() => {
-    if (searchInput === queryParams.search) {
-      setTypingProgress(false);
-      return;
-    }
-
-    setTypingProgress(false);
-    const animationTimer = setTimeout(() => {
-      setTypingProgress(true);
-    }, 50);
-
-    const timer = setTimeout(() => {
-      setQueryParams(prev => {
-        if (prev.search === searchInput) return prev;
-        return { ...prev, search: searchInput };
-      });
-    }, 2000); 
-
-    return () => {
-      clearTimeout(animationTimer);
-      clearTimeout(timer);
-    };
-  }, [searchInput]);
-
-  // 3. FETCH ULANG SAAT QUERY BERUBAH (Search/Filter)
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return; 
-    }
-
-    let isMounted = true;
-    const fetchFilteredData = async () => {
-      setIsRefreshing(true);
-      try {
-        const result = await api.data.getAll(queryParams);
-        if (isMounted) {
-          if (result.success) {
-            setData(result.data);
-          } else {
-            toast.error(result.message);
-          }
-        }
-      } catch (error) {
-        if (isMounted) toast.error('Failed to fetch filtered data.');
-      } finally {
-        if (isMounted) {
-          setIsRefreshing(false);
-          setTypingProgress(false); 
-        }
-      }
-    };
-
-    fetchFilteredData();
-    return () => { isMounted = false; };
-  }, [queryParams]);
-
-  const handleForceRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      const result = await api.data.getAll(queryParams);
-      if (result.success) {
-        setData(result.data);
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      toast.error('Failed to sync vault data.');
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await api.auth.logout();
-    } catch (error) {}
-    localStorage.removeItem('accessToken');
-    navigate('/');
-  };
-
-  const handleItemClick = (item) => { setSelectedItem(item); };
-  const handleCloseModal = () => { setSelectedItem(null); };
-  const handleOpenAddModal = () => { setIsAddModalOpen(true); };
-  const handleCloseAddModal = () => { setIsAddModalOpen(false); };
-  
-  const handleDataAdded = (newData) => {
-    setData((prevData) => [newData, ...prevData]);
-  };
-
-  const handleDataUpdated = (updatedData) => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === updatedData.id ? updatedData : item))
-    );
-    setSelectedItem((prev) => {
-      if (prev && prev.id === updatedData.id) return updatedData;
-      return prev;
-    });
-  };
-
-  const handleDataDeleted = (deletedId) => {
-    setData((prevData) => prevData.filter((item) => item.id !== deletedId));
-    setSelectedItem(null);
-  };
+  // SEMUA STATE DIAMBIL DARI HOOK
+  const {
+    user, data, isLoading, isFetchingData, selectedItem, isAddModalOpen,
+    searchInput, setSearchInput, queryParams, setQueryParams,
+    isRefreshing, typingProgress, handleForceRefresh, handleLogout,
+    handleItemClick, handleCloseModal, handleOpenAddModal, handleCloseAddModal,
+    handleDataAdded, handleDataUpdated, handleDataDeleted
+  } = useDashboard();
 
   // FULL SCREEN LOADING (Hanya untuk User Auth)
   if (isLoading) {
@@ -283,7 +115,6 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
           </div>
         </div>
 
-        {/* 3. Data Bento Grid DENGAN LOCALIZED LOADING */}
         <div className={`transition-opacity duration-200 ${isRefreshing ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
           {isFetchingData ? (
             <div className="w-full py-20 flex flex-col items-center justify-center text-[var(--muted-foreground)]">
