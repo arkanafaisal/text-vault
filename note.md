@@ -24,6 +24,7 @@ ideas:
 - docker, kubernetes
 - mysql migration tools (flyway / liquibase)
 - testing logging
+- server side encrypting
 - frontend encrypting choice ( random key + derive password )
 
 
