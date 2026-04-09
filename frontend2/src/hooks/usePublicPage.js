@@ -15,7 +15,6 @@ export function usePublicPage() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     if (formData.username && formData.publicKey && !hasSearched) {
@@ -23,7 +22,7 @@ export function usePublicPage() {
     } else if (!formData.username || !formData.publicKey) {
       toast.info("Public Access Mode. Enter credentials to unlock shared records.");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = (e) => {
@@ -65,10 +64,13 @@ export function usePublicPage() {
     }
   };
 
-  const formatDecoratedDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return `${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, ${date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  const handleCopy = async (content) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.success('Content copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy content.');
+    }
   };
 
   return {
@@ -76,10 +78,8 @@ export function usePublicPage() {
     data,
     isLoading,
     hasSearched,
-    selectedItem,
-    setSelectedItem,
     handleInputChange,
     handleSearch,
-    formatDecoratedDate
+    handleCopy
   };
 }

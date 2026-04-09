@@ -1,68 +1,21 @@
 // src/pages/PublicPage.jsx
 import React from 'react';
-import { Globe, Search, User, Key, Loader2, FileText, Tag, History, X } from 'lucide-react';
+import { Globe, Search, User, Key, Loader2 } from 'lucide-react';
 import Navbar from '../components/public/Navbar'; 
-import { usePublicPage } from '../hooks/usePublicPage'; // <-- IMPORT HOOK
+import PublicDataCard from '../components/public/PublicDataCard'; // <-- Import komponen baru
+import { usePublicPage } from '../hooks/usePublicPage';
 
 export default function PublicPage({ isDarkMode, toggleTheme }) {
   
-  // SEMUA STATE DIAMBIL DARI HOOK
   const {
     formData,
     data,
     isLoading,
     hasSearched,
-    selectedItem,
-    setSelectedItem,
     handleInputChange,
     handleSearch,
-    formatDecoratedDate
+    handleCopy
   } = usePublicPage();
-
-  const PublicDataModal = () => {
-    if (!selectedItem) return null;
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer" onClick={() => setSelectedItem(null)} />
-        <div className="bg-[var(--card)] w-full max-w-2xl max-h-[85vh] rounded-[2rem] border border-[var(--border-strong)] shadow-2xl relative z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-          <div className="flex items-center justify-between p-5 md:p-6 border-b border-[var(--border)]">
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-[var(--foreground)]">{selectedItem.title}</h2>
-              <div className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] mt-1">
-                <History className="w-3.5 h-3.5" />
-                <span>Last updated: {formatDecoratedDate(selectedItem.updatedAt)}</span>
-              </div>
-            </div>
-            <button onClick={() => setSelectedItem(null)} className="p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)]">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="p-5 md:p-6 overflow-y-auto custom-scrollbar space-y-4 flex-1 bg-[var(--secondary)]/30">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">
-                <FileText className="w-3.5 h-3.5" /> Content
-              </label>
-              <div className="w-full min-h-[160px] bg-[var(--background)] rounded-xl p-4 border border-[var(--border)] shadow-sm">
-                <p className="text-sm md:text-base leading-relaxed text-[var(--foreground)] whitespace-pre-wrap">{selectedItem.content}</p>
-              </div>
-            </div>
-            {selectedItem.tags && selectedItem.tags.length > 0 && (
-              <div>
-                <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">
-                  <Tag className="w-3.5 h-3.5" /> Tags
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {selectedItem.tags.map((tag, idx) => (
-                    <span key={idx} className="bg-[var(--card)] text-[var(--muted-foreground)] text-xs font-bold tracking-widest uppercase px-2.5 py-1 rounded-md border border-[var(--border)] shadow-sm">{tag}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)] relative">
@@ -105,11 +58,9 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
             </div>
           ) : hasSearched ? (
             data.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                 {data.map(item => (
-                  <div key={item.id} onClick={() => setSelectedItem(item)} className="bg-[var(--primary)]/10 text-[var(--foreground)] border border-[var(--primary)]/40 hover:bg-[var(--primary)]/20 hover:border-[var(--primary)] hover:shadow-md rounded-xl p-4 flex flex-col items-center justify-center min-h-[100px] text-center cursor-pointer transition-all active:scale-95 shadow-sm">
-                    <h3 className="font-bold text-sm md:text-base break-words w-full leading-tight">{item.title}</h3>
-                  </div>
+                  <PublicDataCard key={item.id} item={item} onCopy={handleCopy} />
                 ))}
               </div>
             ) : (
@@ -122,7 +73,6 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
           ) : null}
         </div>
       </main>
-      <PublicDataModal />
     </div>
   );
 }

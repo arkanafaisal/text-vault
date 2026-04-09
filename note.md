@@ -27,7 +27,10 @@ ideas:
 - server side encrypting
 - frontend encrypting choice ( random key + derive password )
 - extract App.jsx logic
-
+- modify ui for long word possibility
+- sticky public page input form 
+- smoothscroll public page to bottom (untl section header hidden) at /public after data found
+- review responsiveness
 
 
 
