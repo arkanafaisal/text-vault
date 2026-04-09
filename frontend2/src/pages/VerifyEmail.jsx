@@ -1,48 +1,13 @@
 // src/pages/VerifyEmail.jsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Loader2, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
-import api from '../utils/api';
-import apiMessages from '../helpers/apiMessages'; // <-- Import Helper Global
 import { navigate } from '../utils/navigation';
+import { useVerifyEmail } from '../hooks/useVerifyEmail'; // <-- IMPORT HOOK
 
 export default function VerifyEmail({ token }) {
-  const [status, setStatus] = useState('loading'); // 'loading' | 'success' | 'error'
-  const [message, setMessage] = useState('Verifying your email address...');
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const verifyToken = async () => {
-      // 1. Validasi format token
-      if (!token || token.length !== 64) {
-        setStatus('error');
-        setMessage('Invalid or missing verification token.');
-        return;
-      }
-
-      try {
-        // 2. Eksekusi API yang sudah menggunakan Service Layer
-        const result = await api.auth.verifyEmail(token);
-        
-        if (isMounted) {
-          // 3. Gunakan properti dari objek result yang konsisten
-          setMessage(result.message);
-          setStatus(result.success ? 'success' : 'error');
-        }
-      } catch (error) {
-        if (isMounted) {
-          setStatus('error');
-          setMessage('A network error occurred. Please try again later.');
-        }
-      }
-    };
-
-    verifyToken();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [token]);
+  
+  // SEMUA LOGIKA DIAMBIL DARI HOOK
+  const { status, message } = useVerifyEmail(token);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--background)] p-4">
