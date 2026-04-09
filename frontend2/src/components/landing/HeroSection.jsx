@@ -1,6 +1,8 @@
+// src/components/landing/HeroSection.jsx
 import React, { useState } from 'react';
 import { Search, Zap, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { navigate } from '../../utils/navigation'; // <-- 1. Import navigate
 
 export default function HeroSection() {
   const { t } = useTranslation();
@@ -8,8 +10,11 @@ export default function HeroSection() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!searchUsername.trim()) return;
-    console.log(`Searching for: ${searchUsername}`);
+    const trimmedUsername = searchUsername.trim();
+    if (!trimmedUsername) return;
+    
+    // 2. Arahkan ke /public beserta username-nya (di-encode agar aman untuk URL)
+    navigate(`/public/${encodeURIComponent(trimmedUsername)}`);
   };
 
   return (
@@ -40,6 +45,7 @@ export default function HeroSection() {
           />
         </form>
         <button 
+          onClick={handleSearch} // Tambahkan trigger klik pada tombol juga
           type="submit"
           className="bg-[var(--primary)] text-[var(--primary-foreground)] px-6 py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.98] cursor-pointer shadow-md"
         >
