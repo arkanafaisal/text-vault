@@ -1,38 +1,27 @@
 // src/pages/ResetPassword.jsx
-import React, { useState } from 'react';
+import React from 'react';
 import { Lock, ShieldCheck, Loader2, ArrowRight, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import api from '../utils/api';
 import { navigate } from '../utils/navigation';
-
-const validateResetForm = (passwords, t) => {
-  const { password, confirmPassword } = passwords;
-  const errors = {};
-  if (!password) {
-    errors.password = t('auth.errRequired');
-  } else if (password.length < 6) {
-    errors.password = t('auth.errMin6');
-  }
-  if (password !== confirmPassword) {
-    errors.confirmPassword = t('auth.errMatch');
-  }
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors
-  };
-};
+import { useResetPassword } from '../hooks/useResetPassword'; // <-- IMPORT HOOK
 
 export default function ResetPassword({ token }) {
   const { t } = useTranslation();
 
-  const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState({ text: '', isSuccess: false });
-  const [isSuccessState, setIsSuccessState] = useState(false);
+  // SEMUA STATE DIAMBIL DARI HOOK
+  const {
+    isTokenValid,
+    passwords,
+    errors,
+    isLoading,
+    feedback,
+    isSuccessState,
+    handleInputChange,
+    handleSubmit
+  } = useResetPassword(token, t);
 
   // === VALIDASI TOKEN DI AWAL ===
-  if (!token || token.length !== 64) {
+  if (!isTokenValid) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-[var(--card)] border border-[var(--border-strong)] rounded-[2rem] shadow-xl p-8 text-center animate-in fade-in zoom-in-95 duration-300">
@@ -54,48 +43,6 @@ export default function ResetPassword({ token }) {
     );
   }
   // ==============================
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswords(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-    if (feedback.text) {
-      setFeedback({ text: '', isSuccess: false });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFeedback({ text: '', isSuccess: false });
-    const { isValid, errors: validationErrors } = validateResetForm(passwords, t);
-    
-    if (isValid) {
-      setIsLoading(true);
-      try {
-        const result = await api.auth.resetPassword(token, {
-          password: passwords.password
-        });
-        
-        setFeedback({ text: result.message, isSuccess: result.success });
-
-        if (result.success) {
-          setIsSuccessState(true);
-          setTimeout(() => navigate('/'), 4000); 
-        }
-      } catch (err) {
-        setFeedback({ 
-          text: 'Connection failed. Please check your internet connection.', 
-          isSuccess: false 
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setErrors(validationErrors);
-    }
-  };
 
   const inputWrapperClass = (error) => `flex items-center bg-[var(--background)] px-4 py-2 rounded-xl border transition-all duration-300 shadow-inner ${error ? 'border-[var(--destructive)] ring-1 ring-[var(--destructive)]' : 'border-zinc-200 dark:border-zinc-700 focus-within:ring-2 focus-within:ring-[var(--ring)]'}`;
   const inputClass = "w-full bg-transparent outline-none text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]";
