@@ -1,58 +1,21 @@
 // src/pages/LandingPage.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Navbar from '../components/landing/Navbar';
 import HeroSection from '../components/landing/HeroSection';
 import FeatureSection from '../components/landing/FeatureSection';
 import Footer from '../components/landing/Footer';
-import api from '../utils/api';
-import { navigate } from '../utils/navigation';
 import { Loader2 } from 'lucide-react';
+import { useLanding } from '../hooks/useLanding'; // <-- IMPORT HOOK
 
 export default function LandingPage({ isDarkMode, toggleTheme }) {
-  const [authModal, setAuthModal] = useState({ isOpen: false, type: 'login' });
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    // Di dalam src/pages/LandingPage.jsx (Fokus pada fungsi checkAuth)
-
-    const checkAuth = async () => {
-      try {
-        // Cukup ambil 'success' dari objek kembalian
-        const { success } = await api.users.getMe();
-        
-        if (!isMounted) {
-          return;
-        }
-
-        // Pengecekan menjadi jauh lebih bersih
-        if (success) {
-          navigate('/dashboard');
-          return; 
-        } else {
-          localStorage.removeItem('accessToken');
-        }
-      } catch (error) {
-        // Abaikan error jaringan saat pengecekan di background
-      } finally {
-        if (isMounted) {
-          setIsCheckingAuth(false);
-        }
-      }
-    };
-
-    // Langsung panggil tanpa pengecekan token lokal
-    checkAuth();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const openAuthModal = (type) => {
-    setAuthModal({ isOpen: true, type });
-  };
+  
+  // SEMUA STATE DIAMBIL DARI HOOK
+  const { 
+    authModal, 
+    setAuthModal, 
+    isCheckingAuth, 
+    openAuthModal 
+  } = useLanding();
 
   if (isCheckingAuth) {
     return (
