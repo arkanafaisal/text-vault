@@ -116,26 +116,3 @@ userController.sendEmailVerification = asyncHandler(async (req, res) => {
     await incrbyRateLimit('sendEmailVerification', req.ip)
     return res.sendStatus(200)
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-userController.checkUsernameExist = asyncHandler(async (req, res) => {
-    const params = validateRequest({ schema: UserSchema.checkUsername, target: req.params, res })
-    if(!params){return}
-    const {username} = params
-
-    const isExist = await UserModel.validateUsername({username})
-    if(!isExist) return res.sendStatus(404)
-
-    return res.sendStatus(200)
-})

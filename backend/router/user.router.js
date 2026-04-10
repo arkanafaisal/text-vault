@@ -10,11 +10,9 @@ export const userRouter = express.Router()
 
 
 
-userRouter.get('/me',                      limit("getMyProfile"),             jwtVerify,  userController.getMyProfile);
-// userRouter.get('/search/:username',         rateLimiting("searchUsername", 1, 60),                  userController.checkUsernameExist)
+userRouter.get('/me',               limit("getMyProfile"),              jwtVerify,  userController.getMyProfile);
 
-
-userRouter.patch('/me/username',               limit("updateUsername"),         jwtVerify,  userController.updateUsername)
-userRouter.patch('/me/public-key',             limit("updatePublicKey"),        jwtVerify,  userController.updatePublicKey)
-userRouter.patch('/me/email',                  limit("sendEmailVerification"),           jwtVerify,  userController.sendEmailVerification)
-userRouter.patch('/me/password',                  limit("updatePassword"),           jwtVerify,  userController.updatePassword)
+userRouter.patch('/me/username',    limit("updateUsername"),            jwtVerify,  userController.updateUsername)
+userRouter.patch('/me/public-key',  limit("updatePublicKey"),           jwtVerify,  userController.updatePublicKey)
+userRouter.patch('/me/email',       limit("sendEmailVerification"),     jwtVerify,  userController.sendEmailVerification)
+userRouter.patch('/me/password',    limit("updatePassword"),            jwtVerify,  userController.updatePassword)

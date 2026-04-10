@@ -7,6 +7,13 @@ export async function create({ userId, title, content, tags }) {
     return insertId
 }
 
+
+
+export async function isExist({ id }) {
+    const [[row]] = await db.query('SELECT 1 FROM data WHERE id = ?', [id])
+    return !!row
+}
+
 export async function getAll({ userId, query: { sort, isLocked, search } }) {
     const sortQuery = {
         newest: 'ORDER BY createdAt DESC',
@@ -31,6 +38,14 @@ export async function getById({ userId, id }) {
     return data
 }
 
+export async function getPublicData({ userId }) {
+    const [rows] = await db.query('SELECT title, content from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
+    return rows
+}
+
+
+
+
 export async function updateCommon({ userId, id, title, content, tags }) {
     tags = tags === null? [] : tags
     const [{affectedRows, changedRows}] = await db.query('UPDATE data SET title = COALESCE(?, title), content = COALESCE(?, content), tags = COALESCE(?, tags) WHERE userId = ? AND id = ?',
@@ -50,18 +65,4 @@ export async function del({ userId, id }) {
     const [[data]] = await db.query('SELECT isLocked from data WHERE userId = ? AND id = ?', [userId, id])
     const [{affectedRows}] = await db.query('DELETE FROM data WHERE userId = ? AND id = ?', [userId, id])
     return {affectedRows, isLocked: data?.isLocked}
-}
-
-
-
-
-
-export async function getPublicData({ userId }) {
-    const [rows] = await db.query('SELECT title, content from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
-    return rows
-}
-
-export async function isExist({ id }) {
-    const [[row]] = await db.query('SELECT 1 FROM data WHERE id = ?', [id])
-    return !!row
 }
