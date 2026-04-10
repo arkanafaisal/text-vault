@@ -18,7 +18,8 @@ export async function get(type, key){
         const rawData = await redis.get(redisType[type].prefix + key)
         if(!rawData){return {ok: false}}
 
-        console.log('cache used')
+        if(process.env.NODE_ENV === 'development'){console.log('cache used')}
+        
         return {ok: true, data: JSON.parse(rawData)}
     } catch(err) {
         console.error("Redis GET error:", err.message)
