@@ -37,3 +37,19 @@ app.use('/api/public', publicRouter);
 
 import { errorHandler } from './middleware/errorHandler.js';
 app.use(errorHandler)
+
+
+
+
+import path from 'path'
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
