@@ -10,16 +10,17 @@ migrations merge done:
 005
 006
 007
+008
 
 */
 
 CREATE TABLE users (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  display_name VARCHAR(30) NOT NULL,
+  displayName VARCHAR(30) NOT NULL,
   username VARCHAR(30) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE,
   password VARCHAR(255),
-  publicKey VARCHAR(255),
+  publicKey VARCHAR(255)
 );
 
 
@@ -39,7 +40,6 @@ CREATE TABLE data (
 
   INDEX idx_user (userId),
   INDEX idx_user_updated (userId, updatedAt DESC),
-  INDEX idx_expires (expiresAt),
 
   CONSTRAINT fk_data_user
     FOREIGN KEY (userId) REFERENCES users(id)
