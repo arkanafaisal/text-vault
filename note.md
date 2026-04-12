@@ -31,6 +31,8 @@ ideas:
 - sticky public page input form 
 - smoothscroll public page to bottom (untl section header hidden) at /public after data found
 - review responsiveness
+- redesign color palette
+- test api speed after cache
 
 
 

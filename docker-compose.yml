@@ -61,6 +61,8 @@ services:
       migrate
     volumes:
       - ./flyway/sql:/flyway/sql
+      # - ./backend/flyway/sql:/flyway/sql
+
 
 
 volumes:
