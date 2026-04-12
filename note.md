@@ -33,6 +33,7 @@ ideas:
 - review responsiveness
 - redesign color palette
 - test api speed after cache
+- fix flyway volume docker compose prod 
 
 
 

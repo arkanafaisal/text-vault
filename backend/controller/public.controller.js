@@ -11,22 +11,49 @@ import { getIdByUsernamePublickey } from '../model/user-model.js'
 
 export const publicController = {}
 
-publicController.getData = asyncHandler(async (req, res)=>{
-    logging('/public/data')
+publicController.getData = asyncHandler(async (req, res) => {
+  logging('/public/data');
 
-    const body = validateRequest({ schema: publicData, target: req.body, res })
-    if(!body){return}
+  const body = validateRequest({
+    schema: publicData,
+    target: req.body,
+    res
+  });
+  if (!body) return;
 
+  const userId = await getIdByUsernamePublickey(body);
+  if (!userId) {
+    return res.status(400).json({ error: "wrong username or public key" });
+  }
 
-    const userId = await getIdByUsernamePublickey(body)
-    if(!userId){return res.status(400).json({ error: "wrong username or public key" })}
-    
-    const {ok, data} = await redisHelper.get('publicData', userId)
-    if(ok){return res.status(200).json(data)}
+  // const start = performance.now();
 
-    const datas = await getPublicData({ userId })
-    await redisHelper.set('publicData', userId, datas)
+  const { ok, data } = await redisHelper.get('publicData', userId);
 
-    if(datas.length === 0){return res.sendStatus(404)}
-    return res.status(200).json(datas)
-})
+  if (ok) {
+    // console.log("cache_hit");
+    // console.log("cache_ms:", performance.now() - start);
+
+    return res.status(200).json(data);
+  }
+
+  // console.log("cache_miss");
+
+  // const dbStart = performance.now();
+  const datas = await getPublicData({ userId });
+  // console.log("db_ms:", performance.now() - dbStart);
+
+  // const setStart = performance.now();
+  await redisHelper.set('publicData', userId, datas);
+  // console.log("redis_set_ms:", performance.now() - setStart);
+
+  // console.log("miss_total_ms:", performance.now() - start);
+
+  if (datas.length === 0) {
+    return res.sendStatus(404);
+  }
+
+  // console.log("response_ms:", performance.now() - start);
+
+  return res.status(200).json(datas);
+});
