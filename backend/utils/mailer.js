@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const root = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://databox.arkanafaisal.my.id";
+const root = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://textvault2.arkanafaisal.my.id";
 const projectName = process.env.PROJECT_NAME || 'DataBox';
 
 // Helper function agar desain UI email seragam dan tidak perlu ditulis ulang
