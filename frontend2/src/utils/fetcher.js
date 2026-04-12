@@ -1,11 +1,7 @@
 // src/utils/fetcher.js
 import { navigate } from './navigation';
 
-const devUrl = "http://localhost:3001/api/";
-const prodUrl = "https://databox.arkanafaisal.my.id/api/";
-
-const isDevelopment = true;
-const BASE_URL = isDevelopment ? devUrl : prodUrl;
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export async function fetcher(endpoint, options = {}, requireAuth = true) {
   let token = localStorage.getItem('accessToken');
