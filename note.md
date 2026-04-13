@@ -11,7 +11,6 @@ feature:
 - input validation (frontend & backend)
 - rate limit
 - one way password encrypting
--  
 
 
 
@@ -43,6 +42,8 @@ ideas:
 - redesign color palette
 - test api speed after cache
 - fix flyway volume docker compose prod 
+- pagination 
+- 
 
 
 

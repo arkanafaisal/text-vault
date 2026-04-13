@@ -1,9 +1,9 @@
 import db from "../config/db.js"
 
 
-export async function create({ userId, title, content, tags }) {
+export async function create({ userId, title, content, iv, tag, tags }) {
     tags = tags ?? []
-    const [{insertId}] = await db.query('INSERT INTO data (userId, title, content, tags) VALUES (?, ?, ?, ?)', [userId, title, content, JSON.stringify(tags)])
+    const [{insertId}] = await db.query('INSERT INTO data (userId, title, content, iv, tag, tags) VALUES (?, ?, ?, ?, ?, ?)', [userId, title, content, iv, tag, JSON.stringify(tags)])
     return insertId
 }
 
@@ -34,22 +34,28 @@ export async function getAll({ userId, query: { sort, isLocked, search } }) {
 }
 
 export async function getById({ userId, id }) {
-    const [[data]] = await db.query('SELECT id, title, content, tags, isLocked, updatedAt FROM data WHERE userId = ? AND id = ?', [userId, id])
+    const [[data]] = await db.query('SELECT id, title, content, iv, tag, tags, isLocked, updatedAt FROM data WHERE userId = ? AND id = ?', [userId, id])
     return data
 }
 
 export async function getPublicData({ userId }) {
-    const [rows] = await db.query('SELECT title, content from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
+    const [rows] = await db.query('SELECT title, content, iv, tag from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
     return rows
 }
 
 
 
 
-export async function updateCommon({ userId, id, title, content, tags }) {
+export async function updateCommon({ userId, id, title, content, iv, tag, tags }) {
     tags = tags === null? [] : tags
-    const [{affectedRows, changedRows}] = await db.query('UPDATE data SET title = COALESCE(?, title), content = COALESCE(?, content), tags = COALESCE(?, tags) WHERE userId = ? AND id = ?',
-        [title, content, JSON.stringify(tags), userId, id]
+    const [{affectedRows, changedRows}] = await db.query(`UPDATE data SET 
+        title = COALESCE(?, title), 
+        content = COALESCE(?, content), 
+        iv = COALESCE(?, iv), 
+        tag = COALESCE(?, tag), 
+        tags = COALESCE(?, tags) 
+        WHERE userId = ? AND id = ?`,
+        [title, content, iv, tag, JSON.stringify(tags), userId, id]
     )
         
     const [[data]] = await db.query('SELECT isLocked FROM data WHERE userId = ? AND id = ?', [userId, id])

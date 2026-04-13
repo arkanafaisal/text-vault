@@ -7,6 +7,7 @@ import { getPublicData } from '../model/data-model.js'
 
 import * as redisHelper from '../utils/redis-helper.js'
 import { getIdByUsernamePublickey } from '../model/user-model.js'
+import { decryptHelper } from '../utils/crypto.js'
 
 
 export const publicController = {}
@@ -33,8 +34,13 @@ publicController.getData = asyncHandler(async (req, res) => {
   if (ok) {
     // console.log("cache_hit");
     // console.log("cache_ms:", performance.now() - start);
-
-    return res.status(200).json(data);
+    
+    const decryptedData = []
+    for(const row of data){
+      const decrypted = decryptHelper(row)
+      decryptedData.push(decrypted) 
+    }
+    return res.status(200).json(decryptedData);
   }
 
   // console.log("cache_miss");
@@ -47,13 +53,20 @@ publicController.getData = asyncHandler(async (req, res) => {
   await redisHelper.set('publicData', userId, datas);
   // console.log("redis_set_ms:", performance.now() - setStart);
 
-  // console.log("miss_total_ms:", performance.now() - start);
-
   if (datas.length === 0) {
     return res.sendStatus(404);
   }
+  
+  const decryptedData = []
+  for(const data of datas){
+    const decrypted = decryptHelper(data)
+    decryptedData.push(decrypted) 
+  }
+  
+  // console.log("miss_total_ms:", performance.now() - start);
+
 
   // console.log("response_ms:", performance.now() - start);
 
-  return res.status(200).json(datas);
+  return res.status(200).json(decryptedData);
 });

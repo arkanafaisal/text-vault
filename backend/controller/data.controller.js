@@ -10,6 +10,7 @@ import { logging } from '../utils/logging.js'
 import { validateRequest } from '../utils/requestValidation.js'
 import asyncHandler from 'express-async-handler'
 import { incrbyRateLimit } from '../middleware/rate-limiting.js'
+import { encrypt, decrypt, decryptHelper } from '../utils/crypto.js'
 
 
 export const dataController = {};
@@ -38,13 +39,18 @@ dataController.getById = asyncHandler(async (req, res)=>{
     logging('/data/:id')
     
     const {ok, data} = await redisHelper.get('data', `${req.user.id}:${req.params.id}`)
-    if(ok){return res.status(200).json(data)}
+    if(ok){
+        const decrypted = decryptHelper(data)
+        return res.status(200).json(decrypted)
+    }
 
     const storedData = await DataModel.getById({ id: req.params.id, userId: req.user.id })
     if(!storedData){return res.sendStatus(404)}
     await redisHelper.set('data', `${req.user.id}:${req.params.id}`, storedData)
 
-    return res.status(200).json(storedData)
+    const decrypted = decryptHelper(storedData)
+
+    return res.status(200).json(decrypted)
 })
 
 
@@ -54,7 +60,8 @@ dataController.create = asyncHandler(async (req, res)=>{
     const body = validateRequest({ schema: DataSchema.create, target: req.body, res })
     if(!body){return}
 
-    const insertId = await DataModel.create({ ...body, userId: req.user.id })
+    const enc = encrypt(body.content)
+    const insertId = await DataModel.create({ ...body, ...enc, userId: req.user.id })
     if(!insertId){return res.sendStatus(401)}
 
     await redisHelper.delPattern('allData', req.user.id)
@@ -71,8 +78,9 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
 
     const body = validateRequest({ schema: DataSchema.updateCommon, target: req.body, res })
     if(!body){return}
-
-    const {affectedRows, changedRows, isLocked} = await DataModel.updateCommon({  ...body, id: req.params.id, userId: req.user.id })
+    
+    const enc = encrypt(body.content)
+    const {affectedRows, changedRows, isLocked} = await DataModel.updateCommon({  ...body, ...enc, id: req.params.id, userId: req.user.id })
     if(affectedRows === 0){
         const exists = await DataModel.isExist({ id: req.params.id })
         
