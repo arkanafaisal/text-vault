@@ -1,8 +1,17 @@
 feature: 
-- responsive
-- verify email
+- responsive (mobile tablet pc)
 - dark mode
-- 
+- verify email
+- reset & forgot password
+- search & filter own data
+- public access (verify username & publicKey)
+- update profile and data information / status
+- cache
+- jwt auth
+- input validation (frontend & backend)
+- rate limit
+- one way password encrypting
+-  
 
 
 
