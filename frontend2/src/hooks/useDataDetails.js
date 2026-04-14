@@ -14,7 +14,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
-    title: '', content: '', tags: '', visibility: 'private' // Ganti isLocked ke visibility
+    title: '', content: '', tags: '', visibility: 'private' // Gunakan visibility string
   });
 
   const [isSavingCommon, setIsSavingCommon] = useState(false);
@@ -39,14 +39,15 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
             if (result.success && result.data) {
               const data = result.data;
-              // Langsung ambil string visibility tanpa konversi boolean
+              
               setDetailedItem(data);
               setFormData({
                 title: data.title || '',
                 content: data.content || '',
                 tags: data.tags ? data.tags.join(', ') : '',
-                visibility: data.visibility || 'private' 
+                visibility: data.visibility || 'private'
               });
+
               if (onDataUpdated) onDataUpdated(data);
             } else {
               toast.error(result.message || 'Failed to load record details.');
@@ -103,6 +104,17 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
       visibility: detailedItem.visibility || 'private'
     }));
     setIsEditingStatus(false);
+  };
+
+  // --- FUNGSI COPY BARU ---
+  const handleCopy = async (content) => {
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.success('Content copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy content.');
+    }
   };
 
   const handleDeleteRecord = async () => {
@@ -174,7 +186,6 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
         setIsEditingCommon(false);
-        onClose();
       } else {
         toast.error(result.message || 'Failed to update general information.');
       }
@@ -187,7 +198,6 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
   const handleSaveStatus = async () => {
     setIsSavingStatus(true);
-
     if (formData.visibility === detailedItem.visibility) {
       setIsEditingStatus(false);
       setIsSavingStatus(false);
@@ -207,10 +217,10 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
       if (result && result.success) {
         toast.success(result.message); 
         const updatedData = { ...detailedItem, visibility: formData.visibility, updatedAt: new Date().toISOString() };
+        
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
         setIsEditingStatus(false);
-        onClose(); 
       } else {
         toast.error(result.message || 'Failed to update access control.');
       }
@@ -226,6 +236,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
     isDeletingRecord, showDeleteConfirm, formData, isSavingCommon, isSavingStatus,
     setIsEditingCommon, setIsEditingStatus, setShowDeleteConfirm,
     handleInputChange, handleCancelCommon, handleCancelStatus, handleDeleteRecord,
-    handleSaveCommon, handleSaveStatus, formatDecoratedDate
+    handleSaveCommon, handleSaveStatus, formatDecoratedDate,
+    handleCopy // <-- Export fungsi copy baru
   };
 }

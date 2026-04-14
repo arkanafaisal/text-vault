@@ -45,6 +45,11 @@ ideas:
 - fix flyway volume docker compose prod 
 - fix updatedAt miss value
 - learn more about zero downtime migration 
+- add copy in dashboard 
+- word count tracker
+- server health tracker
+- copy from dashboard bento (hit getContent to get the data content)
+- window.location.href push, possible to do undo redo
 
 
 

@@ -1,22 +1,21 @@
 // src/components/dashboard/DataDetailsModal.jsx
 import React from 'react';
-import { X, Tag, Lock, Unlock, Loader2, Save, Edit2, History, ShieldAlert, AlertCircle, Trash2 } from 'lucide-react';
-import { useDataDetails } from '../../hooks/useDataDetails'; // <-- IMPORT HOOK BARU
+import { X, Tag, Lock, Unlock, Loader2, Save, Edit2, History, ShieldAlert, AlertCircle, Trash2, Copy } from 'lucide-react'; // <-- IMPORT COPY
+import { useDataDetails } from '../../hooks/useDataDetails';
 
 export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh }) {
   
-  // SEMUA STATE DAN LOGIKA DIAMBIL DARI CUSTOM HOOK! (Sangat Bersih)
   const {
     detailedItem, isLoadingData, isEditingCommon, isEditingStatus,
     isDeletingRecord, showDeleteConfirm, formData, isSavingCommon, isSavingStatus,
     setIsEditingCommon, setIsEditingStatus, setShowDeleteConfirm,
     handleInputChange, handleCancelCommon, handleCancelStatus, handleDeleteRecord,
-    handleSaveCommon, handleSaveStatus, formatDecoratedDate
+    handleSaveCommon, handleSaveStatus, formatDecoratedDate,
+    handleCopy // <-- AMBIL FUNGSI COPY
   } = useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh });
 
   if (!item) return null;
 
-  // Konfigurasi style UI (Tetap di sini karena ini bagian dari "Wajah")
   const typography = {
     titleView: "font-black text-xl md:text-2xl text-[var(--foreground)] tracking-tight px-1 py-1",
     titleEdit: "font-black text-xl md:text-2xl text-[var(--foreground)] tracking-tight w-full bg-[var(--background)] rounded-lg px-2 md:px-3 py-1.5 outline-none ring-1 ring-[var(--border-strong)] focus:ring-2 focus:ring-[var(--primary)]",
@@ -72,12 +71,24 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
 
                 <div className="relative mt-2 md:mt-3">
                   <label className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-[var(--card)] px-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] z-10">Data Content</label>
-                  <div className="w-full h-[180px] md:h-[200px] lg:h-[220px] border border-[var(--border)] rounded-xl md:rounded-2xl overflow-hidden relative">
+                  {/* TAMBAHAN KELAS GROUP PADA CONTAINER BAWAH INI */}
+                  <div className="w-full h-[180px] md:h-[200px] lg:h-[220px] border border-[var(--border)] rounded-xl md:rounded-2xl overflow-hidden relative group">
                     {isEditingCommon ? (
                       <textarea name="content" value={formData.content} onChange={handleInputChange} className={typography.contentEdit} placeholder="Enter your confidential data..." />
                     ) : (
-                      <div className="w-full h-full overflow-y-auto custom-scrollbar p-3 md:p-4 bg-[var(--secondary)]/30">
+                      <div className="w-full h-full overflow-y-auto custom-scrollbar p-3 md:p-4 bg-[var(--secondary)]/30 relative">
                         <p className={typography.contentView}>{detailedItem.content || <span className="italic opacity-50">Empty content</span>}</p>
+                        
+                        {/* TOMBOL COPY FLOATING DI SINI */}
+                        {detailedItem.content && (
+                          <button 
+                            onClick={() => handleCopy(detailedItem.content)}
+                            className="absolute top-3 right-3 p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-all cursor-pointer opacity-0 group-hover:opacity-100 shadow-sm"
+                            title="Copy to Clipboard"
+                          >
+                            <Copy className="w-4 h-4 md:w-5 md:h-5" />
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -131,7 +142,6 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl border border-[var(--border)] bg-[var(--background)]">
                   <div className="space-y-1 lg:space-y-1.5">
                     <div className="flex items-center gap-2">
-                      {/* Cek visibility === 'private' */}
                       {formData.visibility === 'private' ? <Lock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" /> : <Unlock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" />}
                       <label className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Visibility Status</label>
                     </div>
