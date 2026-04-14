@@ -1,0 +1,2 @@
+ALTER TABLE data
+DROP COLUMN isLocked;

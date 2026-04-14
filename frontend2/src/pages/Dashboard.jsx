@@ -81,15 +81,14 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
           <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
             <div className="relative flex-none">
               <select
-                value={queryParams.isLocked}
-                // RESET PAGE KE 1 SAAT FILTER BERUBAH
-                onChange={(e) => setQueryParams(prev => ({ ...prev, isLocked: e.target.value, page: 1 }))}
+                value={queryParams.visibility}
+                onChange={(e) => setQueryParams(prev => ({ ...prev, visibility: e.target.value, page: 1 }))}
                 className="appearance-none w-full pl-2.5 pr-8 py-1.5 sm:pl-3 sm:pr-9 sm:py-2 bg-[var(--card)] border border-[var(--border-strong)] rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] text-xs sm:text-sm shadow-sm text-[var(--foreground)] cursor-pointer"
               >
                 <option value="">All Status</option>
-                <option value="true">Locked</option>
-                <option value="false">Unlocked</option>
-              </select>
+                <option value="private">Private</option> 
+                <option value="public">Public</option>
+            </select>
               <ChevronDown className="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--muted-foreground)] pointer-events-none" />
             </div>
 

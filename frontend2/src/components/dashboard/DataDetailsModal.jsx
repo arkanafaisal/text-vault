@@ -131,24 +131,25 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl border border-[var(--border)] bg-[var(--background)]">
                   <div className="space-y-1 lg:space-y-1.5">
                     <div className="flex items-center gap-2">
-                      {formData.isLocked === 'true' || formData.isLocked === true ? <Lock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" /> : <Unlock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" />}
+                      {/* Cek visibility === 'private' */}
+                      {formData.visibility === 'private' ? <Lock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" /> : <Unlock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" />}
                       <label className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Visibility Status</label>
                     </div>
                     <p className="text-[10px] md:text-xs text-[var(--muted-foreground)] leading-relaxed max-w-sm lg:max-w-md">
-                      {formData.isLocked === 'true' || formData.isLocked === true 
+                      {formData.visibility === 'private' 
                         ? "Strictly private. Only you can read this data when logged in." 
                         : "Publicly accessible via your Public Key. Anyone with the link can read this."}
                     </p>
                   </div>
                   <div className="min-w-[140px] md:min-w-[160px] mt-2 sm:mt-0">
                     {isEditingStatus ? (
-                      <select name="isLocked" value={formData.isLocked} onChange={handleInputChange} className={typography.metaEdit}>
-                        <option value={true}>Locked (Private)</option>
-                        <option value={false}>Unlocked (Public)</option>
+                      <select name="visibility" value={formData.visibility} onChange={handleInputChange} className={typography.metaEdit}>
+                        <option value="private">Private</option>
+                        <option value="public">Public</option>
                       </select>
                     ) : (
                       <div className="px-3 py-2 md:px-4 md:py-2.5 bg-[var(--secondary)] rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-center border border-[var(--border)] text-[var(--foreground)] shadow-sm">
-                        {detailedItem.isLocked ? 'Locked (Private)' : 'Unlocked (Public)'}
+                        {detailedItem.visibility === 'private' ? 'Private' : 'Public'}
                       </div>
                     )}
                   </div>

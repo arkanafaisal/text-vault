@@ -44,6 +44,7 @@ ideas:
 - public data pagination (and input lock)
 - fix flyway volume docker compose prod 
 - fix updatedAt miss value
+- learn more about zero downtime migration 
 
 
 

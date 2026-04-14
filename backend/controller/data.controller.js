@@ -22,14 +22,14 @@ dataController.getMyData = asyncHandler(async (req, res)=>{
     const query = validateRequest({ schema: DataSchema.query, target: req.query, res })
     if(!query){return}
     
-    if(!(query.search || query.isLocked !== undefined || query.page !== 1)){
+    if(!(query.search || query.visibility !== undefined || query.page !== 1)){
         const {ok, data} = await redisHelper.get('allData', `${req.user.id}:${query.sort}:${query.page}`)
         if(ok){return res.status(200).json(data)}
     }
 
 
     const rows = await DataModel.getAll({ userId: req.user.id, query })
-    if(!(query.search || query.isLocked !== undefined || query.page !== 1)){
+    if(!(query.search || query.visibility !== undefined || query.page !== 1)){
         await redisHelper.set('allData', `${req.user.id}:${query.sort}:${query.page}`, rows)
     }
 
@@ -68,7 +68,7 @@ dataController.create = asyncHandler(async (req, res)=>{
 
     await redisHelper.delPattern('allData', req.user.id)
     await incrbyRateLimit('createData', req.ip)
-    return res.status(201).json({id: insertId, isLocked: true, ...body})
+    return res.status(201).json({id: insertId, visibility: 'private', ...body})
 })
 
 
@@ -82,7 +82,7 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     if(!body){return}
     
     const enc = encrypt(body.content)
-    const {affectedRows, changedRows, isLocked} = await DataModel.updateCommon({  ...body, ...enc, id: req.params.id, userId: req.user.id })
+    const {affectedRows, changedRows, visibility} = await DataModel.updateCommon({  ...body, ...enc, id: req.params.id, userId: req.user.id })
     if(affectedRows === 0){
         const exists = await DataModel.isExist({ id: req.params.id })
         
@@ -93,7 +93,7 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     if(body.title){await redisHelper.delPattern('allData', req.user.id)}
-    if((body.title || body.content) && !isLocked){await redisHelper.del('publicData', req.user.id)}
+    if((body.title || body.content) && visibility === 'public'){await redisHelper.del('publicData', req.user.id)}
 
     await incrbyRateLimit('updateCommon', req.ip)
     return res.sendStatus(200)
@@ -126,12 +126,12 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
 dataController.delete = asyncHandler(async (req, res)=>{
     logging('/data/:id')
 
-    const {affectedRows, isLocked} = await DataModel.del({ id: req.params.id, userId: req.user.id })
+    const {affectedRows, visibility} = await DataModel.del({ id: req.params.id, userId: req.user.id })
     if(affectedRows === 0){return res.sendStatus(404)}
 
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     await redisHelper.delPattern('allData', req.user.id)
-    if(!isLocked){await redisHelper.del('publicData', req.user.id)}
+    if(visibility === 'public'){await redisHelper.del('publicData', req.user.id)}
 
     await incrbyRateLimit('deleteData', req.ip)
     return res.sendStatus(200)

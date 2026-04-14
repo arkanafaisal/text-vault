@@ -14,7 +14,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
-    title: '', content: '', tags: '', isLocked: false
+    title: '', content: '', tags: '', visibility: 'private' // Ganti isLocked ke visibility
   });
 
   const [isSavingCommon, setIsSavingCommon] = useState(false);
@@ -39,17 +39,14 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
             if (result.success && result.data) {
               const data = result.data;
-              const isLockedBool = data.isLocked === 1 || data.isLocked === true || data.isLocked === 'true';
-              data.isLocked = isLockedBool; 
-              
+              // Langsung ambil string visibility tanpa konversi boolean
               setDetailedItem(data);
               setFormData({
                 title: data.title || '',
                 content: data.content || '',
                 tags: data.tags ? data.tags.join(', ') : '',
-                isLocked: isLockedBool
+                visibility: data.visibility || 'private' 
               });
-
               if (onDataUpdated) onDataUpdated(data);
             } else {
               toast.error(result.message || 'Failed to load record details.');
@@ -103,7 +100,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const handleCancelStatus = () => {
     setFormData(prev => ({
       ...prev,
-      isLocked: detailedItem.isLocked || false
+      visibility: detailedItem.visibility || 'private'
     }));
     setIsEditingStatus(false);
   };
@@ -190,17 +187,15 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
   const handleSaveStatus = async () => {
     setIsSavingStatus(true);
-    const newIsLocked = formData.isLocked === 'true' || formData.isLocked === true || formData.isLocked === 1;
-    const oldIsLocked = detailedItem.isLocked === 'true' || detailedItem.isLocked === true || detailedItem.isLocked === 1;
 
-    if (newIsLocked === oldIsLocked) {
+    if (formData.visibility === detailedItem.visibility) {
       setIsEditingStatus(false);
       setIsSavingStatus(false);
       return;
     }
     
     try {
-      const result = await api.data.updateStatus(detailedItem.id, { isLocked: newIsLocked });
+      const result = await api.data.updateStatus(detailedItem.id, { visibility: formData.visibility });
 
       if (result.httpCode === 404 || result.httpCode === 403) {
         toast.error(result.message);
@@ -211,8 +206,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
       if (result && result.success) {
         toast.success(result.message); 
-        const updatedData = { ...detailedItem, isLocked: newIsLocked, updatedAt: new Date().toISOString() };
-        
+        const updatedData = { ...detailedItem, visibility: formData.visibility, updatedAt: new Date().toISOString() };
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
         setIsEditingStatus(false);

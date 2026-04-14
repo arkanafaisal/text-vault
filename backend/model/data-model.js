@@ -14,39 +14,41 @@ export async function isExist({ id }) {
     return !!row
 }
 
-export async function getAll({ userId, query: { sort, isLocked, search, page } }) {
+export async function getAll({ userId, query: { sort, visibility, search, page } }) {
+    const parameter = [userId]
+
     const sortQuery = {
         newest: 'ORDER BY createdAt DESC',
         oldest: 'ORDER BY createdAt ASC',
         updated: 'ORDER BY updatedAt DESC',
     }
-    const isLockedQuery = isLocked === undefined? '' : (isLocked ? 'AND isLocked = 1' : 'AND isLocked = 0')
-    
+
+    const visibilityQuery = visibility === undefined? '' : (`AND visibility = ?`)
+    if(visibilityQuery){parameter.push(visibility)}
     
     const searchQuery = search === undefined? '' : `AND (title LIKE ? OR JSON_CONTAINS(tags, JSON_ARRAY(?)))`
-    const parameter = [userId]
-    if(search !== undefined){
+    if(searchQuery){
         parameter.push(`%${search}%`)
         parameter.push(search)
     }
 
     const PAGE_SIZE = 30
     const [rows] = await db.query(`
-        SELECT id, title, isLocked FROM data 
+        SELECT id, title, visibility FROM data 
         WHERE userId = ? 
-        ${searchQuery} ${isLockedQuery} ${sortQuery[sort]}
+        ${searchQuery} ${visibilityQuery} ${sortQuery[sort]}
         LIMIT ? OFFSET ?
         `, [...parameter, PAGE_SIZE + 1, (page - 1) * PAGE_SIZE])
     return rows
 }
 
 export async function getById({ userId, id }) {
-    const [[data]] = await db.query('SELECT id, title, content, iv, tag, tags, isLocked, updatedAt FROM data WHERE userId = ? AND id = ?', [userId, id])
+    const [[data]] = await db.query('SELECT id, title, content, iv, tag, tags, visibility, updatedAt FROM data WHERE userId = ? AND id = ?', [userId, id])
     return data
 }
 
 export async function getPublicData({ userId }) {
-    const [rows] = await db.query('SELECT title, content, iv, tag from data WHERE userId = ? AND isLocked = 0 ORDER BY createdAt DESC', [userId])
+    const [rows] = await db.query('SELECT title, content, iv, tag from data WHERE userId = ? AND visibility = "public" ORDER BY createdAt DESC', [userId])
     return rows
 }
 
@@ -66,17 +68,17 @@ export async function updateCommon({ userId, id, title, content, iv, tag, tags }
         [title, content, iv, tag, JSON.stringify(tags), userId, id]
     )
         
-    const [[data]] = await db.query('SELECT isLocked FROM data WHERE userId = ? AND id = ?', [userId, id])
-    return {affectedRows, changedRows, isLocked: data?.isLocked}
+    const [[data]] = await db.query('SELECT visibility FROM data WHERE userId = ? AND id = ?', [userId, id])
+    return {affectedRows, changedRows, visibility: data?.visibility}
 }
 
-export async function updateStatus({ userId, id, isLocked }) {
-    const [{affectedRows, changedRows}] = await db.query('UPDATE data SET isLocked = ? WHERE userId = ? AND id = ?', [isLocked, userId, id])
+export async function updateStatus({ userId, id, visibility }) {
+    const [{affectedRows, changedRows}] = await db.query('UPDATE data SET visibility = ? WHERE userId = ? AND id = ?', [visibility, userId, id])
     return {affectedRows, changedRows}
 }
 
 export async function del({ userId, id }) {
-    const [[data]] = await db.query('SELECT isLocked from data WHERE userId = ? AND id = ?', [userId, id])
+    const [[data]] = await db.query('SELECT visibility from data WHERE userId = ? AND id = ?', [userId, id])
     const [{affectedRows}] = await db.query('DELETE FROM data WHERE userId = ? AND id = ?', [userId, id])
-    return {affectedRows, isLocked: data?.isLocked}
+    return {affectedRows, visibility: data?.visibility}
 }

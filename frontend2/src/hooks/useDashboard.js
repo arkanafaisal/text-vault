@@ -17,7 +17,12 @@ export function useDashboard() {
   const [searchInput, setSearchInput] = useState('');
   
   // 1. TAMBAHKAN PAGE DI SINI
-  const [queryParams, setQueryParams] = useState({ search: '', isLocked: '', sort: '', page: 1 });
+  const [queryParams, setQueryParams] = useState({ 
+    search: '', 
+    visibility: '', // Ganti isLocked menjadi visibility
+    sort: '', 
+    page: 1 
+  });
   const [hasNextPage, setHasNextPage] = useState(false); // Penanda tombol Next
 
   const [isRefreshing, setIsRefreshing] = useState(false); 

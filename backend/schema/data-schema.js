@@ -3,7 +3,7 @@ import Joi from 'joi'
 
 const title = Joi.string().trim().max(31)
 const content = Joi.string().max(1000)
-const isLocked = Joi.boolean()
+const visibility = Joi.string().valid('private', 'public')
 const tags = Joi.array().items(Joi.string().trim().max(12)).max(5)
 const expiresAt = Joi.date()
 
@@ -20,7 +20,7 @@ export const updateCommon = Joi.object({
 }).or('title', 'content', 'tags')
 
 export const updateStatus = Joi.object({
-    isLocked: isLocked.required()
+    visibility: visibility.required()
 })
 
 
@@ -31,8 +31,7 @@ const page = Joi.number().min(1).default(1)
 
 export const query = Joi.object({
     sort: sort.default('newest'),
-    isLocked,
-    // tags: Joi.,
+    visibility,
     search: search.empty(''),
     page
 })
