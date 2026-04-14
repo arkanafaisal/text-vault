@@ -160,13 +160,14 @@ const api = {
 
   data: {
     getAll: async (paramsObj = {}) => {
-      const { search, isLocked, sort } = paramsObj;
+      const { search, isLocked, sort, page } = paramsObj;
       const params = new URLSearchParams();
 
       if (search) params.append('search', search);
       // Pengecekan ketat agar string kosong tidak terkirim, namun boolean/string 'true'/'false' tetap masuk
       if (isLocked !== undefined && isLocked !== '') params.append('isLocked', isLocked);
       if (sort) params.append('sort', sort);
+      if (page) params.append('page', page);
 
       const queryString = params.toString();
       const endpoint = queryString ? `data/me?${queryString}` : 'data/me';

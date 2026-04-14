@@ -26,11 +26,13 @@ export const updateStatus = Joi.object({
 
 const search = Joi.string().trim().max(128)
 const sort = Joi.valid('oldest', 'updated', 'newest')
+const page = Joi.number().min(1).default(1)
 
 
 export const query = Joi.object({
     sort: sort.default('newest'),
     isLocked,
     // tags: Joi.,
-    search: search.empty('')
+    search: search.empty(''),
+    page
 })

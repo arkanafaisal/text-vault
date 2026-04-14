@@ -14,7 +14,7 @@ export async function isExist({ id }) {
     return !!row
 }
 
-export async function getAll({ userId, query: { sort, isLocked, search } }) {
+export async function getAll({ userId, query: { sort, isLocked, search, page } }) {
     const sortQuery = {
         newest: 'ORDER BY createdAt DESC',
         oldest: 'ORDER BY createdAt ASC',
@@ -29,7 +29,14 @@ export async function getAll({ userId, query: { sort, isLocked, search } }) {
         parameter.push(`%${search}%`)
         parameter.push(search)
     }
-    const [rows] = await db.query(`SELECT id, title, isLocked FROM data WHERE userId = ? ${searchQuery} ${isLockedQuery} ${sortQuery[sort]}`, parameter)
+
+    const PAGE_SIZE = 30
+    const [rows] = await db.query(`
+        SELECT id, title, isLocked FROM data 
+        WHERE userId = ? 
+        ${searchQuery} ${isLockedQuery} ${sortQuery[sort]}
+        LIMIT ? OFFSET ?
+        `, [...parameter, PAGE_SIZE + 1, (page - 1) * PAGE_SIZE])
     return rows
 }
 
@@ -48,7 +55,8 @@ export async function getPublicData({ userId }) {
 
 export async function updateCommon({ userId, id, title, content, iv, tag, tags }) {
     tags = tags === null? [] : tags
-    const [{affectedRows, changedRows}] = await db.query(`UPDATE data SET 
+    const [{affectedRows, changedRows}] = await db.query(`
+        UPDATE data SET 
         title = COALESCE(?, title), 
         content = COALESCE(?, content), 
         iv = COALESCE(?, iv), 

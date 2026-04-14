@@ -8,7 +8,6 @@ export function useDashboard() {
   const [user, setUser] = useState(null);
   const [data, setData] = useState([]);
   
-  // STATE LOADING DIBAGI DUA:
   const [isLoading, setIsLoading] = useState(true); 
   const [isFetchingData, setIsFetchingData] = useState(true); 
 
@@ -16,36 +15,47 @@ export function useDashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [searchInput, setSearchInput] = useState('');
-  const [queryParams, setQueryParams] = useState({ search: '', isLocked: '', sort: '' });
+  
+  // 1. TAMBAHKAN PAGE DI SINI
+  const [queryParams, setQueryParams] = useState({ search: '', isLocked: '', sort: '', page: 1 });
+  const [hasNextPage, setHasNextPage] = useState(false); // Penanda tombol Next
+
   const [isRefreshing, setIsRefreshing] = useState(false); 
   const [typingProgress, setTypingProgress] = useState(false);
   const isFirstRender = useRef(true);
 
-  // 1. FETCH BERURUTAN (User Dulu -> Buka Layar -> Data Kemudian)
+  // Fungsi internal untuk memproses dan memotong data dari backend (30 dari 51)
+  const processPaginationData = (rawData) => {
+    if (!rawData) return;
+    if (rawData.length > 30) {
+      setHasNextPage(true);
+      setData(rawData.slice(0, 30)); // Ambil 30 saja, timpa data lama
+    } else {
+      setHasNextPage(false);
+      setData(rawData); // Timpa data lama
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
     const fetchDashboardData = async () => {
       setIsLoading(true);
-      
       try {
         const userResult = await api.users.getMe();
-
         if (!isMounted) return;
 
         if (userResult.success && userResult.data) {
           setUser(userResult.data);
           toast.success(userResult.message); 
-          
           setIsLoading(false); 
           
           setIsFetchingData(true);
           const dataResult = await api.data.getAll(queryParams);
-
           if (!isMounted) return;
 
           if (dataResult.success) {
-            setData(dataResult.data);
+            processPaginationData(dataResult.data);
           } else {
             toast.error(dataResult.message);
           }
@@ -54,7 +64,6 @@ export function useDashboard() {
         } else {
           toast.error(userResult.message);
           navigate('/');
-          return;
         }
       } catch (error) {
         if (isMounted) {
@@ -66,12 +75,10 @@ export function useDashboard() {
     };
 
     fetchDashboardData();
-
     return () => { isMounted = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  // 2. DEBOUNCE & PROGRESS BAR LOGIC
   useEffect(() => {
     if (searchInput === queryParams.search) {
       setTypingProgress(false);
@@ -79,14 +86,13 @@ export function useDashboard() {
     }
 
     setTypingProgress(false);
-    const animationTimer = setTimeout(() => {
-      setTypingProgress(true);
-    }, 50);
+    const animationTimer = setTimeout(() => { setTypingProgress(true); }, 50);
 
     const timer = setTimeout(() => {
       setQueryParams(prev => {
         if (prev.search === searchInput) return prev;
-        return { ...prev, search: searchInput };
+        // 2. JIKA USER MENGETIK PENCARIAN, KEMBALIKAN KE PAGE 1
+        return { ...prev, search: searchInput, page: 1 }; 
       });
     }, 2000); 
 
@@ -96,7 +102,6 @@ export function useDashboard() {
     };
   }, [searchInput, queryParams.search]);
 
-  // 3. FETCH ULANG SAAT QUERY BERUBAH (Search/Filter)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -110,7 +115,7 @@ export function useDashboard() {
         const result = await api.data.getAll(queryParams);
         if (isMounted) {
           if (result.success) {
-            setData(result.data);
+            processPaginationData(result.data);
           } else {
             toast.error(result.message);
           }
@@ -129,12 +134,23 @@ export function useDashboard() {
     return () => { isMounted = false; };
   }, [queryParams]);
 
+  // 3. FUNGSI KONTROL PAGINASI
+  const handleNextPage = () => {
+    setQueryParams(prev => ({ ...prev, page: prev.page + 1 }));
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // UX mulus kembali ke atas
+  };
+
+  const handlePrevPage = () => {
+    setQueryParams(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleForceRefresh = async () => {
     setIsRefreshing(true);
     try {
       const result = await api.data.getAll(queryParams);
       if (result.success) {
-        setData(result.data);
+        processPaginationData(result.data);
       } else {
         toast.error(result.message);
       }
@@ -146,9 +162,7 @@ export function useDashboard() {
   };
 
   const handleLogout = async () => {
-    try {
-      await api.auth.logout();
-    } catch (error) {}
+    try { await api.auth.logout(); } catch (error) {}
     localStorage.removeItem('accessToken');
     navigate('/');
   };
@@ -158,30 +172,26 @@ export function useDashboard() {
   const handleOpenAddModal = () => { setIsAddModalOpen(true); };
   const handleCloseAddModal = () => { setIsAddModalOpen(false); };
   
-  const handleDataAdded = (newData) => {
-    setData((prevData) => [newData, ...prevData]);
-  };
-
+  const handleDataAdded = (newData) => { setData((prev) => [newData, ...prev]); };
   const handleDataUpdated = (updatedData) => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === updatedData.id ? updatedData : item))
-    );
+    setData((prevData) => prevData.map((item) => (item.id === updatedData.id ? updatedData : item)));
     setSelectedItem((prev) => {
       if (prev && prev.id === updatedData.id) return updatedData;
       return prev;
     });
   };
-
   const handleDataDeleted = (deletedId) => {
-    setData((prevData) => prevData.filter((item) => item.id !== deletedId));
+    setData((prev) => prev.filter((item) => item.id !== deletedId));
     setSelectedItem(null);
   };
 
   return {
     user, data, isLoading, isFetchingData, selectedItem, isAddModalOpen,
     searchInput, setSearchInput, queryParams, setQueryParams,
-    isRefreshing, typingProgress, handleForceRefresh, handleLogout,
+    isRefreshing, typingProgress, hasNextPage, // <-- Export state baru
+    handleForceRefresh, handleLogout,
     handleItemClick, handleCloseModal, handleOpenAddModal, handleCloseAddModal,
-    handleDataAdded, handleDataUpdated, handleDataDeleted
+    handleDataAdded, handleDataUpdated, handleDataDeleted,
+    handleNextPage, handlePrevPage // <-- Export fungsi baru
   };
 }

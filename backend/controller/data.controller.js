@@ -22,14 +22,16 @@ dataController.getMyData = asyncHandler(async (req, res)=>{
     const query = validateRequest({ schema: DataSchema.query, target: req.query, res })
     if(!query){return}
     
-    if(!(query.search || query.isLocked !== undefined)){
-        const {ok, data} = await redisHelper.get('allData', `${req.user.id}:${query.sort}`)
+    if(!(query.search || query.isLocked !== undefined || query.page !== 1)){
+        const {ok, data} = await redisHelper.get('allData', `${req.user.id}:${query.sort}:${query.page}`)
         if(ok){return res.status(200).json(data)}
     }
 
 
     const rows = await DataModel.getAll({ userId: req.user.id, query })
-    if(!(query.search || query.isLocked !== undefined)){await redisHelper.set('allData', `${req.user.id}:${query.sort}`, rows)}
+    if(!(query.search || query.isLocked !== undefined || query.page !== 1)){
+        await redisHelper.set('allData', `${req.user.id}:${query.sort}:${query.page}`, rows)
+    }
 
     return res.status(200).json(rows)
 })
