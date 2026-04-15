@@ -36,7 +36,7 @@ export async function getAll({ userId, query: { sort, visibility, search, page }
     const [rows] = await db.query(`
         SELECT id, title, visibility FROM data 
         WHERE userId = ? 
-        ${searchQuery} ${visibilityQuery} ${sortQuery[sort]}
+        ${visibilityQuery} ${searchQuery} ${sortQuery[sort]}
         LIMIT ? OFFSET ?
         `, [...parameter, PAGE_SIZE + 1, (page - 1) * PAGE_SIZE])
     return rows
