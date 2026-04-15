@@ -160,13 +160,14 @@ const api = {
 
   data: {
     getAll: async (paramsObj = {}) => {
-      const { search, isLocked, sort } = paramsObj;
+      const { search, visibility, sort, page } = paramsObj;
       const params = new URLSearchParams();
 
       if (search) params.append('search', search);
       // Pengecekan ketat agar string kosong tidak terkirim, namun boolean/string 'true'/'false' tetap masuk
-      if (isLocked !== undefined && isLocked !== '') params.append('isLocked', isLocked);
+      if (visibility) params.append('visibility', visibility);
       if (sort) params.append('sort', sort);
+      if (page) params.append('page', page);
 
       const queryString = params.toString();
       const endpoint = queryString ? `data/me?${queryString}` : 'data/me';
@@ -233,10 +234,10 @@ const api = {
       
       return { success, message, data, httpCode };
     },
-    updateStatus: async (id, { isLocked }) => {
+    updateStatus: async (id, { visibility }) => { // Parameter diubah dari isLocked
       const response = await fetcher(`data/${id}/status`, { 
         method: 'PATCH', 
-        body: { isLocked } 
+        body: { visibility } // Payload dikirim sebagai visibility
       });
       
       const httpCode = response.status;

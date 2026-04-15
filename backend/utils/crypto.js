@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import "dotenv/config";
 
 const algorithm = "aes-256-gcm";
 
@@ -6,6 +7,7 @@ const algorithm = "aes-256-gcm";
 const key = Buffer.from(process.env.ENCRYPTION_KEY, "hex");
 
 export function encrypt(text) {
+    if(text === undefined){return {}}
   const iv = crypto.randomBytes(12);
 
   const cipher = crypto.createCipheriv(algorithm, key, iv);
@@ -19,14 +21,14 @@ export function encrypt(text) {
 
   return {
     iv: iv.toString("hex"),
-    data: encrypted.toString("hex"),
+    content: encrypted.toString("hex"),
     tag: tag.toString("hex")
   };
 }
 
 export function decrypt(enc) {
   const iv = Buffer.from(enc.iv, "hex");
-  const data = Buffer.from(enc.data, "hex");
+  const content = Buffer.from(enc.content, "hex");
   const tag = Buffer.from(enc.tag, "hex");
 
   const decipher = crypto.createDecipheriv(algorithm, key, iv);
@@ -34,9 +36,15 @@ export function decrypt(enc) {
   decipher.setAuthTag(tag);
 
   const decrypted = Buffer.concat([
-    decipher.update(data),
+    decipher.update(content),
     decipher.final()
   ]);
 
   return decrypted.toString("utf8");
+}
+
+export function decryptHelper(data){
+    const {iv, content, tag, ...others} = data
+    const plain = decrypt({iv, content, tag})
+    return {...others, content: plain}
 }

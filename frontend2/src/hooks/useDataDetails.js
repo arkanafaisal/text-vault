@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { toast } from '../utils/toast';
+import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh }) {
   const [detailedItem, setDetailedItem] = useState(null);
@@ -14,7 +15,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
-    title: '', content: '', tags: '', isLocked: false
+    title: '', content: '', tags: '', visibility: 'private'
   });
 
   const [isSavingCommon, setIsSavingCommon] = useState(false);
@@ -39,15 +40,13 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
             if (result.success && result.data) {
               const data = result.data;
-              const isLockedBool = data.isLocked === 1 || data.isLocked === true || data.isLocked === 'true';
-              data.isLocked = isLockedBool; 
               
               setDetailedItem(data);
               setFormData({
                 title: data.title || '',
                 content: data.content || '',
                 tags: data.tags ? data.tags.join(', ') : '',
-                isLocked: isLockedBool
+                visibility: data.visibility || 'private'
               });
 
               if (onDataUpdated) onDataUpdated(data);
@@ -58,7 +57,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
           }
         } catch (error) {
           if (isMounted) {
-            toast.error('Network error while loading details.');
+            toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
             onClose();
           }
         } finally {
@@ -103,9 +102,19 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const handleCancelStatus = () => {
     setFormData(prev => ({
       ...prev,
-      isLocked: detailedItem.isLocked || false
+      visibility: detailedItem.visibility || 'private'
     }));
     setIsEditingStatus(false);
+  };
+
+  const handleCopy = async (content) => {
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      toast.success('Content copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy content.');
+    }
   };
 
   const handleDeleteRecord = async () => {
@@ -129,7 +138,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         setShowDeleteConfirm(false);
       }
     } catch (error) {
-      toast.error('A network error occurred while deleting the record.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
       setShowDeleteConfirm(false);
     } finally {
       setIsDeletingRecord(false);
@@ -139,9 +148,34 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const handleSaveCommon = async () => {
     setIsSavingCommon(true);
     const newTitle = formData.title.trim();
+    const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+
+    // --- 3. TAMBAHKAN VALIDASI DI SINI SEBELUM CEK PERUBAHAN ---
+    if (!newTitle || newTitle.length > VALIDATION.RECORD.MAX_TITLE) {
+      toast.error(`Title is required (max ${VALIDATION.RECORD.MAX_TITLE} chars).`);
+      setIsSavingCommon(false);
+      return;
+    }
+    if (!formData.content.trim() || formData.content.length > VALIDATION.RECORD.MAX_CONTENT) {
+      toast.error(`Content is required (max ${VALIDATION.RECORD.MAX_CONTENT} chars).`);
+      setIsSavingCommon(false);
+      return;
+    }
+    if (tagsArray.length > VALIDATION.RECORD.MAX_TAGS_COUNT) {
+      toast.error(`Maximum ${VALIDATION.RECORD.MAX_TAGS_COUNT} tags allowed.`);
+      setIsSavingCommon(false);
+      return;
+    }
+    const longTag = tagsArray.find(tag => tag.length > VALIDATION.RECORD.MAX_TAG_LENGTH);
+    if (longTag) {
+      toast.error(`Each tag must be max ${VALIDATION.RECORD.MAX_TAG_LENGTH} characters.`);
+      setIsSavingCommon(false);
+      return;
+    }
+    // -------------------------------------------------------------
+
     const isTitleChanged = newTitle !== (detailedItem.title || '');
     const isContentChanged = formData.content !== (detailedItem.content || '');
-    const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
     const oldTags = detailedItem.tags || [];
     const isTagsChanged = JSON.stringify(oldTags) !== JSON.stringify(tagsArray);
 
@@ -177,12 +211,11 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
         setIsEditingCommon(false);
-        onClose();
       } else {
         toast.error(result.message || 'Failed to update general information.');
       }
     } catch (error) {
-      toast.error('A network error occurred while saving information.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
     } finally {
       setIsSavingCommon(false);
     }
@@ -190,17 +223,14 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
   const handleSaveStatus = async () => {
     setIsSavingStatus(true);
-    const newIsLocked = formData.isLocked === 'true' || formData.isLocked === true || formData.isLocked === 1;
-    const oldIsLocked = detailedItem.isLocked === 'true' || detailedItem.isLocked === true || detailedItem.isLocked === 1;
-
-    if (newIsLocked === oldIsLocked) {
+    if (formData.visibility === detailedItem.visibility) {
       setIsEditingStatus(false);
       setIsSavingStatus(false);
       return;
     }
     
     try {
-      const result = await api.data.updateStatus(detailedItem.id, { isLocked: newIsLocked });
+      const result = await api.data.updateStatus(detailedItem.id, { visibility: formData.visibility });
 
       if (result.httpCode === 404 || result.httpCode === 403) {
         toast.error(result.message);
@@ -211,17 +241,16 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
       if (result && result.success) {
         toast.success(result.message); 
-        const updatedData = { ...detailedItem, isLocked: newIsLocked, updatedAt: new Date().toISOString() };
+        const updatedData = { ...detailedItem, visibility: formData.visibility, updatedAt: new Date().toISOString() };
         
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
         setIsEditingStatus(false);
-        onClose(); 
       } else {
         toast.error(result.message || 'Failed to update access control.');
       }
     } catch (error) {
-      toast.error('A network error occurred while updating access control.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
     } finally {
       setIsSavingStatus(false);
     }
@@ -232,6 +261,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
     isDeletingRecord, showDeleteConfirm, formData, isSavingCommon, isSavingStatus,
     setIsEditingCommon, setIsEditingStatus, setShowDeleteConfirm,
     handleInputChange, handleCancelCommon, handleCancelStatus, handleDeleteRecord,
-    handleSaveCommon, handleSaveStatus, formatDecoratedDate
+    handleSaveCommon, handleSaveStatus, formatDecoratedDate,
+    handleCopy 
   };
 }

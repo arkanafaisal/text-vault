@@ -5,24 +5,10 @@ services:
       target: app
       args:
         VITE_API_URL: ${VITE_API_URL}
-    expose:
-      - "3000"
+    ports:
+      - "${PORT}:${PORT}"
     env_file:
       - .env
-    restart: always
-
-
-  caddy:
-    image: caddy:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    restart: always
-
 
   flyway:
     build:
@@ -34,9 +20,3 @@ services:
       FLYWAY_PASSWORD: ${MYSQL_PASSWORD}
       FLYWAY_VALIDATE_MIGRATION_NAMING: "true"
     command: migrate
-
-
-
-volumes:
-  caddy_data:
-  caddy_config:

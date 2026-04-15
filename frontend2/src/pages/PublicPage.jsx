@@ -4,6 +4,7 @@ import { Globe, Search, User, Key, Loader2 } from 'lucide-react';
 import Navbar from '../components/public/Navbar'; 
 import PublicDataCard from '../components/public/PublicDataCard'; // <-- Import komponen baru
 import { usePublicPage } from '../hooks/usePublicPage';
+import { VALIDATION } from '../utils/constants';
 
 export default function PublicPage({ isDarkMode, toggleTheme }) {
   
@@ -37,11 +38,21 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3 md:gap-4">
             <div className="flex-1 relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2"><User className="w-4 h-4 text-[var(--muted-foreground)]" /></div>
-              <input type="text" name="username" value={formData.username} onChange={handleInputChange} placeholder="Target Username" required disabled={isLoading} className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" />
+              <input 
+                type="text" name="username" value={formData.username} onChange={handleInputChange} 
+                placeholder="Target Username" required disabled={isLoading} 
+                maxLength={VALIDATION.USER.MAX_USERNAME}
+                className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" 
+              />
             </div>
             <div className="flex-1 relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2"><Key className="w-4 h-4 text-[var(--muted-foreground)]" /></div>
-              <input type="text" name="publicKey" value={formData.publicKey} onChange={handleInputChange} placeholder="Public Key" required disabled={isLoading} className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" />
+              <input 
+                type="text" name="publicKey" value={formData.publicKey} onChange={handleInputChange} 
+                placeholder="Public Key" required disabled={isLoading} 
+                maxLength={VALIDATION.USER.MAX_PUBLIC_KEY}
+                className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" 
+              />
             </div>
             <button type="submit" disabled={isLoading} className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-bold rounded-xl hover:opacity-90 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70">
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}

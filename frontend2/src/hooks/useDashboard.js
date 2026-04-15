@@ -3,12 +3,13 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../utils/api';
 import { navigate } from '../utils/navigation';
 import { toast } from '../utils/toast';
+// Import semua konstanta yang diperlukan
+import { VALIDATION, PAGINATION, UI, SYSTEM_MESSAGES } from '../utils/constants';
 
 export function useDashboard() {
   const [user, setUser] = useState(null);
   const [data, setData] = useState([]);
   
-  // STATE LOADING DIBAGI DUA:
   const [isLoading, setIsLoading] = useState(true); 
   const [isFetchingData, setIsFetchingData] = useState(true); 
 
@@ -16,36 +17,51 @@ export function useDashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [searchInput, setSearchInput] = useState('');
-  const [queryParams, setQueryParams] = useState({ search: '', isLocked: '', sort: '' });
+  
+  const [queryParams, setQueryParams] = useState({ 
+    search: '', 
+    visibility: '', 
+    sort: '', 
+    page: 1 
+  });
+  const [hasNextPage, setHasNextPage] = useState(false);
+
   const [isRefreshing, setIsRefreshing] = useState(false); 
   const [typingProgress, setTypingProgress] = useState(false);
   const isFirstRender = useRef(true);
 
-  // 1. FETCH BERURUTAN (User Dulu -> Buka Layar -> Data Kemudian)
+  const processPaginationData = (rawData) => {
+    if (!rawData) return;
+    // Menggunakan PAGINATION.DASHBOARD_LIMIT (30)
+    if (rawData.length > PAGINATION.DASHBOARD_LIMIT) {
+      setHasNextPage(true);
+      setData(rawData.slice(0, PAGINATION.DASHBOARD_LIMIT)); 
+    } else {
+      setHasNextPage(false);
+      setData(rawData); 
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
     const fetchDashboardData = async () => {
       setIsLoading(true);
-      
       try {
         const userResult = await api.users.getMe();
-
         if (!isMounted) return;
 
         if (userResult.success && userResult.data) {
           setUser(userResult.data);
           toast.success(userResult.message); 
-          
           setIsLoading(false); 
           
           setIsFetchingData(true);
           const dataResult = await api.data.getAll(queryParams);
-
           if (!isMounted) return;
 
           if (dataResult.success) {
-            setData(dataResult.data);
+            processPaginationData(dataResult.data);
           } else {
             toast.error(dataResult.message);
           }
@@ -54,11 +70,11 @@ export function useDashboard() {
         } else {
           toast.error(userResult.message);
           navigate('/');
-          return;
         }
       } catch (error) {
         if (isMounted) {
-          toast.error('Failed to connect to the server.');
+          // Menggunakan SYSTEM_MESSAGES
+          toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
           setIsLoading(false);
           setIsFetchingData(false);
         }
@@ -66,12 +82,10 @@ export function useDashboard() {
     };
 
     fetchDashboardData();
-
     return () => { isMounted = false; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  // 2. DEBOUNCE & PROGRESS BAR LOGIC
   useEffect(() => {
     if (searchInput === queryParams.search) {
       setTypingProgress(false);
@@ -79,16 +93,18 @@ export function useDashboard() {
     }
 
     setTypingProgress(false);
-    const animationTimer = setTimeout(() => {
-      setTypingProgress(true);
-    }, 50);
+    // 50ms bisa dipertimbangkan masuk UI constant ke depannya
+    const animationTimer = setTimeout(() => { setTypingProgress(true); }, 50);
 
     const timer = setTimeout(() => {
       setQueryParams(prev => {
         if (prev.search === searchInput) return prev;
-        return { ...prev, search: searchInput };
+        
+        // Memastikan search query dipotong sesuai MAX_TITLE
+        const safeSearchInput = searchInput.substring(0, VALIDATION.RECORD.MAX_TITLE);
+        return { ...prev, search: safeSearchInput, page: 1 }; 
       });
-    }, 2000); 
+    }, UI.SEARCH_DEBOUNCE_MS); // Menggunakan UI.SEARCH_DEBOUNCE_MS (2000)
 
     return () => {
       clearTimeout(animationTimer);
@@ -96,7 +112,6 @@ export function useDashboard() {
     };
   }, [searchInput, queryParams.search]);
 
-  // 3. FETCH ULANG SAAT QUERY BERUBAH (Search/Filter)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -110,13 +125,13 @@ export function useDashboard() {
         const result = await api.data.getAll(queryParams);
         if (isMounted) {
           if (result.success) {
-            setData(result.data);
+            processPaginationData(result.data);
           } else {
             toast.error(result.message);
           }
         }
       } catch (error) {
-        if (isMounted) toast.error('Failed to fetch filtered data.');
+        if (isMounted) toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
       } finally {
         if (isMounted) {
           setIsRefreshing(false);
@@ -129,26 +144,34 @@ export function useDashboard() {
     return () => { isMounted = false; };
   }, [queryParams]);
 
+  const handleNextPage = () => {
+    setQueryParams(prev => ({ ...prev, page: prev.page + 1 }));
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  };
+
+  const handlePrevPage = () => {
+    setQueryParams(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleForceRefresh = async () => {
     setIsRefreshing(true);
     try {
       const result = await api.data.getAll(queryParams);
       if (result.success) {
-        setData(result.data);
+        processPaginationData(result.data);
       } else {
         toast.error(result.message);
       }
     } catch (error) {
-      toast.error('Failed to sync vault data.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
     } finally {
       setIsRefreshing(false);
     }
   };
 
   const handleLogout = async () => {
-    try {
-      await api.auth.logout();
-    } catch (error) {}
+    try { await api.auth.logout(); } catch (error) {}
     localStorage.removeItem('accessToken');
     navigate('/');
   };
@@ -158,30 +181,26 @@ export function useDashboard() {
   const handleOpenAddModal = () => { setIsAddModalOpen(true); };
   const handleCloseAddModal = () => { setIsAddModalOpen(false); };
   
-  const handleDataAdded = (newData) => {
-    setData((prevData) => [newData, ...prevData]);
-  };
-
+  const handleDataAdded = (newData) => { setData((prev) => [newData, ...prev]); };
   const handleDataUpdated = (updatedData) => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === updatedData.id ? updatedData : item))
-    );
+    setData((prevData) => prevData.map((item) => (item.id === updatedData.id ? updatedData : item)));
     setSelectedItem((prev) => {
       if (prev && prev.id === updatedData.id) return updatedData;
       return prev;
     });
   };
-
   const handleDataDeleted = (deletedId) => {
-    setData((prevData) => prevData.filter((item) => item.id !== deletedId));
+    setData((prev) => prev.filter((item) => item.id !== deletedId));
     setSelectedItem(null);
   };
 
   return {
     user, data, isLoading, isFetchingData, selectedItem, isAddModalOpen,
     searchInput, setSearchInput, queryParams, setQueryParams,
-    isRefreshing, typingProgress, handleForceRefresh, handleLogout,
+    isRefreshing, typingProgress, hasNextPage, 
+    handleForceRefresh, handleLogout,
     handleItemClick, handleCloseModal, handleOpenAddModal, handleCloseAddModal,
-    handleDataAdded, handleDataUpdated, handleDataDeleted
+    handleDataAdded, handleDataUpdated, handleDataDeleted,
+    handleNextPage, handlePrevPage 
   };
 }

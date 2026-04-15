@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { validateProfileField } from '../helpers/profileValidation';
+import { SYSTEM_MESSAGES } from '../utils/constants';
 
 export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
   const [editingField, setEditingField] = useState(null);
@@ -85,14 +86,14 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
       let result;
 
       if (field === 'displayName' || field === 'username') {
-        result = await api.users.updateUsername({ username: editValue });
+        result = await api.users.updateUsername({ username: typeof editValue === 'string' ? editValue.trim() : editValue });
       } else if (field === 'password') {
         result = await api.users.updatePassword({ 
           oldPassword: editValue.oldPassword, 
           newPassword: editValue.newPassword 
         });
       } else if (field === 'publicKey') {
-        result = await api.users.updatePublicKey({ publicKey: editValue });
+        result = await api.users.updatePublicKey({ publicKey: typeof editValue === 'string' ? editValue.trim() : editValue });
       }
 
       if (result && result.success) {
@@ -105,7 +106,7 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
         setErrors({ [field]: result.message });
       }
     } catch (error) {
-      setErrors({ [field]: 'A network error occurred while updating profile.' });
+      setErrors({ [field]: SYSTEM_MESSAGES.NETWORK_ERROR });
     } finally {
       setIsSaving(false);
     }
@@ -141,9 +142,9 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
       }
     } catch (error) {
       if (confirmModal.type === 'edit_email' || confirmModal.type === 'set_new_email') {
-        setErrors({ email: 'A network error occurred while updating email.' });
+        setErrors({ email: SYSTEM_MESSAGES.NETWORK_ERROR });
       } else {
-        setErrors({ password: 'A network error occurred while requesting reset link.' });
+        setErrors({ password: SYSTEM_MESSAGES.NETWORK_ERROR });
       }
       setConfirmModal({ isOpen: false, type: '', targetEmail: '' });
     } finally {

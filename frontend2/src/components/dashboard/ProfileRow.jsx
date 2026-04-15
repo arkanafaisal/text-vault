@@ -1,6 +1,7 @@
 // src/components/dashboard/ProfileRow.jsx
 import React from 'react';
 import { Edit2, Loader2 } from 'lucide-react';
+import { VALIDATION } from '../../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function ProfileRow({
   field,
@@ -21,11 +22,19 @@ export default function ProfileRow({
 }) {
   const isEditing = editingField === field;
 
+  // 2. HELPER UNTUK MENENTUKAN LIMIT BERDASARKAN FIELD
+  const getMaxLength = () => {
+    if (field === 'displayName') return VALIDATION.USER.MAX_USERNAME;
+    if (field === 'email') return VALIDATION.USER.MAX_EMAIL;
+    if (field === 'publicKey') return VALIDATION.USER.MAX_PUBLIC_KEY;
+    if (field === 'password') return VALIDATION.USER.MAX_PASSWORD;
+    return undefined;
+  };
+
   const renderActionButtons = () => (
     <>
       {isEditing ? (
         <>
-          {/* Tombol Cancel & Save dikunci persis h-8 (32px) agar sejajar dengan Change */}
           <button 
             onClick={handleCancelEdit} 
             disabled={isSaving}
@@ -53,7 +62,6 @@ export default function ProfileRow({
   return (
     <div className="py-4 flex flex-col sm:flex-row sm:items-center justify-between transition-all">
       
-      {/* Label Mobile */}
       <div className="flex items-center gap-2 sm:hidden mb-1.5">
         <div className="p-1.5 bg-[var(--secondary)] rounded-md text-[var(--muted-foreground)] flex-shrink-0">
           <Icon className="w-3.5 h-3.5" />
@@ -64,13 +72,11 @@ export default function ProfileRow({
       </div>
 
       <div className="flex items-center justify-between w-full sm:w-auto gap-3">
-        {/* Ikon Desktop */}
         <div className="hidden sm:block p-2 bg-[var(--secondary)] rounded-lg text-[var(--muted-foreground)] flex-shrink-0">
           <Icon className="w-4 h-4" />
         </div>
 
         <div className="min-w-0 flex-1 sm:flex-none">
-          {/* Label Desktop */}
           <p className="hidden sm:block text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-0.5">
             {label}
           </p>
@@ -87,6 +93,7 @@ export default function ProfileRow({
                       value={editValue.oldPassword || ''}
                       onChange={(e) => setEditValue({ ...editValue, oldPassword: e.target.value })}
                       placeholder="Current password"
+                      maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 3. LIMIT PASSWORD LAMA
                       className="h-7 bg-transparent border-b border-[var(--primary)] outline-none text-sm font-medium text-[var(--foreground)] w-full disabled:opacity-50"
                     />
                     {errors.oldPassword && (
@@ -100,6 +107,7 @@ export default function ProfileRow({
                       value={editValue.newPassword || ''}
                       onChange={(e) => setEditValue({ ...editValue, newPassword: e.target.value })}
                       placeholder="New password"
+                      maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 3. LIMIT PASSWORD BARU
                       className="h-7 bg-transparent border-b border-[var(--primary)] outline-none text-sm font-medium text-[var(--foreground)] w-full disabled:opacity-50"
                     />
                     {errors.newPassword && (
@@ -111,7 +119,6 @@ export default function ProfileRow({
                   </div>
                 </div>
               ) : (
-                /* Kontainer Edit Non-Password: min-h-[32px] agar sama dengan mode baca */
                 <div className="flex items-center min-h-[32px] w-full">
                   <input 
                     type="text"
@@ -120,12 +127,12 @@ export default function ProfileRow({
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     placeholder={`Enter new ${label.toLowerCase()}`}
+                    maxLength={getMaxLength()} // <-- 3. LIMIT DINAMIS (Username/Email/Key)
                     className="h-7 bg-transparent border-b border-[var(--primary)] outline-none text-sm font-medium text-[var(--foreground)] w-full disabled:opacity-50" 
                   />
                 </div>
               )}
               
-              {/* Notifikasi Error/Sukses ditempatkan di luar min-h-[32px] agar expand natural */}
               {errors[field] && !isPassword && (
                 <p className="text-[10px] text-[var(--destructive)] mt-1 font-bold">{errors[field]}</p>
               )}
@@ -144,7 +151,6 @@ export default function ProfileRow({
               )}
             </div>
           ) : (
-            /* Kontainer Baca Teks Biasa: min-h-[32px] agar sama persis dengan mode edit */
             <div className="flex items-center min-h-[32px]">
               <p className="font-semibold text-sm text-[var(--foreground)] truncate max-w-[180px] sm:max-w-[250px]">
                 {isPassword ? '••••••••' : (value || <span className="italic opacity-50">Not set</span>)}
@@ -153,13 +159,11 @@ export default function ProfileRow({
           )}
         </div>
 
-        {/* Tombol Aksi Mobile - BERSIH dari mt-2 dan items-start */}
         <div className="flex items-center gap-1.5 sm:hidden flex-shrink-0">
           {renderActionButtons()}
         </div>
       </div>
 
-      {/* Tombol Aksi Desktop */}
       <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
         {renderActionButtons()}
       </div>

@@ -1,27 +1,28 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Search, Plus, ChevronDown } from 'lucide-react'; 
+import { Loader2, Search, Plus, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'; 
 
 import Navbar from '../components/dashboard/Navbar';
 import Bento from '../components/dashboard/Bento';
 import AddDataModal from '../components/dashboard/AddDataModal';
 import DataDetailsModal from '../components/dashboard/DataDetailsModal';
-import { useDashboard } from '../hooks/useDashboard'; // <-- IMPORT HOOK
+import { useDashboard } from '../hooks/useDashboard';
+import { VALIDATION } from '../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function Dashboard({ isDarkMode, toggleTheme }) {
   const { t } = useTranslation();
   
-  // SEMUA STATE DIAMBIL DARI HOOK
   const {
     user, data, isLoading, isFetchingData, selectedItem, isAddModalOpen,
     searchInput, setSearchInput, queryParams, setQueryParams,
-    isRefreshing, typingProgress, handleForceRefresh, handleLogout,
+    isRefreshing, typingProgress, hasNextPage,
+    handleForceRefresh, handleLogout,
     handleItemClick, handleCloseModal, handleOpenAddModal, handleCloseAddModal,
-    handleDataAdded, handleDataUpdated, handleDataDeleted
+    handleDataAdded, handleDataUpdated, handleDataDeleted,
+    handleNextPage, handlePrevPage
   } = useDashboard();
 
-  // FULL SCREEN LOADING (Hanya untuk User Auth)
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background)] text-[var(--foreground)]">
@@ -63,6 +64,7 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
               placeholder="Search tags or title..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- 2. TAMBAHKAN MAXLENGTH DI SINI
               className="w-full pl-9 pr-4 py-2 bg-transparent outline-none text-sm text-[var(--foreground)]"
             />
 
@@ -81,21 +83,21 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
           <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
             <div className="relative flex-none">
               <select
-                value={queryParams.isLocked}
-                onChange={(e) => setQueryParams(prev => ({ ...prev, isLocked: e.target.value }))}
+                value={queryParams.visibility}
+                onChange={(e) => setQueryParams(prev => ({ ...prev, visibility: e.target.value, page: 1 }))}
                 className="appearance-none w-full pl-2.5 pr-8 py-1.5 sm:pl-3 sm:pr-9 sm:py-2 bg-[var(--card)] border border-[var(--border-strong)] rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] text-xs sm:text-sm shadow-sm text-[var(--foreground)] cursor-pointer"
               >
                 <option value="">All Status</option>
-                <option value="true">Locked</option>
-                <option value="false">Unlocked</option>
-              </select>
+                <option value="private">Private</option> 
+                <option value="public">Public</option>
+            </select>
               <ChevronDown className="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--muted-foreground)] pointer-events-none" />
             </div>
 
             <div className="relative flex-none">
               <select
                 value={queryParams.sort}
-                onChange={(e) => setQueryParams(prev => ({ ...prev, sort: e.target.value }))}
+                onChange={(e) => setQueryParams(prev => ({ ...prev, sort: e.target.value, page: 1 }))}
                 className="appearance-none w-full pl-2.5 pr-8 py-1.5 sm:pl-3 sm:pr-9 sm:py-2 bg-[var(--card)] border border-[var(--border-strong)] rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] text-xs sm:text-sm shadow-sm text-[var(--foreground)] cursor-pointer"
               >
                 <option value="">Newest</option>
@@ -122,7 +124,35 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
               <p className="text-xs md:text-sm font-bold tracking-widest uppercase animate-pulse">Decrypting Vault...</p>
             </div>
           ) : (
-            <Bento data={data} onItemClick={handleItemClick} />
+            <>
+              <Bento data={data} onItemClick={handleItemClick} />
+              
+              {(queryParams.page > 1 || hasNextPage) && (
+                <div className="mt-8 flex items-center justify-center gap-3">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={queryParams.page === 1}
+                    className="flex items-center gap-1 px-4 py-2 bg-[var(--card)] border border-[var(--border-strong)] text-[var(--foreground)] text-sm font-bold rounded-xl hover:bg-[var(--secondary)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Prev
+                  </button>
+                  
+                  <div className="px-4 py-2 bg-[var(--secondary)] border border-[var(--border)] rounded-xl text-sm font-bold text-[var(--foreground)] shadow-inner">
+                    Page {queryParams.page}
+                  </div>
+
+                  <button
+                    onClick={handleNextPage}
+                    disabled={!hasNextPage}
+                    className="flex items-center gap-1 px-4 py-2 bg-[var(--card)] border border-[var(--border-strong)] text-[var(--foreground)] text-sm font-bold rounded-xl hover:bg-[var(--secondary)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

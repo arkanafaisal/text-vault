@@ -1,0 +1,2 @@
+ALTER TABLE data
+ADD COLUMN content_enc TEXT NOT NULL;

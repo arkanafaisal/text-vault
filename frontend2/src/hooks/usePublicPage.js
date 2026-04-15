@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { toast } from '../utils/toast';
+import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants'; // <-- 1. IMPORT
 
 export function usePublicPage() {
   const [formData, setFormData] = useState(() => {
@@ -19,7 +20,7 @@ export function usePublicPage() {
   useEffect(() => {
     if (formData.username && formData.publicKey && !hasSearched) {
       handleSearch();
-    } else if (!formData.username || !formData.publicKey) {
+    } else if (!formData.username || !formData.publicKey) { // <-- INI DIKEMBALIKAN!
       toast.info("Public Access Mode. Enter credentials to unlock shared records.");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,41 +31,8 @@ export function usePublicPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSearch = async (e) => {
-    if (e) e.preventDefault();
-    
-    if (!formData.username.trim() || !formData.publicKey.trim()) {
-      toast.error('Both Username and Public Key are required.');
-      return;
-    }
-
-    setIsLoading(true);
-    setHasSearched(true);
-    setData([]);
-
-    try {
-      const result = await api.public.getData({
-        username: formData.username.trim(),
-        publicKey: formData.publicKey.trim()
-      });
-
-      if (result.success) {
-        setData(result.data);
-        toast.success(result.message);
-        
-        const newPath = `/public/${encodeURIComponent(formData.username.trim())}/${encodeURIComponent(formData.publicKey.trim())}`;
-        window.history.replaceState({}, '', newPath);
-      } else {
-        toast.error(result.message); 
-      }
-    } catch (error) {
-      toast.error('Network error occurred while fetching public data.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleCopy = async (content) => {
+    if (!content) return;
     try {
       await navigator.clipboard.writeText(content);
       toast.success('Content copied to clipboard!');
@@ -73,13 +41,62 @@ export function usePublicPage() {
     }
   };
 
-  return {
-    formData,
-    data,
-    isLoading,
-    hasSearched,
-    handleInputChange,
-    handleSearch,
-    handleCopy
+  const handleSearch = async (e) => {
+    if (e) e.preventDefault();
+    
+    const cleanUsername = formData.username.trim();
+    const cleanPublicKey = formData.publicKey.trim();
+
+    if (!cleanUsername || !cleanPublicKey) {
+      toast.error('Both Username and Public Key are required.');
+      return;
+    }
+
+    // --- PROTEKSI VALIDASI PANJANG KARAKTER ---
+    if (cleanUsername.length > VALIDATION.USER.MAX_USERNAME) {
+      toast.error(`Username must be max ${VALIDATION.USER.MAX_USERNAME} characters.`);
+      return;
+    }
+
+    if (cleanPublicKey.length > VALIDATION.USER.MAX_PUBLIC_KEY) {
+      toast.error(`Public Key must be max ${VALIDATION.USER.MAX_PUBLIC_KEY} characters.`);
+      return;
+    }
+    // ------------------------------------------
+
+    setIsLoading(true);
+    setHasSearched(true);
+    setData([]);
+
+    try {
+      const result = await api.public.getData({
+        username: cleanUsername,
+        publicKey: cleanPublicKey
+      });
+
+      if (result.success) {
+        setData(result.data);
+        toast.success(result.message);
+        
+        const newPath = `/public/${encodeURIComponent(cleanUsername)}/${encodeURIComponent(cleanPublicKey)}`;
+        window.history.replaceState({}, '', newPath);
+      } else {
+        toast.error(result.message); 
+      }
+    } catch (error) {
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. KONSTANTA
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { 
+    formData, 
+    data, 
+    isLoading, 
+    hasSearched, 
+    handleInputChange, 
+    handleSearch, 
+    handleCopy 
   };
 }

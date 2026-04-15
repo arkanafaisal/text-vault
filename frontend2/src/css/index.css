@@ -3,29 +3,36 @@
 
 @layer base {
   :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(240 10% 3.9%);
-    --card: hsl(0 0% 100%);
+    /* BACKGROUND LEBIH REDUP (Lightness diturunkan dari 98% ke 95%) */
+    --background: hsl(240 5% 95%); 
+    --foreground: hsl(240 10% 3.9%); 
+    
+    /* Card sengaja dibiarkan 100% (putih murni) agar 
+       bento grid Anda tampak menonjol/timbul di atas background redup */
+    --card: hsl(0 0% 100%); 
     --card-foreground: hsl(240 10% 3.9%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(240 10% 3.9%);
-    --primary: hsl(142.1 76.2% 36.3%);
-    --primary-foreground: hsl(355.7 100% 97.3%);
+    
+    --primary: hsl(142.1 80% 45%); 
+    --primary-foreground: hsl(0 0% 100%); 
+    
     --secondary: hsl(240 4.8% 95.9%);
     --secondary-foreground: hsl(240 5.9% 10%);
     --muted: hsl(240 4.8% 95.9%);
     --muted-foreground: hsl(240 3.8% 46.1%);
     --accent: hsl(240 4.8% 95.9%);
     --accent-foreground: hsl(240 5.9% 10%);
+    
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
     
-    /* Pemboleh ubah Border */
-    --border: hsl(240 5.9% 90%); /* Border asal yang lembut */
-    --border-strong: hsl(240 5.9% 75%); /* Border baharu yang lebih tegas */
+    /* Sedikit menggelapkan border agar tetap terlihat di background yang redup */
+    --border: hsl(240 6% 87%); 
+    --border-strong: hsl(240 6% 70%); 
     
     --input: hsl(240 5.9% 90%);
-    --ring: hsl(142.1 76.2% 36.3%);
+    --ring: hsl(142.1 80% 45%); 
     --radius: 0.75rem;
   }
 
@@ -44,12 +51,13 @@
     --muted-foreground: hsl(240 5% 64.9%);
     --accent: hsl(240 3.7% 15.9%);
     --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 62.8% 30.6%);
-    --destructive-foreground: hsl(0 0% 98%);
     
-    /* Pemboleh ubah Border Dark Mode */
-    --border: hsl(240 3.7% 15.9%); /* Border asal */
-    --border-strong: hsl(240 3.7% 28%); /* Border baharu yang lebih menonjol di mod gelap */
+    /* 3. MERAH LEBIH MENYALA DI DARK MODE */
+    --destructive: hsl(0 85% 60%); 
+    --destructive-foreground: hsl(0 0% 100%);
+    
+    --border: hsl(240 3.7% 15.9%); 
+    --border-strong: hsl(240 3.7% 28%); 
     
     --input: hsl(240 3.7% 15.9%);
     --ring: hsl(142.1 70.6% 45.3%);

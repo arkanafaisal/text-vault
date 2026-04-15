@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import api from '../utils/api';
 import { navigate } from '../utils/navigation';
+import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants';
 
 // Fungsi validasi kita pindahkan ke sini agar file komponen UI bersih
 const validateResetForm = (passwords, t) => {
@@ -9,16 +10,13 @@ const validateResetForm = (passwords, t) => {
   const errors = {};
   if (!password) {
     errors.password = t('auth.errRequired');
-  } else if (password.length < 6) {
+  } else if (password.length < VALIDATION.USER.MIN_PASSWORD) { // <-- 2. GANTI ANGKA 6
     errors.password = t('auth.errMin6');
   }
   if (password !== confirmPassword) {
     errors.confirmPassword = t('auth.errMatch');
   }
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors
-  };
+  return { isValid: Object.keys(errors).length === 0, errors };
 };
 
 export function useResetPassword(token, t) {
@@ -65,11 +63,10 @@ export function useResetPassword(token, t) {
         }
       } catch (err) {
         setFeedback({ 
-          text: 'Connection failed. Please check your internet connection.', 
+          text: SYSTEM_MESSAGES.NETWORK_ERROR, // <-- 3. GANTI TEKS STATIS
           isSuccess: false 
         });
       } finally {
-        setIsLoading(false);
       }
     } else {
       setErrors(validationErrors);
