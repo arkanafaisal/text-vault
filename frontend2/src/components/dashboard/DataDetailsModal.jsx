@@ -123,6 +123,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         onChange={handleInputChange} 
                         className={typography.metaEdit} 
                         placeholder={`e.g. work, private (max ${VALIDATION.RECORD.MAX_TAGS_COUNT} tags)`} // <-- 3. UPDATE PLACEHOLDER
+                        maxLength={(VALIDATION.RECORD.MAX_TAG_LENGTH + 2) * VALIDATION.RECORD.MAX_TAGS_COUNT + 10}
                       />
                     ) : (
                       <div className={`${typography.metaView} flex flex-wrap gap-1.5 md:gap-2`}>

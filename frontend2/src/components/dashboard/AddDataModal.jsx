@@ -99,6 +99,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 onChange={handleInputChange} 
                 className={typography.input} 
                 placeholder="e.g. work, private, api-keys (comma separated)" 
+                maxLength={(VALIDATION.RECORD.MAX_TAG_LENGTH + 2) * VALIDATION.RECORD.MAX_TAGS_COUNT + 10}
               />
             </div>
 
