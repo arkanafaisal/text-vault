@@ -31,7 +31,7 @@ ideas:
 - express ts 
 - mysql charset/collation (case & accent sensitive)
 - readjust rate limit
-- docker, kubernetes
+- kubernetes
 - mysql migration tools (flyway / liquibase)
 - testing, logging
 - frontend encrypting choice ( random key + derive password )
@@ -50,6 +50,9 @@ ideas:
 - server health tracker
 - copy from dashboard bento (hit getContent to get the data content)
 - window.location.href push, possible to do undo redo
+- skeleton loading
+- i18n (english indonesia)
+- review docker compose prod
 
 
 
@@ -58,6 +61,8 @@ done:
 - dashboard pagination
 - server side encrypting
 - test api speed after cache
+- use flyway migration
+- docker containerization (+ compose)
 - not found error (affectedRows === 0) handling by userId or dataId (avoid stuck cache)
 - search title tags and filter sort & islocked
 - fix auth.authenticateUser

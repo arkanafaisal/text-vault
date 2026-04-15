@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  flyway:
+    image: flyway/flyway
+    env_file:
+    - .env
+    command: >
+      -url=jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DB}
+      -user=${MYSQL_USER}
+      -password=${MYSQL_PASSWORD}
+      migrate
+    volumes:
+      - ./backend/flyway/sql:/flyway/sql
