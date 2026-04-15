@@ -53,6 +53,7 @@ ideas:
 - skeleton loading
 - i18n (english indonesia)
 - review docker compose prod
+- request json invalid handler
 
 
 

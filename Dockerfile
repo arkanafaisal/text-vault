@@ -5,10 +5,12 @@ COPY frontend2/package*.json ./
 RUN npm install
 
 COPY frontend2 .
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 
-FROM node:20
+FROM node:20 AS app
 WORKDIR /app
 
 COPY backend/package*.json ./
@@ -18,4 +20,9 @@ COPY backend .
 
 COPY --from=frontend-build /frontend/dist ./dist
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]
+
+
+
+FROM flyway/flyway AS flyway
+COPY ./backend/flyway/sql /flyway/sql
