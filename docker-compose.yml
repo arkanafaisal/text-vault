@@ -6,7 +6,7 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL}
     expose:
-      - "3000"
+      - "3001"
     env_file:
       - .env
     restart: always
