@@ -4,6 +4,7 @@ import { Lock, ShieldCheck, Loader2, ArrowRight, AlertTriangle, CheckCircle, XCi
 import { useTranslation } from 'react-i18next';
 import { navigate } from '../utils/navigation';
 import { useResetPassword } from '../hooks/useResetPassword'; // <-- IMPORT HOOK
+import { VALIDATION } from '../utils/constants';
 
 export default function ResetPassword({ token }) {
   const { t } = useTranslation();
@@ -86,13 +87,9 @@ export default function ResetPassword({ token }) {
                   <div className={inputWrapperClass(errors.password)}>
                     <Lock className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.password ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
                     <input 
-                      type="password" 
-                      name="password" 
-                      value={passwords.password} 
-                      onChange={handleInputChange} 
-                      placeholder={t('auth.placeholderPassword')} 
-                      className={inputClass} 
-                      disabled={isLoading} 
+                      type="password" name="password" value={passwords.password} onChange={handleInputChange} 
+                      placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} 
+                      maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 2. TAMBAH MAXLENGTH
                     />
                   </div>
                   {errors.password && (
@@ -107,13 +104,9 @@ export default function ResetPassword({ token }) {
                   <div className={inputWrapperClass(errors.confirmPassword)}>
                     <ShieldCheck className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.confirmPassword ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
                     <input 
-                      type="password" 
-                      name="confirmPassword" 
-                      value={passwords.confirmPassword} 
-                      onChange={handleInputChange} 
-                      placeholder={t('resetPassword.placeholderConfirm')} 
-                      className={inputClass} 
-                      disabled={isLoading} 
+                      type="password" name="confirmPassword" value={passwords.confirmPassword} onChange={handleInputChange} 
+                      placeholder={t('resetPassword.placeholderConfirm')} className={inputClass} disabled={isLoading} 
+                      maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 2. TAMBAH MAXLENGTH
                     />
                   </div>
                   {errors.confirmPassword && (

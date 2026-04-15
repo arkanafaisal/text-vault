@@ -2,20 +2,15 @@
 import React from 'react';
 import { X, User, Lock, ArrowRight, AlertTriangle, ShieldCheck, Loader2, MailCheck, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/useAuth'; // <-- IMPORT HOOK BARU
+import { useAuth } from '../../hooks/useAuth'; 
+import { VALIDATION } from '../../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function AuthModal({ isOpen, onClose, type, setType }) {
   const { t } = useTranslation();
   
-  // SEMUA STATE & LOGIKA DIAMBIL DARI HOOK
   const {
-    formData,
-    errors,
-    isLoading,
-    feedback,
-    isForgotPasswordSuccess,
-    handleInputChange,
-    handleSubmit
+    formData, errors, isLoading, feedback,
+    isForgotPasswordSuccess, handleInputChange, handleSubmit
   } = useAuth({ isOpen, type, onClose, t });
 
   if (!isOpen) return null;
@@ -30,6 +25,11 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
     if (type === 'login') return t('auth.loginDesc');
     if (type === 'signup') return t('auth.signupDesc');
     return t('auth.forgotPasswordDesc');
+  };
+
+  // 2. HELPER LIMIT IDENTIFIER DINAMIS
+  const getIdMaxLength = () => {
+    return type === 'signup' ? VALIDATION.USER.MAX_USERNAME : VALIDATION.USER.MAX_EMAIL;
   };
 
   const inputWrapperClass = (error) => `flex items-center bg-[var(--background)] px-4 py-2 rounded-xl border transition-all duration-300 shadow-inner ${error ? 'border-[var(--destructive)] ring-1 ring-[var(--destructive)]' : 'border-zinc-200 dark:border-zinc-800 focus-within:ring-2 focus-within:ring-[var(--ring)]'}`;
@@ -78,7 +78,16 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                 </label>
                 <div className={inputWrapperClass(errors.identifier)}>
                   <User className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.identifier ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-                  <input type={type === 'forgot-password' ? 'email' : 'text'} name="identifier" value={formData.identifier} onChange={handleInputChange} placeholder={type === 'login' ? t('auth.placeholderIdLogin') : (type === 'signup' ? t('auth.placeholderIdSignup') : t('auth.placeholderEmail'))} className={inputClass} disabled={isLoading} />
+                  <input 
+                    type={type === 'forgot-password' ? 'email' : 'text'} 
+                    name="identifier" 
+                    value={formData.identifier} 
+                    onChange={handleInputChange} 
+                    placeholder={type === 'login' ? t('auth.placeholderIdLogin') : (type === 'signup' ? t('auth.placeholderIdSignup') : t('auth.placeholderEmail'))} 
+                    className={inputClass} 
+                    disabled={isLoading} 
+                    maxLength={getIdMaxLength()} // <-- 3. TAMBAH MAXLENGTH
+                  />
                 </div>
                 {errors.identifier && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.identifier}</p>}
               </div>
@@ -95,7 +104,16 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                   </div>
                   <div className={inputWrapperClass(errors.password)}>
                     <Lock className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.password ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-                    <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
+                    <input 
+                      type="password" 
+                      name="password" 
+                      value={formData.password} 
+                      onChange={handleInputChange} 
+                      placeholder={t('auth.placeholderPassword')} 
+                      className={inputClass} 
+                      disabled={isLoading} 
+                      maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 3. TAMBAH MAXLENGTH
+                    />
                   </div>
                   {errors.password && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.password}</p>}
                 </div>
@@ -107,7 +125,16 @@ export default function AuthModal({ isOpen, onClose, type, setType }) {
                     <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">{t('auth.labelConfirm')}</label>
                     <div className={inputWrapperClass(errors.confirmPassword)}>
                       <ShieldCheck className={`w-4 h-4 mr-3 flex-shrink-0 ${errors.confirmPassword ? 'text-[var(--destructive)]' : 'text-[var(--muted-foreground)]'}`} />
-                      <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} placeholder={t('auth.placeholderPassword')} className={inputClass} disabled={isLoading} />
+                      <input 
+                        type="password" 
+                        name="confirmPassword" 
+                        value={formData.confirmPassword} 
+                        onChange={handleInputChange} 
+                        placeholder={t('auth.placeholderPassword')} 
+                        className={inputClass} 
+                        disabled={isLoading} 
+                        maxLength={VALIDATION.USER.MAX_PASSWORD} // <-- 3. TAMBAH MAXLENGTH
+                      />
                     </div>
                     {errors.confirmPassword && <p className="text-[var(--destructive)] text-[10px] ml-1 font-bold animate-in fade-in slide-in-from-left-1">{errors.confirmPassword}</p>}
                   </div>

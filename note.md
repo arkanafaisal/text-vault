@@ -54,6 +54,9 @@ ideas:
 - i18n (english indonesia)
 - review docker compose prod
 - request json invalid handler
+- validate input tags
+- use constant variable
+- validate constant variable to table schema
 
 
 

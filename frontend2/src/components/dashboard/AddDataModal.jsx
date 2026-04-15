@@ -2,10 +2,10 @@
 import React from 'react';
 import { X, Loader2, AlertTriangle, FileText, Tag, AlignLeft, Plus } from 'lucide-react';
 import { useAddData } from '../../hooks/useAddData';
+import { VALIDATION } from '../../utils/constants'; // <-- IMPORT KONSTANTA GLOBAL
 
 export default function AddDataModal({ onClose, onDataAdded }) {
   
-  // Panggil hook di sini
   const { 
     formData, 
     isSubmitting, 
@@ -44,7 +44,6 @@ export default function AddDataModal({ onClose, onDataAdded }) {
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
           <div className="p-5 md:p-6 space-y-6 flex-1 bg-[var(--secondary)]/30">
             
-            {/* Pesan Error di DALAM Modal */}
             {apiError && (
               <div className="p-4 bg-[var(--destructive)]/10 border border-[var(--destructive)]/20 rounded-xl flex items-start gap-3 text-[var(--destructive)] text-xs font-bold mb-2">
                 <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -57,7 +56,17 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 <FileText className="w-4 h-4" />
                 <span>Record Title</span>
               </label>
-              <input id="title" type="text" value={formData.title} onChange={handleInputChange} className={typography.input} placeholder="Enter a clear title (max 31 chars)..." maxLength="31" required autoFocus />
+              <input 
+                id="title" 
+                type="text" 
+                value={formData.title} 
+                onChange={handleInputChange} 
+                className={typography.input} 
+                placeholder={`Enter a clear title (max ${VALIDATION.RECORD.MAX_TITLE} chars)...`} // <-- BERSIFAT DINAMIS
+                maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- MENGGUNAKAN KONSTANTA
+                required 
+                autoFocus 
+              />
             </div>
 
             <div className="flex-1 flex flex-col">
@@ -66,7 +75,15 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 <span>Secured Content</span>
               </label>
               <div className="flex-1 relative">
-                <textarea id="content" value={formData.content} onChange={handleInputChange} className={typography.textarea} placeholder="Enter your confidential data, notes, or credentials here..." maxLength="1000" required />
+                <textarea 
+                  id="content" 
+                  value={formData.content} 
+                  onChange={handleInputChange} 
+                  className={typography.textarea} 
+                  placeholder="Enter your confidential data, notes, or credentials here..." 
+                  maxLength={VALIDATION.RECORD.MAX_CONTENT} // <-- MENGGUNAKAN KONSTANTA
+                  required 
+                />
               </div>
             </div>
 
@@ -75,7 +92,14 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 <Tag className="w-4 h-4" />
                 <span>Tags (Optional)</span>
               </label>
-              <input id="tags" type="text" value={formData.tags} onChange={handleInputChange} className={typography.input} placeholder="e.g. work, private, api-keys (comma separated)" />
+              <input 
+                id="tags" 
+                type="text" 
+                value={formData.tags} 
+                onChange={handleInputChange} 
+                className={typography.input} 
+                placeholder="e.g. work, private, api-keys (comma separated)" 
+              />
             </div>
 
           </div>

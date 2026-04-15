@@ -8,6 +8,7 @@ import Bento from '../components/dashboard/Bento';
 import AddDataModal from '../components/dashboard/AddDataModal';
 import DataDetailsModal from '../components/dashboard/DataDetailsModal';
 import { useDashboard } from '../hooks/useDashboard';
+import { VALIDATION } from '../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function Dashboard({ isDarkMode, toggleTheme }) {
   const { t } = useTranslation();
@@ -63,6 +64,7 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
               placeholder="Search tags or title..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- 2. TAMBAHKAN MAXLENGTH DI SINI
               className="w-full pl-9 pr-4 py-2 bg-transparent outline-none text-sm text-[var(--foreground)]"
             />
 
@@ -95,7 +97,6 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
             <div className="relative flex-none">
               <select
                 value={queryParams.sort}
-                // RESET PAGE KE 1 SAAT URUTAN BERUBAH
                 onChange={(e) => setQueryParams(prev => ({ ...prev, sort: e.target.value, page: 1 }))}
                 className="appearance-none w-full pl-2.5 pr-8 py-1.5 sm:pl-3 sm:pr-9 sm:py-2 bg-[var(--card)] border border-[var(--border-strong)] rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] text-xs sm:text-sm shadow-sm text-[var(--foreground)] cursor-pointer"
               >
@@ -126,7 +127,6 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
             <>
               <Bento data={data} onItemClick={handleItemClick} />
               
-              {/* KONTROL PAGINATION MUNCUL DI SINI */}
               {(queryParams.page > 1 || hasNextPage) && (
                 <div className="mt-8 flex items-center justify-center gap-3">
                   <button

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { toast } from '../utils/toast';
+import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh }) {
   const [detailedItem, setDetailedItem] = useState(null);
@@ -14,7 +15,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const [formData, setFormData] = useState({
-    title: '', content: '', tags: '', visibility: 'private' // Gunakan visibility string
+    title: '', content: '', tags: '', visibility: 'private'
   });
 
   const [isSavingCommon, setIsSavingCommon] = useState(false);
@@ -56,7 +57,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
           }
         } catch (error) {
           if (isMounted) {
-            toast.error('Network error while loading details.');
+            toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
             onClose();
           }
         } finally {
@@ -106,7 +107,6 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
     setIsEditingStatus(false);
   };
 
-  // --- FUNGSI COPY BARU ---
   const handleCopy = async (content) => {
     if (!content) return;
     try {
@@ -138,7 +138,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         setShowDeleteConfirm(false);
       }
     } catch (error) {
-      toast.error('A network error occurred while deleting the record.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
       setShowDeleteConfirm(false);
     } finally {
       setIsDeletingRecord(false);
@@ -148,9 +148,34 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
   const handleSaveCommon = async () => {
     setIsSavingCommon(true);
     const newTitle = formData.title.trim();
+    const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+
+    // --- 3. TAMBAHKAN VALIDASI DI SINI SEBELUM CEK PERUBAHAN ---
+    if (!newTitle || newTitle.length > VALIDATION.RECORD.MAX_TITLE) {
+      toast.error(`Title is required (max ${VALIDATION.RECORD.MAX_TITLE} chars).`);
+      setIsSavingCommon(false);
+      return;
+    }
+    if (!formData.content.trim() || formData.content.length > VALIDATION.RECORD.MAX_CONTENT) {
+      toast.error(`Content is required (max ${VALIDATION.RECORD.MAX_CONTENT} chars).`);
+      setIsSavingCommon(false);
+      return;
+    }
+    if (tagsArray.length > VALIDATION.RECORD.MAX_TAGS_COUNT) {
+      toast.error(`Maximum ${VALIDATION.RECORD.MAX_TAGS_COUNT} tags allowed.`);
+      setIsSavingCommon(false);
+      return;
+    }
+    const longTag = tagsArray.find(tag => tag.length > VALIDATION.RECORD.MAX_TAG_LENGTH);
+    if (longTag) {
+      toast.error(`Each tag must be max ${VALIDATION.RECORD.MAX_TAG_LENGTH} characters.`);
+      setIsSavingCommon(false);
+      return;
+    }
+    // -------------------------------------------------------------
+
     const isTitleChanged = newTitle !== (detailedItem.title || '');
     const isContentChanged = formData.content !== (detailedItem.content || '');
-    const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
     const oldTags = detailedItem.tags || [];
     const isTagsChanged = JSON.stringify(oldTags) !== JSON.stringify(tagsArray);
 
@@ -190,7 +215,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         toast.error(result.message || 'Failed to update general information.');
       }
     } catch (error) {
-      toast.error('A network error occurred while saving information.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
     } finally {
       setIsSavingCommon(false);
     }
@@ -225,7 +250,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         toast.error(result.message || 'Failed to update access control.');
       }
     } catch (error) {
-      toast.error('A network error occurred while updating access control.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI PESAN ERROR
     } finally {
       setIsSavingStatus(false);
     }
@@ -237,6 +262,6 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
     setIsEditingCommon, setIsEditingStatus, setShowDeleteConfirm,
     handleInputChange, handleCancelCommon, handleCancelStatus, handleDeleteRecord,
     handleSaveCommon, handleSaveStatus, formatDecoratedDate,
-    handleCopy // <-- Export fungsi copy baru
+    handleCopy 
   };
 }

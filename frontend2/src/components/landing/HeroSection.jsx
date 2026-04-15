@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Search, Zap, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { navigate } from '../../utils/navigation'; // <-- 1. Import navigate
+import { VALIDATION } from '../../utils/constants'; // <-- IMPORT KONSTANTA
 
 export default function HeroSection() {
   const { t } = useTranslation();
@@ -13,8 +14,11 @@ export default function HeroSection() {
     const trimmedUsername = searchUsername.trim();
     if (!trimmedUsername) return;
     
+    // PROTEKSI GANDA: Potong paksa string sesuai batas maksimal karakter sebelum navigasi
+    const safeUsername = trimmedUsername.substring(0, VALIDATION.USER.MAX_USERNAME);
+    
     // 2. Arahkan ke /public beserta username-nya (di-encode agar aman untuk URL)
-    navigate(`/public/${encodeURIComponent(trimmedUsername)}`);
+    navigate(`/public/${encodeURIComponent(safeUsername)}`);
   };
 
   return (
@@ -42,6 +46,7 @@ export default function HeroSection() {
             className="w-full bg-transparent outline-none placeholder:text-[var(--muted-foreground)] text-[var(--foreground)]"
             value={searchUsername}
             onChange={(e) => setSearchUsername(e.target.value)}
+            maxLength={VALIDATION.USER.MAX_USERNAME}
           />
         </form>
         <button 

@@ -1,7 +1,8 @@
 // src/components/dashboard/DataDetailsModal.jsx
 import React from 'react';
-import { X, Tag, Lock, Unlock, Loader2, Save, Edit2, History, ShieldAlert, AlertCircle, Trash2, Copy } from 'lucide-react'; // <-- IMPORT COPY
+import { X, Tag, Lock, Unlock, Loader2, Save, Edit2, History, ShieldAlert, AlertCircle, Trash2, Copy } from 'lucide-react';
 import { useDataDetails } from '../../hooks/useDataDetails';
+import { VALIDATION } from '../../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh }) {
   
@@ -11,7 +12,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
     setIsEditingCommon, setIsEditingStatus, setShowDeleteConfirm,
     handleInputChange, handleCancelCommon, handleCancelStatus, handleDeleteRecord,
     handleSaveCommon, handleSaveStatus, formatDecoratedDate,
-    handleCopy // <-- AMBIL FUNGSI COPY
+    handleCopy 
   } = useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh });
 
   if (!item) return null;
@@ -63,7 +64,16 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
               <div className="p-4 md:p-5 lg:p-6 space-y-4 md:space-y-5">
                 <div className="min-h-[40px] md:min-h-[44px] flex items-center">
                   {isEditingCommon ? (
-                    <input type="text" name="title" value={formData.title} onChange={handleInputChange} className={typography.titleEdit} placeholder="Record title..." autoFocus />
+                    <input 
+                      type="text" 
+                      name="title" 
+                      value={formData.title} 
+                      onChange={handleInputChange} 
+                      className={typography.titleEdit} 
+                      placeholder="Record title..." 
+                      autoFocus 
+                      maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- 2. TAMBAH MAXLENGTH
+                    />
                   ) : (
                     <h3 className={typography.titleView}>{detailedItem.title}</h3>
                   )}
@@ -71,15 +81,20 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
 
                 <div className="relative mt-2 md:mt-3">
                   <label className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-[var(--card)] px-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] z-10">Data Content</label>
-                  {/* TAMBAHAN KELAS GROUP PADA CONTAINER BAWAH INI */}
                   <div className="w-full h-[180px] md:h-[200px] lg:h-[220px] border border-[var(--border)] rounded-xl md:rounded-2xl overflow-hidden relative group">
                     {isEditingCommon ? (
-                      <textarea name="content" value={formData.content} onChange={handleInputChange} className={typography.contentEdit} placeholder="Enter your confidential data..." />
+                      <textarea 
+                        name="content" 
+                        value={formData.content} 
+                        onChange={handleInputChange} 
+                        className={typography.contentEdit} 
+                        placeholder="Enter your confidential data..." 
+                        maxLength={VALIDATION.RECORD.MAX_CONTENT} // <-- 2. TAMBAH MAXLENGTH
+                      />
                     ) : (
                       <div className="w-full h-full overflow-y-auto custom-scrollbar p-3 md:p-4 bg-[var(--secondary)]/30 relative">
                         <p className={typography.contentView}>{detailedItem.content || <span className="italic opacity-50">Empty content</span>}</p>
                         
-                        {/* TOMBOL COPY FLOATING DI SINI */}
                         {detailedItem.content && (
                           <button 
                             onClick={() => handleCopy(detailedItem.content)}
@@ -101,7 +116,14 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                   </div>
                   <div className="min-h-[32px] md:min-h-[36px] flex items-center">
                     {isEditingCommon ? (
-                      <input type="text" name="tags" value={formData.tags} onChange={handleInputChange} className={typography.metaEdit} placeholder="work, private, api" />
+                      <input 
+                        type="text" 
+                        name="tags" 
+                        value={formData.tags} 
+                        onChange={handleInputChange} 
+                        className={typography.metaEdit} 
+                        placeholder={`e.g. work, private (max ${VALIDATION.RECORD.MAX_TAGS_COUNT} tags)`} // <-- 3. UPDATE PLACEHOLDER
+                      />
                     ) : (
                       <div className={`${typography.metaView} flex flex-wrap gap-1.5 md:gap-2`}>
                         {detailedItem.tags && detailedItem.tags.length > 0 ? detailedItem.tags.map((tag, idx) => (
@@ -117,7 +139,12 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 {isEditingCommon ? (
                   <>
                     <button onClick={handleCancelCommon} disabled={isSavingCommon} className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">Cancel</button>
-                    <button onClick={handleSaveCommon} disabled={isSavingCommon} className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--foreground)] text-[var(--background)] text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:opacity-90 transition-opacity shadow-md disabled:opacity-70 cursor-pointer">
+                    {/* 4. DISABLED JIKA KOSONG */}
+                    <button 
+                      onClick={handleSaveCommon} 
+                      disabled={isSavingCommon || !formData.title.trim() || !formData.content.trim()} 
+                      className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--foreground)] text-[var(--background)] text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:opacity-90 transition-opacity shadow-md disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                    >
                       {isSavingCommon ? <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" /> : <Save className="w-3.5 h-3.5 md:w-4 md:h-4" />}
                       <span>Save Information</span>
                     </button>

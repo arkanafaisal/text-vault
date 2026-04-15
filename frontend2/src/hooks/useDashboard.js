@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import api from '../utils/api';
 import { navigate } from '../utils/navigation';
 import { toast } from '../utils/toast';
+// Import semua konstanta yang diperlukan
+import { VALIDATION, PAGINATION, UI, SYSTEM_MESSAGES } from '../utils/constants';
 
 export function useDashboard() {
   const [user, setUser] = useState(null);
@@ -16,28 +18,27 @@ export function useDashboard() {
 
   const [searchInput, setSearchInput] = useState('');
   
-  // 1. TAMBAHKAN PAGE DI SINI
   const [queryParams, setQueryParams] = useState({ 
     search: '', 
-    visibility: '', // Ganti isLocked menjadi visibility
+    visibility: '', 
     sort: '', 
     page: 1 
   });
-  const [hasNextPage, setHasNextPage] = useState(false); // Penanda tombol Next
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   const [isRefreshing, setIsRefreshing] = useState(false); 
   const [typingProgress, setTypingProgress] = useState(false);
   const isFirstRender = useRef(true);
 
-  // Fungsi internal untuk memproses dan memotong data dari backend (30 dari 51)
   const processPaginationData = (rawData) => {
     if (!rawData) return;
-    if (rawData.length > 30) {
+    // Menggunakan PAGINATION.DASHBOARD_LIMIT (30)
+    if (rawData.length > PAGINATION.DASHBOARD_LIMIT) {
       setHasNextPage(true);
-      setData(rawData.slice(0, 30)); // Ambil 30 saja, timpa data lama
+      setData(rawData.slice(0, PAGINATION.DASHBOARD_LIMIT)); 
     } else {
       setHasNextPage(false);
-      setData(rawData); // Timpa data lama
+      setData(rawData); 
     }
   };
 
@@ -72,7 +73,8 @@ export function useDashboard() {
         }
       } catch (error) {
         if (isMounted) {
-          toast.error('Failed to connect to the server.');
+          // Menggunakan SYSTEM_MESSAGES
+          toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
           setIsLoading(false);
           setIsFetchingData(false);
         }
@@ -91,15 +93,18 @@ export function useDashboard() {
     }
 
     setTypingProgress(false);
+    // 50ms bisa dipertimbangkan masuk UI constant ke depannya
     const animationTimer = setTimeout(() => { setTypingProgress(true); }, 50);
 
     const timer = setTimeout(() => {
       setQueryParams(prev => {
         if (prev.search === searchInput) return prev;
-        // 2. JIKA USER MENGETIK PENCARIAN, KEMBALIKAN KE PAGE 1
-        return { ...prev, search: searchInput, page: 1 }; 
+        
+        // Memastikan search query dipotong sesuai MAX_TITLE
+        const safeSearchInput = searchInput.substring(0, VALIDATION.RECORD.MAX_TITLE);
+        return { ...prev, search: safeSearchInput, page: 1 }; 
       });
-    }, 2000); 
+    }, UI.SEARCH_DEBOUNCE_MS); // Menggunakan UI.SEARCH_DEBOUNCE_MS (2000)
 
     return () => {
       clearTimeout(animationTimer);
@@ -126,7 +131,7 @@ export function useDashboard() {
           }
         }
       } catch (error) {
-        if (isMounted) toast.error('Failed to fetch filtered data.');
+        if (isMounted) toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
       } finally {
         if (isMounted) {
           setIsRefreshing(false);
@@ -139,10 +144,9 @@ export function useDashboard() {
     return () => { isMounted = false; };
   }, [queryParams]);
 
-  // 3. FUNGSI KONTROL PAGINASI
   const handleNextPage = () => {
     setQueryParams(prev => ({ ...prev, page: prev.page + 1 }));
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // UX mulus kembali ke atas
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const handlePrevPage = () => {
@@ -160,7 +164,7 @@ export function useDashboard() {
         toast.error(result.message);
       }
     } catch (error) {
-      toast.error('Failed to sync vault data.');
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
     } finally {
       setIsRefreshing(false);
     }
@@ -193,10 +197,10 @@ export function useDashboard() {
   return {
     user, data, isLoading, isFetchingData, selectedItem, isAddModalOpen,
     searchInput, setSearchInput, queryParams, setQueryParams,
-    isRefreshing, typingProgress, hasNextPage, // <-- Export state baru
+    isRefreshing, typingProgress, hasNextPage, 
     handleForceRefresh, handleLogout,
     handleItemClick, handleCloseModal, handleOpenAddModal, handleCloseAddModal,
     handleDataAdded, handleDataUpdated, handleDataDeleted,
-    handleNextPage, handlePrevPage // <-- Export fungsi baru
+    handleNextPage, handlePrevPage 
   };
 }

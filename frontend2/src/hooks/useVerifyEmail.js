@@ -28,7 +28,7 @@ export function useVerifyEmail(token) {
       } catch (error) {
         if (isMounted) {
           setStatus('error');
-          setMessage('A network error occurred. Please try again later.');
+          setMessage(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. GANTI TEKS STATIS
         }
       }
     };
