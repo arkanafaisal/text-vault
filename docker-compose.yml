@@ -36,6 +36,8 @@ services:
       FLYWAY_PASSWORD: ${MYSQL_PASSWORD}
       FLYWAY_VALIDATE_MIGRATION_NAMING: "true"
     command: migrate
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
 
 
 
