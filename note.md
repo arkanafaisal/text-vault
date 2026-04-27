@@ -1,4 +1,4 @@
-feature: 
+feature
 - responsive (mobile tablet pc)
 - dark mode
 - verify email
@@ -15,9 +15,43 @@ feature:
 - pagination (limit 30)
 
 
+updates:
+~ 27/04/2026 :
+- change subdomain to textvault2
+- refactor error message logging
+- fix subdomain url on mailer function
+
+~ 10/03/2026 - 26/04/2026 :
+- redesign color palette (reduce light, enchance contrast)
+- dashboard pagination
+- server side encrypting
+- test api speed after cache
+- use flyway migration
+- docker containerization (+ compose)
+- not found error (affectedRows === 0) handling by userId or dataId (avoid stuck cache)
+- search title tags and filter sort & islocked
+- fix auth.authenticateUser
+- fix add & edit data payload, also api
+- fix update password
+- dynamic api parameter calls & undefined joi schema
+- refactor destructure redis / validate
+- use validateRequest
+- updatecommon updatestatus lastupdate modular
+- update status bug (no select)
+- hide data id & move last updated
+- get with query
+- change snake_case to camelCase
+- strict api object parameter
+- refactor validate
+- implement express-async-handler
 
 
-ideas:
+
+
+
+
+
+to-do:
 - input validation (length, regex, required) 
 - google login (session profile and ask username for register)
 - footer feedback
@@ -61,28 +95,6 @@ ideas:
 
 
 done:
-- redesign color palette (reduce light, enchance contrast)
-- dashboard pagination
-- server side encrypting
-- test api speed after cache
-- use flyway migration
-- docker containerization (+ compose)
-- not found error (affectedRows === 0) handling by userId or dataId (avoid stuck cache)
-- search title tags and filter sort & islocked
-- fix auth.authenticateUser
-- fix add & edit data payload, also api
-- fix update password
-- dynamic api parameter calls & undefined joi schema
-- refactor destructure redis / validate
-- use validateRequest
-- updatecommon updatestatus lastupdate modular
-- update status bug (no select)
-- hide data id & move last updated
-- get with query
-- change snake_case to camelCase
-- strict api object parameter
-- refactor validate
-- implement express-async-handler
 
 
 
