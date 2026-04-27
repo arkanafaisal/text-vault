@@ -10,8 +10,8 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const root = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://textvault2.arkanafaisal.my.id";
 const projectName = process.env.PROJECT_NAME || 'DataBox';
+const root = process.env.NODE_ENV === "development" ? "http://localhost:5173" : `https://${projectName}.arkanafaisal.my.id`;
 
 // Helper function agar desain UI email seragam dan tidak perlu ditulis ulang
 const generateEmailTemplate = (title, message, buttonText, link) => {
