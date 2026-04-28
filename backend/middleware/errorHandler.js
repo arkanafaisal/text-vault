@@ -1,9 +1,10 @@
 export function errorHandler(err, req, res, next){
-    let code = 500
+    
+    if(err instanceof SyntaxError && err.status === 400 && 'body' in err){return res.status(400).json({error: "invalid JSON format"})}
+    if(err.code === 'ER_DUP_ENTRY' || err.message === 'duplicate'){return res.sendStatus(409)}
 
-    if(err.code === 'ER_DUP_ENTRY' || err.message === 'duplicate'){code = 409}
+    console.log(err.message)
 
-    if(code !== 500){console.log(err.message)}
-
-    return res.sendStatus(code)
+    
+    return res.sendStatus(500)
 };
