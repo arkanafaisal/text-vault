@@ -27,6 +27,7 @@ const rl = {
     updateUsername: { ttl: 60, limit: 10, increaseBy: 10 }, // Rare action. 1 success per hour to prevent name squatting/confusion.
     updatePassword: { ttl: 60, limit: 10, increaseBy: 5 }, // Security sensitive. 1 success per hour.
     updatePublicKey: { ttl: 5, limit: 20, increaseBy: 5 }, // Users might toggle this on/off to test their public link.
+    deleteUser: { ttl: 60, limit: 10, increaseBy: 10 },
 
     sendEmailVerification: { ttl: 60, limit: 10, increaseBy: 5 }, // Strict. 1 success per hour to prevent third-party email spam.
 

@@ -151,6 +151,16 @@ const apiMessages = {
       if (status === 200) return "Public key updated successfully.";
       
       return `Failed to update public key (Code: ${status}).`;
+    },
+    deleteMe: async (response) => {
+      const common = await handleCommonMessages(response);
+      if (common) return common;
+      
+      const status = response.status;
+      if (status === 200 || status === 204) return "Account deleted successfully.";
+      if (status === 400) return "Invalid username confirmation.";
+      
+      return `Failed to delete account (Code: ${status}).`;
     }
   },
 

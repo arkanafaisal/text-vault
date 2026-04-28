@@ -16,3 +16,5 @@ userRouter.patch('/me/username',    limit("updateUsername"),            jwtVerif
 userRouter.patch('/me/public-key',  limit("updatePublicKey"),           jwtVerify,  userController.updatePublicKey)
 userRouter.patch('/me/email',       limit("sendEmailVerification"),     jwtVerify,  userController.sendEmailVerification)
 userRouter.patch('/me/password',    limit("updatePassword"),            jwtVerify,  userController.updatePassword)
+
+userRouter.delete('/me', limit("deleteUser"), jwtVerify, userController.deleteUser)

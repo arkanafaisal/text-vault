@@ -73,3 +73,9 @@ export async function updatePassword({ id, password }) {
     const [{affectedRows}] = await db.query("UPDATE users SET password = ? WHERE id = ?", [password, id])
     return affectedRows
 }
+
+
+export async function deleteUser({ id, username }) {
+    const [{ affectedRows }] = await db.query('DELETE FROM users WHERE id = ? AND username = ?', [id, username])
+    return affectedRows
+}

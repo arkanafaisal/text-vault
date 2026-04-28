@@ -12,6 +12,7 @@ import { response } from "../utils/response.js";
 import { logging } from "../utils/logging.js"
 import { validateRequest } from "../utils/requestValidation.js"
 import asyncHandler from "express-async-handler"
+import redis from "../config/redis.js"
 
 export const userController = {}
 
@@ -22,7 +23,7 @@ userController.getMyProfile = asyncHandler(async (req, res)=> {
     if(ok){return res.status(200).json(data)}
 
     const user = await UserModel.getUserById({id: req.user.id})
-    if(!user){return response.sendStatus(401)}
+    if(!user){return res.sendStatus(401)}
 
     await redisHelper.set('profile', req.user.id, user)
     return res.status(200).json(user)
@@ -44,7 +45,7 @@ userController.updateUsername = asyncHandler(async (req, res) => {
     if(changedRows === 0){return res.sendStatus(200)}
 
     await redisHelper.del('profile', req.user.id)
-    await redisHelper.del('publicData', req.user.id)
+    await redisHelper.delPattern('publicData', req.user.id)
 
     return res.sendStatus(200)
 })
@@ -85,7 +86,7 @@ userController.updatePublicKey = asyncHandler(async (req, res) => {
     if(changedRows === 0){return res.sendStatus(200)}
 
     await redisHelper.del('profile', req.user.id)
-    await redisHelper.del('publicData', req.user.id)
+    await redisHelper.delPattern('publicData', req.user.id)
     
     return res.sendStatus(200)
 })
@@ -114,5 +115,22 @@ userController.sendEmailVerification = asyncHandler(async (req, res) => {
     await sendMail.verifyEmail({email, token})
 
     await incrbyRateLimit('sendEmailVerification', req.ip)
+    return res.sendStatus(200)
+})
+
+
+userController.deleteUser = asyncHandler(async (req, res) => {
+    logging('/users/me')
+
+    const body = validateRequest({ schema: UserSchema.deleteUser, target: req.body, res })
+    if(!body){return}
+
+    const affectedRows = await UserModel.deleteUser({ id: req.user.id, ...body })
+    if(!affectedRows){return res.sendStatus(400)}
+
+    await redisHelper.del('profile', req.user.id)
+    await redisHelper.delPattern('allData', req.user.id)
+    await redisHelper.delPattern('publicData', req.user.id)
+
     return res.sendStatus(200)
 })

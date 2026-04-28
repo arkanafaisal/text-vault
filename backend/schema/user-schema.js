@@ -30,3 +30,4 @@ export const resetPassword = Joi.object({ password })
 export const checkUsername = Joi.object({ username: username.required() })
 
 export const publicData = Joi.object({ username: username.lowercase().required(), publicKey })
+export const deleteUser = Joi.object({ username: username.required() })

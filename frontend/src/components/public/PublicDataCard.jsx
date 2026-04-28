@@ -1,6 +1,6 @@
 // src/components/public/PublicDataCard.jsx
 import React, { useState } from 'react';
-import { Copy, X, FileText, Tag } from 'lucide-react'; // <-- Eye Dihapus
+import { Copy, X, FileText, Tag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function PublicDataCard({ item, onCopy }) {
@@ -18,8 +18,8 @@ export default function PublicDataCard({ item, onCopy }) {
   return (
     <>
       <div 
-        onClick={() => setIsModalOpen(true)} // <-- DIPINDAHKAN KE SINI
-        className="flex-grow flex items-center justify-between gap-2.5 md:gap-3 bg-[var(--primary)]/10 text-[var(--foreground)] border border-[var(--primary)]/40 rounded-xl p-2.5 md:p-3 shadow-sm hover:bg-[var(--primary)]/20 hover:border-[var(--primary)] hover:shadow-md transition-all duration-300 min-w-[150px] md:min-w-[180px] max-w-full cursor-pointer active:scale-[0.98]" // <-- TAMBAH CURSOR & SCALE
+        onClick={() => setIsModalOpen(true)}
+        className="flex-grow flex items-center justify-between gap-2.5 md:gap-3 bg-[var(--primary)]/10 text-[var(--foreground)] border border-[var(--primary)]/40 rounded-xl p-2.5 md:p-3 shadow-sm hover:bg-[var(--primary)]/20 hover:border-[var(--primary)] hover:shadow-md transition-all duration-300 min-w-[150px] md:min-w-[180px] max-w-full cursor-pointer active:scale-[0.98]"
       >
         <h3 className={`font-bold leading-tight truncate flex-1 ${getTitleFontSize(item.title)}`} title={item.title}>
           {item.title}
@@ -28,7 +28,7 @@ export default function PublicDataCard({ item, onCopy }) {
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <button 
             onClick={(e) => {
-              e.stopPropagation(); // <-- MENCEGAH MODAL IKUT TERBUKA SAAT MENEKAN COPY
+              e.stopPropagation();
               onCopy(item.content);
             }}
             className="p-1.5 md:p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer shadow-sm"
@@ -36,7 +36,6 @@ export default function PublicDataCard({ item, onCopy }) {
           >
             <Copy className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </button>
-          {/* TOMBOL EYE DIHAPUS DARI SINI */}
         </div>
       </div>
 
@@ -44,27 +43,38 @@ export default function PublicDataCard({ item, onCopy }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer" onClick={() => setIsModalOpen(false)} />
           <div className="bg-[var(--card)] w-full max-w-2xl max-h-[85vh] rounded-[2rem] border border-[var(--border-strong)] shadow-2xl relative z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-5 md:p-6 border-b border-[var(--border)]">
-              <h2 className="text-xl font-bold tracking-tight text-[var(--foreground)]">{item.title}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)]">
+            
+            {/* 1. UPDATE HEADER MODAL: Font Dinamis + Truncate */}
+            <div className="flex items-center justify-between p-5 md:p-6 border-b border-[var(--border)] gap-4">
+              <h2 className={`font-bold tracking-tight text-[var(--foreground)] truncate flex-1 ${getTitleFontSize(item.title)}`} title={item.title}>
+                {item.title}
+              </h2>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)] flex-shrink-0">
                 <X className="w-5 h-5" />
               </button>
             </div>
+
             <div className="p-5 md:p-6 overflow-y-auto custom-scrollbar space-y-4 flex-1 bg-[var(--secondary)]/30">
               <div>
                 <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">
                   <FileText className="w-3.5 h-3.5" /> {t('public.card.content')}
                 </label>
-                <div className="w-full min-h-[160px] bg-[var(--background)] rounded-xl p-4 border border-[var(--border)] shadow-sm relative group">
+                
+                {/* 2. UPDATE KOTAK KONTEN: Fixed Height + Overflow Hidden */}
+                <div className="w-full h-[160px] md:h-[200px] bg-[var(--background)] rounded-xl p-4 border border-[var(--border)] shadow-sm relative group overflow-hidden">
                   <p className="text-sm md:text-base leading-relaxed text-[var(--foreground)] whitespace-pre-wrap">{item.content}</p>
                   <button 
                     onClick={() => onCopy(item.content)}
-                    className="absolute top-3 right-3 p-2 bg-[var(--secondary)] hover:bg-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-colors cursor-pointer lg:opacity-0 lg:group-hover:opacity-100 shadow-sm"
+                    className="absolute top-3 right-3 p-2 bg-[var(--secondary)] hover:bg-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-colors cursor-pointer lg:opacity-0 lg:group-hover:opacity-100 shadow-sm z-10"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
+                  
+                  {/* Efek Gradasi Pudar (Opsional, agar potongan terlihat lebih estetik) */}
+                  <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-[var(--background)] to-transparent pointer-events-none" />
                 </div>
               </div>
+
               {item.tags && item.tags.length > 0 && (
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">

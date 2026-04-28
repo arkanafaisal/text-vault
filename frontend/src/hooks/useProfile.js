@@ -3,8 +3,13 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { validateProfileField } from '../helpers/profileValidation';
 import { SYSTEM_MESSAGES } from '../utils/constants';
+import { toast } from '../utils/toast';
+import { useTranslation } from 'react-i18next';
+
 
 export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
+  const { t } = useTranslation()
+
   const [editingField, setEditingField] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [errors, setErrors] = useState({});
@@ -13,6 +18,9 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
   
   // State untuk Confirmation Modal
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: '', targetEmail: '' });
+
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, confirmUsername: '' });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Pindahkan useEffect listener tombol Escape ke sini
   useEffect(() => {
@@ -152,6 +160,30 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (deleteModal.confirmUsername !== user.displayName) {
+      toast.error(t('dashboard.profile.errUsernameMatch'));
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const result = await api.users.deleteMe({ username: deleteModal.confirmUsername });
+      
+      if (result.success) {
+        toast.success(result.message);
+        // Paksa refresh ke halaman utama untuk membersihkan semua state/cookies
+        window.location.href = '/'; 
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return {
     editingField,
     editValue,
@@ -165,6 +197,10 @@ export function useProfile({ isOpen, onClose, user, onUpdateUser }) {
     handleSave,
     handleEditClick,
     handleForgotPasswordClick,
-    executeConfirmAction
+    executeConfirmAction,
+    deleteModal, // <-- EXPORT STATE INI
+    setDeleteModal, // <-- EXPORT FUNGSI INI
+    isDeleting, // <-- EXPORT STATE INI
+    handleDeleteUser
   };
 }

@@ -155,6 +155,18 @@ const api = {
       let data = null;
       if (success) data = await response.clone().json().catch(() => null);
       return { success, message, data, httpCode: response.status };
+    },
+    deleteMe: async ({ username }) => {
+      const response = await fetcher('users/me', { 
+        method: 'DELETE', 
+        body: { username } 
+      }); // Parameter ketiga kosong = true (otomatis menyertakan cookies/token)
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const responseMessage = await apiMessages.users.deleteMe(response);
+      
+      return { success, message: responseMessage, data: null, httpCode };
     }
   },
 

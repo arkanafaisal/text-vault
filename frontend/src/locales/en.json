@@ -176,7 +176,16 @@
       "placeNewPass": "New password",
       "placeNew": "Enter new {{label}}",
       "forgotPass": "Forgot password?",
-      "notSet": "Not set"
+      "notSet": "Not set",
+      "dangerZone": "Danger Zone",
+      "deleteAccount": "Delete Account",
+      "deleteDesc": "Permanently remove your account and all associated data. This action cannot be undone.",
+      "deleteModalTitle": "Confirm Deletion",
+      "deleteModalWarning": "You are about to permanently delete your account. All your encrypted records, tags, and profile data will be wiped from our servers immediately.",
+      "deleteModalLabel": "Type your username to confirm:",
+      "deleteModalPlaceholder": "Enter your username...",
+      "btnConfirmDelete": "Permanently Delete",
+      "errUsernameMatch": "Username confirmation does not match."
     }
   },
   "public": {

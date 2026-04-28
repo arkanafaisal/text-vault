@@ -22,13 +22,16 @@ updates:
 - fix copy button in dashboard & public card (mobile & tablet) 
 - readjust rate limit
 - invalid JSON request handler
-- remove frontend folder, rename frontend2 to frontend (and build config)
+- removed frontend folder, rename frontend2 to frontend (and docker build config)
 - update landing page footer
 - add feedback feature on dashboard and public
 - change package json project name, folder name, repo name
 - use i18n (english) in dashboard & public page
 - fix last update miss value
 - redesign public data card
+- dynamic title fontsize (length based)
+- public data pagination
+- delete user
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -77,12 +80,9 @@ updates:
 
 to do:
 - alert server error + button open modal report admin
-- delete user
 - tags input
 - sticky public page input form
-- modify ui for long word possibility
 - testing, logging
-- public data pagination (and input lock)
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
@@ -94,6 +94,7 @@ to do:
 - skeleton loading
 - docker compose for frontend only
 
+- tutorial / help
 - review constant variable to table schema
 - smoothscroll public page to bottom (untl section header hidden) at /public after data found
 - re-test api speed after cache
