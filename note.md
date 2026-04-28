@@ -27,7 +27,8 @@ updates:
 - add feedback feature on dashboard and public
 - change package json project name, folder name, repo name
 - use i18n (english) in dashboard & public page
-- fix updatedAt miss value
+- fix last update miss value
+- redesign public data card
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -79,14 +80,13 @@ to do:
 - delete user
 - tags input
 - sticky public page input form
-- redesign public data card
 - modify ui for long word possibility
 - testing, logging
+- public data pagination (and input lock)
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
 - frontend encrypting choice ( random key + derive password )
-- public data pagination (and input lock)
 - server health tracker
 - word count tracker
 - profile modal state url

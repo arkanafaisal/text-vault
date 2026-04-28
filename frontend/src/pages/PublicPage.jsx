@@ -72,7 +72,7 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
             </div>
           ) : hasSearched ? (
             data.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {data.map(item => (
                   <PublicDataCard key={item.id} item={item} onCopy={handleCopy} />
                 ))}

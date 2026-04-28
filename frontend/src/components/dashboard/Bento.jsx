@@ -3,7 +3,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next'; // <-- IMPORT
 
 export default function Bento({ data, onItemClick }) {
-  const { t } = useTranslation(); // <-- HOOK
+  const { t } = useTranslation();
+
+  // Logika font dinamis agar judul pendek terlihat lebih tegas
+  const getFontSize = (title) => {
+    const len = title?.length || 0;
+    if (len <= 8) return 'text-sm md:text-lg lg:text-xl';
+    if (len <= 15) return 'text-xs md:text-base lg:text-lg';
+    return 'text-[10px] md:text-sm lg:text-base';
+  };
 
   if (!data || data.length === 0) {
     return (
@@ -16,7 +24,6 @@ export default function Bento({ data, onItemClick }) {
   return (
     <div className="flex flex-wrap gap-1.5 md:gap-2 lg:gap-3">
       {data.map((item) => {
-        // Cek berdasarkan visibility string 'private'
         const colorClass = item.visibility === 'private'
           ? 'bg-[var(--card)] text-[var(--foreground)] border-[var(--border-strong)] shadow-sm hover:border-[var(--muted-foreground)] hover:shadow-md'
           : 'bg-[var(--primary)]/10 text-[var(--foreground)] border-[var(--primary)]/40 shadow-sm hover:bg-[var(--primary)]/20 hover:border-[var(--primary)] hover:shadow-md';
@@ -27,7 +34,7 @@ export default function Bento({ data, onItemClick }) {
             onClick={() => onItemClick(item)}
             className={`flex-grow flex items-center justify-center px-2.5 py-1.5 md:px-3 md:py-2 lg:px-4 lg:py-2.5 rounded-lg md:rounded-xl border transition-all duration-300 cursor-pointer min-w-[70px] md:min-w-[90px] lg:min-w-[120px] max-w-full active:scale-[0.98] ${colorClass}`}
           >
-            <h3 className="font-bold text-center text-xs md:text-base lg:text-lg break-words w-full leading-tight">
+            <h3 className={`font-bold text-center break-words w-full leading-tight ${getFontSize(item.title)}`}>
               {item.title}
             </h3>
           </div>
