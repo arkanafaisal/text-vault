@@ -32,3 +32,10 @@ export const UI = {
 export const SYSTEM_MESSAGES = {
   NETWORK_ERROR: 'A network error occurred. Please check your connection.',
 };
+
+export const AUTHOR = {
+  NAME: 'Arkana',
+  GITHUB: 'https://github.com/arkanafaisal/text-vault',
+  LINKEDIN: 'https://linkedin.com/in/arkana-faisal-ridho-8a4085344',
+  WEBSITE: 'https://arkanafaisal.my.id'
+};

@@ -15,11 +15,7 @@ export const publicController = {}
 publicController.getData = asyncHandler(async (req, res) => {
   logging('/public/data');
 
-  const body = validateRequest({
-    schema: publicData,
-    target: req.body,
-    res
-  });
+  const body = validateRequest({ schema: publicData, target: req.body, res });
   if (!body) return;
 
   const userId = await getIdByUsernamePublickey(body);

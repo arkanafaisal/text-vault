@@ -21,6 +21,7 @@ updates:
 ~ v3.0.1 - 28/04/2026 :
 - fix copy button in dashboard & public card (mobile & tablet) 
 - readjust rate limit
+- invalid JSON request handler
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -68,7 +69,6 @@ updates:
 
 
 to-do:
-- request json invalid handler
 - change footer, feedback
 - alert server error + button open modal report admin
 - delete user
@@ -88,7 +88,6 @@ to-do:
 - profile modal state url
 - window.location.href push, possible to do undo redo
 - skeleton loading
-- add copy in dashboard (mobile)
 - docker compose for frontend only
 - change package json project name, folder name, repo name
 
