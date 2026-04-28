@@ -3,8 +3,8 @@ import redis from "../config/redis.js"
 // ttl = minute
 const rl = {
     // --- AUTHENTICATION ROUTER ---
-    register: { ttl: 60, limit: 10, increaseBy: 10 }, // Generous for typos. 1 successful account creation per hour.
-    login: { ttl: 15, limit: 10, increaseBy: 10 }, // 10 attempts. Success fills the bucket to prevent rapid re-logins.
+    register: { ttl: 60, limit: 10, increaseBy: 3 }, // Generous for typos. 3 successful account creation per hour.
+    login: { ttl: 15, limit: 10, increaseBy: 3 }, // 10 attempts. Success fills 1/3 the bucket to prevent rapid re-logins.
     logout: { ttl: 15, limit: 30 }, // No success penalty. Low risk.
     refresh: { ttl: 15, limit: 60 }, // Generous for background token refreshing.
     verifyEmail: { ttl: 60, limit: 10, increaseBy: 10 }, // 10 attempts for mistyped codes. 1 success per hour.
@@ -14,9 +14,9 @@ const rl = {
     // --- DATAS ROUTER ---
     getMyData: { ttl: 1, limit: 30 }, // 60 per minute. Allows rapid inbox polling/refreshing.
     getById: {ttl: 1, limit: 20},
-    createData: { ttl: 20, limit: 40, increaseBy: 5},
-    updateCommon: { ttl: 20, limit: 40, increaseBy: 5},
-    updateStatus: { ttl: 10, limit: 20, increaseBy: 5},
+    createData: { ttl: 20, limit: 80, increaseBy: 5},
+    updateCommon: { ttl: 20, limit: 80, increaseBy: 5},
+    updateStatus: { ttl: 30, limit: 60, increaseBy: 5},
     deleteData: { ttl: 20, limit: 40, increaseBy: 5},
 
 
@@ -28,7 +28,7 @@ const rl = {
     updatePassword: { ttl: 60, limit: 10, increaseBy: 5 }, // Security sensitive. 1 success per hour.
     updatePublicKey: { ttl: 5, limit: 20, increaseBy: 5 }, // Users might toggle this on/off to test their public link.
 
-    sendEmailVerification: { ttl: 60, limit: 5, increaseBy: 5 }, // Strict. 1 success per hour to prevent third-party email spam.
+    sendEmailVerification: { ttl: 60, limit: 10, increaseBy: 5 }, // Strict. 1 success per hour to prevent third-party email spam.
 
     // --- PUBLIC ROUTER ---
     publicData: { ttl: 10, limit: 100, increaseBy: 5 }

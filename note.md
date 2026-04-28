@@ -20,6 +20,7 @@ feature
 updates:
 ~ v3.0.1 - 28/04/2026 :
 - fix copy button in dashboard & public card (mobile & tablet) 
+- readjust rate limit
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -58,6 +59,7 @@ updates:
 - review docker compose prod
 - validate input tags
 - add copy in dashboard 
+- input validation (length, regex, required) 
 
 
 
@@ -66,18 +68,16 @@ updates:
 
 
 to-do:
-- readjust rate limit
+- request json invalid handler
 - change footer, feedback
 - alert server error + button open modal report admin
 - delete user
 - tags input
-- testing, logging
-- input validation (length, regex, required) 
-- modify ui for long word possibility
-- fix updatedAt miss value
-- request json invalid handler
 - sticky public page input form
 - redesign public data card
+- fix updatedAt miss value
+- modify ui for long word possibility
+- testing, logging
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
