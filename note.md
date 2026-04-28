@@ -26,7 +26,8 @@ updates:
 - update landing page footer
 - add feedback feature on dashboard and public
 - change package json project name, folder name, repo name
-- use i18n (english) in public page
+- use i18n (english) in dashboard & public page
+- fix updatedAt miss value
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -79,7 +80,6 @@ to do:
 - tags input
 - sticky public page input form
 - redesign public data card
-- fix updatedAt miss value
 - modify ui for long word possibility
 - testing, logging
  

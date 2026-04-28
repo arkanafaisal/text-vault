@@ -80,8 +80,18 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
   const formatDecoratedDate = (dateString) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+
+
+    const localString = dateString.endsWith('Z') ? dateString.slice(0, -1) : dateString;
+    const date = new Date(localString);
+    
     return `${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, ${date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  };
+
+  const getLocalISOString = () => {
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - tzOffset).toISOString().slice(0, -1);
   };
 
   const handleInputChange = (e) => {
@@ -206,7 +216,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
         if (isTitleChanged) updatedData.title = newTitle;
         if (isContentChanged) updatedData.content = formData.content;
         if (isTagsChanged) updatedData.tags = tagsArray;
-        updatedData.updatedAt = new Date().toISOString();
+        updatedData.updatedAt = getLocalISOString();
         
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
@@ -241,7 +251,7 @@ export function useDataDetails({ item, onClose, onDataUpdated, onDataDeleted, on
 
       if (result && result.success) {
         toast.success(result.message); 
-        const updatedData = { ...detailedItem, visibility: formData.visibility, updatedAt: new Date().toISOString() };
+        const updatedData = { ...detailedItem, visibility: formData.visibility, updatedAt: getLocalISOString() };
         
         setDetailedItem(updatedData);
         if (onDataUpdated) onDataUpdated(updatedData);
