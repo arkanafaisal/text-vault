@@ -12,7 +12,7 @@ feature
 - rate limit
 - one way password encrypting
 - server side encrypting
-- pagination (limit 30)
+- dashboard pagination (limit 30)
 
 
 
@@ -25,6 +25,8 @@ updates:
 - remove frontend folder, rename frontend2 to frontend (and build config)
 - update landing page footer
 - add feedback feature on dashboard and public
+- change package json project name, folder name, repo name
+- use i18n (english) in public page
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -71,7 +73,7 @@ updates:
 
 
 
-to-do:
+to do:
 - alert server error + button open modal report admin
 - delete user
 - tags input
@@ -91,7 +93,6 @@ to-do:
 - window.location.href push, possible to do undo redo
 - skeleton loading
 - docker compose for frontend only
-- change package json project name, folder name, repo name
 
 - review constant variable to table schema
 - smoothscroll public page to bottom (untl section header hidden) at /public after data found
