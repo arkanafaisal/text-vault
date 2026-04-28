@@ -18,30 +18,30 @@ feature
 
 
 updates:
-~ v3.0.1 - 28/04/2026 :
-- fix copy button in dashboard & public card (mobile & tablet) 
-- readjust rate limit
-- invalid JSON request handler
-- removed frontend folder, rename frontend2 to frontend (and docker build config)
-- update landing page footer
-- add feedback feature on dashboard and public
-- change package json project name, folder name, repo name
-- use i18n (english) in dashboard & public page
-- fix last update miss value
-- redesign public data card
+v3.0.1 —— 28/04/2026
+- added feedback feature (dashboard & public)
+- added public data pagination
+- added delete user feature
+- added invalid JSON request handler
+- fixed copy button in dashboard & public card (mobile & tablet) 
+- fixed last update miss value
+- adjusted rate limit
+- redesigned public data card
 - dynamic title fontsize (length based)
-- public data pagination
-- delete user
+- updated landing page footer
+- updated project name in package.json, folder, and repository
+- removed frontend folder, renamed frontend2 -> frontend (modify docker build config)
+- implemented i18n (english) in dashboard & public page
 
 
-~ v3.0.0 - 27/04/2026 :
-- change subdomain to textvault2
-- refactor error message logging
-- fix subdomain url on mailer function
-- html head (title & logo)
+v3.0.0 —— 27/04/2026 
+- changed subdomain textvault2 -> textvault
+- updated error message logging
+- updated subdomain url on mailer function
+- updated html head (title & logo)
 
 
-~ 10/03/2026 - 26/04/2026 :
+v2.0.0 —— 10/03/2026 ~ 26/04/2026 :
 - redesign color palette (reduce light, enchance contrast)
 - dashboard pagination
 - server side encrypting
