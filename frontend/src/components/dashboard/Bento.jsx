@@ -1,11 +1,14 @@
 // src/components/dashboard/Bento.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 
 export default function Bento({ data, onItemClick }) {
+  const { t } = useTranslation(); // <-- HOOK
+
   if (!data || data.length === 0) {
     return (
       <div className="w-full py-10 flex items-center justify-center text-[var(--muted-foreground)] border border-dashed border-[var(--border-strong)] rounded-2xl">
-        <p className="text-sm font-medium">No data found in your vault.</p>
+        <p className="text-sm font-medium">{t('dashboard.empty')}</p>
       </div>
     );
   }

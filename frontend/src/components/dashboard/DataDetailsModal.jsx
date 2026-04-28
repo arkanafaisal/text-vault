@@ -1,11 +1,13 @@
 // src/components/dashboard/DataDetailsModal.jsx
 import React from 'react';
 import { X, Tag, Lock, Unlock, Loader2, Save, Edit2, History, ShieldAlert, AlertCircle, Trash2, Copy } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import { useDataDetails } from '../../hooks/useDataDetails';
 import { VALIDATION } from '../../utils/constants'; // <-- 1. IMPORT KONSTANTA
 
 export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataDeleted, onForceRefresh }) {
-  
+  const { t } = useTranslation(); // <-- HOOK
+
   const {
     detailedItem, isLoadingData, isEditingCommon, isEditingStatus,
     isDeletingRecord, showDeleteConfirm, formData, isSavingCommon, isSavingStatus,
@@ -35,11 +37,11 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
         {/* HEADER */}
         <div className="flex items-center justify-between p-4 md:p-5 lg:p-6 border-b border-[var(--border)] bg-[var(--card)] flex-shrink-0">
           <div>
-            <h2 className="text-lg md:text-xl font-bold tracking-tight text-[var(--foreground)]">Record Details</h2>
+            <h2 className="text-lg md:text-xl font-bold tracking-tight text-[var(--foreground)]">{t('dashboard.modals.details.title')}</h2>
             {detailedItem && !isLoadingData && (
               <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-[var(--muted-foreground)] opacity-70 mt-1">
                 <History className="w-3 h-3 md:w-3.5 md:h-3.5 flex-shrink-0" />
-                <span>Last updated: {formatDecoratedDate(detailedItem.updatedAt)}</span>
+                <span>{t('dashboard.modals.details.lastUpdated')} {formatDecoratedDate(detailedItem.updatedAt)}</span>
               </div>
             )}
           </div>
@@ -53,7 +55,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
           <div className="flex-1 flex flex-col items-center justify-center p-10 min-h-[40vh]">
             <Loader2 className="w-10 h-10 md:w-12 md:h-12 animate-spin text-[var(--primary)] mb-4" />
             <p className="text-xs md:text-sm font-bold tracking-widest uppercase text-[var(--muted-foreground)] animate-pulse">
-              Decrypting Content...
+              {t('dashboard.modals.details.loading')}
             </p>
           </div>
         ) : detailedItem ? (
@@ -70,7 +72,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                       value={formData.title} 
                       onChange={handleInputChange} 
                       className={typography.titleEdit} 
-                      placeholder="Record title..." 
+                      placeholder={t('dashboard.modals.details.placeTitle')} 
                       autoFocus 
                       maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- 2. TAMBAH MAXLENGTH
                     />
@@ -80,7 +82,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 </div>
 
                 <div className="relative mt-2 md:mt-3">
-                  <label className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-[var(--card)] px-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] z-10">Data Content</label>
+                  <label className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-[var(--card)] px-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] z-10">{t('dashboard.modals.details.labelContent')}</label>
                   <div className="w-full h-[180px] md:h-[200px] lg:h-[220px] border border-[var(--border)] rounded-xl md:rounded-2xl overflow-hidden relative group">
                     {isEditingCommon ? (
                       <textarea 
@@ -88,18 +90,18 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         value={formData.content} 
                         onChange={handleInputChange} 
                         className={typography.contentEdit} 
-                        placeholder="Enter your confidential data..." 
+                        placeholder={t('dashboard.modals.details.placeContent')} 
                         maxLength={VALIDATION.RECORD.MAX_CONTENT} // <-- 2. TAMBAH MAXLENGTH
                       />
                     ) : (
                       <div className="w-full h-full overflow-y-auto custom-scrollbar p-3 md:p-4 bg-[var(--secondary)]/30 relative">
-                        <p className={typography.contentView}>{detailedItem.content || <span className="italic opacity-50">Empty content</span>}</p>
+                        <p className={typography.contentView}>{detailedItem.content || <span className="italic opacity-50">{t('dashboard.modals.details.emptyContent')}</span>}</p>
                         
                         {detailedItem.content && (
                           <button 
                             onClick={() => handleCopy(detailedItem.content)}
-                            className="absolute top-3 right-3 p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-all cursor-pointer lg:opacity-0 lg:group-hover:opacity-100 shadow-sm"
-                            title="Copy to Clipboard"
+                            className="absolute top-3 right-3 p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-all cursor-pointer opacity-0 group-hover:opacity-100 shadow-sm"
+                            title={t('dashboard.modals.details.copy')}
                           >
                             <Copy className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
@@ -112,7 +114,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                 <div className="space-y-2 pt-2 md:pt-3">
                   <div className="flex items-center gap-2.5 text-[var(--muted-foreground)]">
                     <Tag className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-                    <label className="text-[10px] md:text-xs font-bold uppercase tracking-widest">Tags (Comma Separated)</label>
+                    <label className="text-[10px] md:text-xs font-bold uppercase tracking-widest">{t('dashboard.modals.details.labelTags')}</label>
                   </div>
                   <div className="min-h-[32px] md:min-h-[36px] flex items-center">
                     {isEditingCommon ? (
@@ -122,14 +124,14 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         value={formData.tags} 
                         onChange={handleInputChange} 
                         className={typography.metaEdit} 
-                        placeholder={`e.g. work, private (max ${VALIDATION.RECORD.MAX_TAGS_COUNT} tags)`} // <-- 3. UPDATE PLACEHOLDER
+                        placeholder={t('dashboard.modals.details.placeTags', { max: VALIDATION.RECORD.MAX_TAGS_COUNT })} // <-- 3. UPDATE PLACEHOLDER
                         maxLength={(VALIDATION.RECORD.MAX_TAG_LENGTH + 2) * VALIDATION.RECORD.MAX_TAGS_COUNT + 10}
                       />
                     ) : (
                       <div className={`${typography.metaView} flex flex-wrap gap-1.5 md:gap-2`}>
                         {detailedItem.tags && detailedItem.tags.length > 0 ? detailedItem.tags.map((tag, idx) => (
                           <span key={idx} className="bg-[var(--secondary)] text-[var(--muted-foreground)] text-[10px] md:text-xs font-bold tracking-widest uppercase px-2 md:px-2.5 py-0.5 md:py-1 rounded-md md:rounded-lg border border-[var(--border)]">{tag}</span>
-                        )) : <span className="italic opacity-50 text-xs md:text-sm">No tags</span>}
+                        )) : <span className="italic opacity-50 text-xs md:text-sm">{t('dashboard.modals.details.emptyTags')}</span>}
                       </div>
                     )}
                   </div>
@@ -139,7 +141,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
               <div className="bg-[var(--secondary)]/50 border-t border-[var(--border)] p-3 md:p-4 flex justify-end gap-2 md:gap-3">
                 {isEditingCommon ? (
                   <>
-                    <button onClick={handleCancelCommon} disabled={isSavingCommon} className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">Cancel</button>
+                    <button onClick={handleCancelCommon} disabled={isSavingCommon} className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">{t('dashboard.modals.details.btnCancel')}</button>
                     {/* 4. DISABLED JIKA KOSONG */}
                     <button 
                       onClick={handleSaveCommon} 
@@ -147,13 +149,13 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                       className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--foreground)] text-[var(--background)] text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:opacity-90 transition-opacity shadow-md disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {isSavingCommon ? <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" /> : <Save className="w-3.5 h-3.5 md:w-4 md:h-4" />}
-                      <span>Save Information</span>
+                      <span>{t('dashboard.modals.details.btnSaveInfo')}</span>
                     </button>
                   </>
                 ) : (
                   <button onClick={() => setIsEditingCommon(true)} disabled={isSavingStatus || isEditingStatus} className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--card)] border border-[var(--border-strong)] text-[var(--foreground)] text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:bg-[var(--secondary)] transition-colors shadow-sm disabled:opacity-50 cursor-pointer">
                     <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    <span>Edit Information</span>
+                    <span>{t('dashboard.modals.details.btnEditInfo')}</span>
                   </button>
                 )}
               </div>
@@ -165,29 +167,29 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
               <div className="p-4 md:p-5 lg:p-6">
                 <div className="flex items-center gap-2 mb-4 md:mb-5 text-[var(--destructive)]">
                   <ShieldAlert className="w-4 h-4 md:w-5 md:h-5" />
-                  <h3 className="text-sm md:text-base font-bold tracking-tight">Access & Security Control</h3>
+                  <h3 className="text-sm md:text-base font-bold tracking-tight">{t('dashboard.modals.details.securityTitle')}</h3>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4 p-3 md:p-4 rounded-xl md:rounded-2xl border border-[var(--border)] bg-[var(--background)]">
                   <div className="space-y-1 lg:space-y-1.5">
                     <div className="flex items-center gap-2">
                       {formData.visibility === 'private' ? <Lock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" /> : <Unlock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[var(--muted-foreground)]" />}
-                      <label className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">Visibility Status</label>
+                      <label className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">{t('dashboard.modals.details.visibilityLabel')}</label>
                     </div>
                     <p className="text-[10px] md:text-xs text-[var(--muted-foreground)] leading-relaxed max-w-sm lg:max-w-md">
                       {formData.visibility === 'private' 
-                        ? "Strictly private. Only you can read this data when logged in." 
-                        : "Publicly accessible via your Public Key. Anyone with the link can read this."}
+                        ? t('dashboard.modals.details.descPrivate') 
+                        : t('dashboard.modals.details.descPublic')}
                     </p>
                   </div>
                   <div className="min-w-[140px] md:min-w-[160px] mt-2 sm:mt-0">
                     {isEditingStatus ? (
                       <select name="visibility" value={formData.visibility} onChange={handleInputChange} className={typography.metaEdit}>
-                        <option value="private">Private</option>
-                        <option value="public">Public</option>
+                        <option value="private">{t('dashboard.modals.details.optPrivate')}</option>
+                        <option value="public">{t('dashboard.modals.details.optPublic')}</option>
                       </select>
                     ) : (
                       <div className="px-3 py-2 md:px-4 md:py-2.5 bg-[var(--secondary)] rounded-lg md:rounded-xl text-xs md:text-sm font-bold text-center border border-[var(--border)] text-[var(--foreground)] shadow-sm">
-                        {detailedItem.visibility === 'private' ? 'Private' : 'Public'}
+                        {detailedItem.visibility === 'private' ? t('dashboard.modals.details.optPrivate') : t('dashboard.modals.details.optPublic')}
                       </div>
                     )}
                   </div>
@@ -197,16 +199,16 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
               <div className="bg-[var(--destructive)]/5 border-t border-[var(--destructive)]/20 p-3 md:p-4 flex justify-end gap-2 md:gap-3">
                 {isEditingStatus ? (
                   <>
-                    <button onClick={handleCancelStatus} disabled={isSavingStatus} className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">Cancel</button>
+                    <button onClick={handleCancelStatus} disabled={isSavingStatus} className="px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">{t('dashboard.modals.details.btnCancel')}</button>
                     <button onClick={handleSaveStatus} disabled={isSavingStatus} className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--destructive)] text-white text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:bg-[var(--destructive)]/90 transition-opacity shadow-md disabled:opacity-70 cursor-pointer">
                       {isSavingStatus ? <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" /> : <ShieldAlert className="w-3.5 h-3.5 md:w-4 md:h-4" />}
-                      <span>Save Security</span>
+                      <span>{t('dashboard.modals.details.btnSaveSecurity')}</span>
                     </button>
                   </>
                 ) : (
                   <button onClick={() => setIsEditingStatus(true)} disabled={isSavingCommon || isEditingCommon} className="flex items-center gap-1.5 md:gap-2 px-4 md:px-5 py-2 bg-[var(--card)] border border-[var(--destructive)]/30 text-[var(--destructive)] text-xs md:text-sm font-bold rounded-lg lg:rounded-xl hover:bg-[var(--destructive)]/10 transition-colors shadow-sm disabled:opacity-50 cursor-pointer">
                     <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    <span>Edit Security</span>
+                    <span>{t('dashboard.modals.details.btnEditSecurity')}</span>
                   </button>
                 )}
               </div>
@@ -219,10 +221,10 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                   <div>
                     <h3 className="text-sm md:text-base font-bold text-[var(--destructive)] flex items-center gap-2">
                       <AlertCircle className="w-4 h-4" />
-                      Danger Zone
+                      {t('dashboard.modals.details.dangerTitle')}
                     </h3>
                     <p className="text-[10px] md:text-xs text-[var(--muted-foreground)] mt-1">
-                      Once you delete a record, there is no going back. Please be certain.
+                      {t('dashboard.modals.details.dangerDesc')}
                     </p>
                   </div>
 
@@ -233,7 +235,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-transparent border border-[var(--destructive)]/30 text-[var(--destructive)] text-xs md:text-sm font-bold rounded-xl hover:bg-[var(--destructive)] hover:text-white transition-all cursor-pointer disabled:opacity-50"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                      Delete Record
+                      {t('dashboard.modals.details.btnDelete')}
                     </button>
                   ) : (
                     <div className="flex items-center gap-2 animate-in slide-in-from-right-2">
@@ -241,7 +243,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         onClick={() => setShowDeleteConfirm(false)}
                         className="px-3 py-2 text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
                       >
-                        Cancel
+                        {t('dashboard.modals.details.btnCancel')}
                       </button>
                       <button 
                         onClick={handleDeleteRecord}
@@ -249,7 +251,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         className="flex items-center gap-2 px-4 py-2 bg-[var(--destructive)] text-white text-xs md:text-sm font-bold rounded-xl hover:opacity-90 shadow-md cursor-pointer disabled:opacity-70"
                       >
                         {isDeletingRecord ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                        Confirm Delete
+                        {t('dashboard.modals.details.btnConfirmDelete')}
                       </button>
                     </div>
                   )}

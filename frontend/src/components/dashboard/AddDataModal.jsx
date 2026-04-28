@@ -1,10 +1,12 @@
 // src/components/dashboard/AddDataModal.jsx
 import React from 'react';
 import { X, Loader2, AlertTriangle, FileText, Tag, AlignLeft, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import { useAddData } from '../../hooks/useAddData';
 import { VALIDATION } from '../../utils/constants'; // <-- IMPORT KONSTANTA GLOBAL
 
 export default function AddDataModal({ onClose, onDataAdded }) {
+  const { t } = useTranslation(); // <-- HOOK
   
   const { 
     formData, 
@@ -32,8 +34,8 @@ export default function AddDataModal({ onClose, onDataAdded }) {
               <Plus className="w-5 h-5 md:w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold tracking-tight text-[var(--foreground)]">Add New Data</h2>
-              <p className="text-[10px] md:text-xs text-[var(--muted-foreground)] opacity-70 mt-0.5">Create a new secured record in your vault</p>
+              <h2 className="text-lg md:text-xl font-bold tracking-tight text-[var(--foreground)]">{t('dashboard.modals.add.title')}</h2>
+              <p className="text-[10px] md:text-xs text-[var(--muted-foreground)] opacity-70 mt-0.5">{t('dashboard.modals.add.subtitle')}</p>
             </div>
           </div>
           <button onClick={onClose} disabled={isSubmitting} className="p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)] cursor-pointer disabled:opacity-50">
@@ -54,7 +56,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
             <div>
               <label htmlFor="title" className={typography.label}>
                 <FileText className="w-4 h-4" />
-                <span>Record Title</span>
+                <span>{t('dashboard.modals.add.labelTitle')}</span>
               </label>
               <input 
                 id="title" 
@@ -62,7 +64,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 value={formData.title} 
                 onChange={handleInputChange} 
                 className={typography.input} 
-                placeholder={`Enter a clear title (max ${VALIDATION.RECORD.MAX_TITLE} chars)...`} // <-- BERSIFAT DINAMIS
+                placeholder={t('dashboard.modals.add.placeTitle', { max: VALIDATION.RECORD.MAX_TITLE })} // <-- BERSIFAT DINAMIS
                 maxLength={VALIDATION.RECORD.MAX_TITLE} // <-- MENGGUNAKAN KONSTANTA
                 required 
                 autoFocus 
@@ -72,7 +74,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
             <div className="flex-1 flex flex-col">
               <label htmlFor="content" className={typography.label}>
                 <AlignLeft className="w-4 h-4" />
-                <span>Secured Content</span>
+                <span>{t('dashboard.modals.add.labelContent')}</span>
               </label>
               <div className="flex-1 relative">
                 <textarea 
@@ -80,7 +82,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                   value={formData.content} 
                   onChange={handleInputChange} 
                   className={typography.textarea} 
-                  placeholder="Enter your confidential data, notes, or credentials here..." 
+                  placeholder={t('dashboard.modals.add.placeContent')} 
                   maxLength={VALIDATION.RECORD.MAX_CONTENT} // <-- MENGGUNAKAN KONSTANTA
                   required 
                 />
@@ -90,7 +92,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
             <div>
               <label htmlFor="tags" className={typography.label}>
                 <Tag className="w-4 h-4" />
-                <span>Tags (Optional)</span>
+                <span>{t('dashboard.modals.add.labelTags')}</span>
               </label>
               <input 
                 id="tags" 
@@ -98,7 +100,7 @@ export default function AddDataModal({ onClose, onDataAdded }) {
                 value={formData.tags} 
                 onChange={handleInputChange} 
                 className={typography.input} 
-                placeholder="e.g. work, private, api-keys (comma separated)" 
+                placeholder={t('dashboard.modals.add.placeTags')} 
                 maxLength={(VALIDATION.RECORD.MAX_TAG_LENGTH + 2) * VALIDATION.RECORD.MAX_TAGS_COUNT + 10}
               />
             </div>
@@ -107,11 +109,11 @@ export default function AddDataModal({ onClose, onDataAdded }) {
           
           <div className="p-5 md:p-6 border-t border-[var(--border)] bg-[var(--card)] flex items-center justify-end gap-3 flex-shrink-0">
             <button type="button" onClick={onClose} disabled={isSubmitting} className="px-5 py-2.5 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors disabled:opacity-50 cursor-pointer">
-              Cancel
+              {t('dashboard.modals.add.btnCancel')}
             </button>
             <button type="submit" disabled={isSubmitting || !formData.title.trim() || !formData.content.trim()} className="flex items-center gap-2 px-6 py-2.5 bg-[var(--foreground)] text-[var(--background)] text-xs md:text-sm font-bold rounded-xl hover:opacity-90 transition-opacity shadow-md disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer">
               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              <span>{isSubmitting ? 'Saving...' : 'Save to Vault'}</span>
+              <span>{isSubmitting ? t('dashboard.modals.add.btnSaving') : t('dashboard.modals.add.btnSave')}</span>
             </button>
           </div>
         </form>

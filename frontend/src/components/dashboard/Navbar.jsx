@@ -1,11 +1,13 @@
 // src/components/dashboard/Navbar.jsx
 import React, { useState } from 'react';
 import { Zap, Moon, Sun, User, LogOut, Globe } from 'lucide-react'; // 1. Tambahkan Globe
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import { navigate } from '../../utils/navigation'; // 2. Import navigate
 import ProfileModal from './ProfileModal';
 import { toast } from '../../utils/toast';
 
 export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpdateUser }) {
+  const { t } = useTranslation(); // <-- HOOK
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -27,8 +29,8 @@ export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpda
                 navigate('/public'); // Baru pindah halaman
               }}
               className="p-1.5 md:p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)] hover:text-[var(--primary)] cursor-pointer flex-shrink-0"
-              aria-label="Public Access"
-              title="Go to Public Vault"
+              aria-label={t('dashboard.navbar.publicAria')}
+              title={t('dashboard.navbar.publicTitle')}
             >
               <Globe className="w-4 h-4 md:w-5 md:h-5" />
             </button>
@@ -36,8 +38,8 @@ export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpda
             <button 
               onClick={toggleTheme} 
               className="p-1.5 md:p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer flex-shrink-0"
-              aria-label="Toggle Dark Mode"
-              title="Toggle Theme"
+              aria-label={t('dashboard.navbar.themeAria')}
+              title={t('dashboard.navbar.themeTitle')}
             >
               {isDarkMode ? <Sun className="w-4 h-4 md:w-5 md:h-5" /> : <Moon className="w-4 h-4 md:w-5 md:h-5" />}
             </button>
@@ -45,8 +47,8 @@ export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpda
             <button 
               onClick={() => setIsProfileOpen(true)}
               className="p-1.5 md:p-2 rounded-full hover:bg-[var(--secondary)] transition-colors text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer flex-shrink-0"
-              aria-label="Profile"
-              title="Profile Settings"
+              aria-label={t('dashboard.navbar.profileAria')}
+              title={t('dashboard.navbar.profileTitle')}
             >
               <User className="w-4 h-4 md:w-5 md:h-5" />
             </button>
@@ -56,7 +58,7 @@ export default function Navbar({ isDarkMode, toggleTheme, user, onLogout, onUpda
               className="flex items-center gap-1.5 text-xs md:text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--destructive)] transition-colors cursor-pointer px-1 md:px-2 p-1.5 rounded-lg hover:bg-[var(--destructive)]/10"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden md:inline">Logout</span>
+              <span className="hidden md:inline">{t('dashboard.navbar.logout')}</span>
             </button>
           </div>
         </div>
