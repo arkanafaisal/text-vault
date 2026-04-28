@@ -1,13 +1,15 @@
 // src/pages/PublicPage.jsx
 import React from 'react';
 import { Globe, Search, User, Key, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import Navbar from '../components/public/Navbar'; 
-import PublicDataCard from '../components/public/PublicDataCard'; // <-- Import komponen baru
+import PublicDataCard from '../components/public/PublicDataCard'; 
 import { usePublicPage } from '../hooks/usePublicPage';
 import { VALIDATION } from '../utils/constants';
 import FeedbackFooter from '../components/common/FeedbackFooter';
 
 export default function PublicPage({ isDarkMode, toggleTheme }) {
+  const { t } = useTranslation(); // <-- HOOK
   
   const {
     formData,
@@ -29,9 +31,9 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
           <div className="w-16 h-16 bg-[var(--primary)]/10 text-[var(--primary)] rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[var(--primary)]/20 shadow-sm">
             <Globe className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3">Public Access Vault</h1>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3">{t('public.hero.title')}</h1>
           <p className="text-[var(--muted-foreground)] text-sm md:text-base max-w-xl mx-auto">
-            Access unlocked data shared by users. You need the correct Username and Public Key to view the records.
+            {t('public.hero.desc')}
           </p>
         </div>
 
@@ -41,7 +43,7 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
               <div className="absolute left-3 top-1/2 -translate-y-1/2"><User className="w-4 h-4 text-[var(--muted-foreground)]" /></div>
               <input 
                 type="text" name="username" value={formData.username} onChange={handleInputChange} 
-                placeholder="Target Username" required disabled={isLoading} 
+                placeholder={t('public.form.username')} required disabled={isLoading} 
                 maxLength={VALIDATION.USER.MAX_USERNAME}
                 className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" 
               />
@@ -50,14 +52,14 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
               <div className="absolute left-3 top-1/2 -translate-y-1/2"><Key className="w-4 h-4 text-[var(--muted-foreground)]" /></div>
               <input 
                 type="text" name="publicKey" value={formData.publicKey} onChange={handleInputChange} 
-                placeholder="Public Key" required disabled={isLoading} 
+                placeholder={t('public.form.publicKey')} required disabled={isLoading} 
                 maxLength={VALIDATION.USER.MAX_PUBLIC_KEY}
                 className="w-full pl-9 pr-4 py-3 bg-[var(--background)] border border-[var(--border)] rounded-xl outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm shadow-inner transition-shadow" 
               />
             </div>
             <button type="submit" disabled={isLoading} className="px-6 py-3 bg-[var(--foreground)] text-[var(--background)] font-bold rounded-xl hover:opacity-90 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70">
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              <span className="md:hidden lg:inline">Access</span>
+              <span className="md:hidden lg:inline">{t('public.form.btn')}</span>
             </button>
           </form>
         </div>
@@ -66,7 +68,7 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-10 h-10 text-[var(--primary)] animate-spin mb-4" />
-              <p className="text-[var(--muted-foreground)] font-bold tracking-widest uppercase text-xs animate-pulse">Retrieving Data...</p>
+              <p className="text-[var(--muted-foreground)] font-bold tracking-widest uppercase text-xs animate-pulse">{t('public.status.loading')}</p>
             </div>
           ) : hasSearched ? (
             data.length > 0 ? (
@@ -78,14 +80,14 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
             ) : (
               <div className="w-full py-12 flex flex-col items-center justify-center text-[var(--muted-foreground)] border-2 border-dashed border-[var(--border-strong)] rounded-[2rem] bg-[var(--card)]/50 px-6 text-center">
                 <Globe className="w-12 h-12 mb-3 opacity-20" />
-                <p className="text-sm md:text-base font-bold mb-1 text-[var(--foreground)]">No Data Available</p>
-                <p className="text-xs md:text-sm">We couldn't find any public records matching your request.</p>
+                <p className="text-sm md:text-base font-bold mb-1 text-[var(--foreground)]">{t('public.status.noDataTitle')}</p>
+                <p className="text-xs md:text-sm">{t('public.status.noDataDesc')}</p>
               </div>
             )
           ) : null}
         </div>
       </main>
-
+      
       <FeedbackFooter />
     </div>
   );

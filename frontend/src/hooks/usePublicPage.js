@@ -1,10 +1,13 @@
 // src/hooks/usePublicPage.js
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import api from '../utils/api';
 import { toast } from '../utils/toast';
-import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants'; // <-- 1. IMPORT
+import { VALIDATION, SYSTEM_MESSAGES } from '../utils/constants';
 
 export function usePublicPage() {
+  const { t } = useTranslation(); // <-- HOOK
+
   const [formData, setFormData] = useState(() => {
     const parts = typeof window !== 'undefined' ? window.location.pathname.split('/') : [];
     return {
@@ -20,8 +23,8 @@ export function usePublicPage() {
   useEffect(() => {
     if (formData.username && formData.publicKey && !hasSearched) {
       handleSearch();
-    } else if (!formData.username || !formData.publicKey) { // <-- INI DIKEMBALIKAN!
-      toast.info("Public Access Mode. Enter credentials to unlock shared records.");
+    } else if (!formData.username || !formData.publicKey) {
+      toast.info(t('public.messages.infoMode')); // <-- i18n
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -35,9 +38,9 @@ export function usePublicPage() {
     if (!content) return;
     try {
       await navigator.clipboard.writeText(content);
-      toast.success('Content copied to clipboard!');
+      toast.success(t('public.messages.copySuccess')); // <-- i18n
     } catch (err) {
-      toast.error('Failed to copy content.');
+      toast.error(t('public.messages.copyError')); // <-- i18n
     }
   };
 
@@ -48,21 +51,19 @@ export function usePublicPage() {
     const cleanPublicKey = formData.publicKey.trim();
 
     if (!cleanUsername || !cleanPublicKey) {
-      toast.error('Both Username and Public Key are required.');
+      toast.error(t('public.messages.errRequired')); // <-- i18n
       return;
     }
 
-    // --- PROTEKSI VALIDASI PANJANG KARAKTER ---
     if (cleanUsername.length > VALIDATION.USER.MAX_USERNAME) {
-      toast.error(`Username must be max ${VALIDATION.USER.MAX_USERNAME} characters.`);
+      toast.error(t('public.messages.errMaxUser', { max: VALIDATION.USER.MAX_USERNAME })); // <-- i18n
       return;
     }
 
     if (cleanPublicKey.length > VALIDATION.USER.MAX_PUBLIC_KEY) {
-      toast.error(`Public Key must be max ${VALIDATION.USER.MAX_PUBLIC_KEY} characters.`);
+      toast.error(t('public.messages.errMaxKey', { max: VALIDATION.USER.MAX_PUBLIC_KEY })); // <-- i18n
       return;
     }
-    // ------------------------------------------
 
     setIsLoading(true);
     setHasSearched(true);
@@ -84,7 +85,7 @@ export function usePublicPage() {
         toast.error(result.message); 
       }
     } catch (error) {
-      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR); // <-- 2. KONSTANTA
+      toast.error(SYSTEM_MESSAGES.NETWORK_ERROR);
     } finally {
       setIsLoading(false);
     }

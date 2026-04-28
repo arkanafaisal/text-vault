@@ -1,9 +1,12 @@
 // src/components/public/Navbar.jsx
 import React from 'react';
 import { Zap, Moon, Sun, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 import { navigate } from '../../utils/navigation';
 
 export default function Navbar({ isDarkMode, toggleTheme }) {
+  const { t } = useTranslation(); // <-- HOOK
+
   return (
     <header className="w-full sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--border)] shadow-sm">
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-3.5 md:py-4 flex justify-between items-center">
@@ -26,8 +29,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             className="flex items-center gap-1.5 text-xs md:text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer px-2 py-1.5 rounded-lg hover:bg-[var(--secondary)] group"
           >
             <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="hidden sm:inline">Back to Home</span>
-            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">{t('public.navbar.backHome')}</span>
+            <span className="sm:hidden">{t('public.navbar.back')}</span>
           </button>
         </div>
       </div>

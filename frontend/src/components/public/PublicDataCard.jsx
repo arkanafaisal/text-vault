@@ -1,13 +1,14 @@
 // src/components/public/PublicDataCard.jsx
 import React, { useState } from 'react';
 import { Copy, Eye, X, FileText, Tag } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // <-- IMPORT
 
 export default function PublicDataCard({ item, onCopy }) {
+  const { t } = useTranslation(); // <-- HOOK
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      {/* PREVIEW BAR (Hemat Vertikal) */}
       <div className="bg-[var(--primary)]/10 text-[var(--foreground)] border border-[var(--primary)]/40 rounded-xl p-3 md:p-4 flex items-center justify-between gap-3 shadow-sm hover:border-[var(--primary)] hover:shadow-md transition-all">
         <h3 className="font-bold text-sm md:text-base truncate flex-1" title={item.title}>
           {item.title}
@@ -17,21 +18,20 @@ export default function PublicDataCard({ item, onCopy }) {
           <button 
             onClick={() => onCopy(item.content)}
             className="p-1.5 md:p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] rounded-lg text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
-            title="Copy Content"
+            title={t('public.card.copy')}
           >
             <Copy className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </button>
           <button 
             onClick={() => setIsModalOpen(true)}
             className="p-1.5 md:p-2 bg-[var(--foreground)] hover:opacity-90 text-[var(--background)] rounded-lg transition-opacity cursor-pointer shadow-sm"
-            title="Inspect Details"
+            title={t('public.card.inspect')}
           >
             <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
           </button>
         </div>
       </div>
 
-      {/* MODAL DETAILS */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer" onClick={() => setIsModalOpen(false)} />
@@ -45,7 +45,7 @@ export default function PublicDataCard({ item, onCopy }) {
             <div className="p-5 md:p-6 overflow-y-auto custom-scrollbar space-y-4 flex-1 bg-[var(--secondary)]/30">
               <div>
                 <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">
-                  <FileText className="w-3.5 h-3.5" /> Content
+                  <FileText className="w-3.5 h-3.5" /> {t('public.card.content')}
                 </label>
                 <div className="w-full min-h-[160px] bg-[var(--background)] rounded-xl p-4 border border-[var(--border)] shadow-sm relative group">
                   <p className="text-sm md:text-base leading-relaxed text-[var(--foreground)] whitespace-pre-wrap">{item.content}</p>
@@ -60,7 +60,7 @@ export default function PublicDataCard({ item, onCopy }) {
               {item.tags && item.tags.length > 0 && (
                 <div>
                   <label className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] flex items-center gap-2 mb-2">
-                    <Tag className="w-3.5 h-3.5" /> Tags
+                    <Tag className="w-3.5 h-3.5" /> {t('public.card.tags')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {item.tags.map((tag, idx) => (

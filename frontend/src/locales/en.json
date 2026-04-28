@@ -87,6 +87,40 @@
     "email": "Email",
     "notAvailable": "N/A"
   },
+  "public": {
+    "navbar": {
+      "backHome": "Back to Home",
+      "back": "Back"
+    },
+    "hero": {
+      "title": "Public Access Vault",
+      "desc": "Access unlocked data shared by users. You need the correct Username and Public Key to view the records."
+    },
+    "form": {
+      "username": "Target Username",
+      "publicKey": "Public Key",
+      "btn": "Access"
+    },
+    "status": {
+      "loading": "Retrieving Data...",
+      "noDataTitle": "No Data Available",
+      "noDataDesc": "We couldn't find any public records matching your request."
+    },
+    "card": {
+      "copy": "Copy Content",
+      "inspect": "Inspect Details",
+      "content": "Content",
+      "tags": "Tags"
+    },
+    "messages": {
+      "infoMode": "Public Access Mode. Enter credentials to unlock shared records.",
+      "errRequired": "Both Username and Public Key are required.",
+      "errMaxUser": "Username must be max {{max}} characters.",
+      "errMaxKey": "Public Key must be max {{max}} characters.",
+      "copySuccess": "Content copied to clipboard!",
+      "copyError": "Failed to copy content."
+    }
+  },
   "feedback": {
     "title": "Feedback",
     "desc": "Have a suggestion or found a bug? Let us know to help us make TextVault better.",
