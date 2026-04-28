@@ -15,11 +15,15 @@ feature
 - pagination (limit 30)
 
 
+
+
 updates:
-~ 27/04/2026 :
+~ v3.0 - 27/04/2026 :
 - change subdomain to textvault2
 - refactor error message logging
 - fix subdomain url on mailer function
+- html head (title & logo)
+
 
 ~ 10/03/2026 - 26/04/2026 :
 - redesign color palette (reduce light, enchance contrast)
@@ -44,6 +48,12 @@ updates:
 - strict api object parameter
 - refactor validate
 - implement express-async-handler
+- mysql migration tools (flyway / liquibase)
+- fix flyway volume docker compose prod 
+- use constant variable
+- review docker compose prod
+- validate input tags
+- add copy in dashboard (PC) 
 
 
 
@@ -52,45 +62,45 @@ updates:
 
 
 to-do:
-- input validation (length, regex, required) 
-- google login (session profile and ask username for register)
-- footer feedback
-- alert server error + button open modal report admin
-- self destruct (ttl & one read only)
-- delete user
-- profile modal state url
-- axios
-- tags input
-- validation middleware, rename authMiddleware
-- express ts 
-- mysql charset/collation (case & accent sensitive)
 - readjust rate limit
-- kubernetes
-- mysql migration tools (flyway / liquibase)
+- change footer, feedback
+- alert server error + button open modal report admin
+- delete user
+- tags input
 - testing, logging
-- frontend encrypting choice ( random key + derive password )
-- extract App.jsx logic
+- input validation (length, regex, required) 
 - modify ui for long word possibility
-- sticky public page input form 
-- smoothscroll public page to bottom (untl section header hidden) at /public after data found
-- review responsiveness
-- re-test api speed after cache
-- public data pagination (and input lock)
-- fix flyway volume docker compose prod 
+- sticky public page input form
 - fix updatedAt miss value
-- learn more about zero downtime migration 
-- add copy in dashboard 
-- word count tracker
-- server health tracker
+- request json invalid handler
+ 
 - copy from dashboard bento (hit getContent to get the data content)
+- review responsiveness
+- frontend encrypting choice ( random key + derive password )
+- public data pagination (and input lock)
+- server health tracker
+- word count tracker
+- profile modal state url
 - window.location.href push, possible to do undo redo
 - skeleton loading
+- add copy in dashboard (mobile)
+- docker compose for frontend only
+- change package json project name, folder name, repo name
+
+- remove frontend folder, rename frontend2 to frontend (and build config)
+- review constant variable to table schema
+- smoothscroll public page to bottom (untl section header hidden) at /public after data found
+- re-test api speed after cache
+- validation middleware, rename authMiddleware
 - i18n (english indonesia)
-- review docker compose prod
-- request json invalid handler
-- validate input tags
-- use constant variable
-- validate constant variable to table schema
+- mysql charset/collation (case & accent sensitive)
+- self destruct (ttl & one read only)
+- axios
+- express ts 
+- kubernetes
+- learn more about zero downtime migration 
+- extract App.jsx logic
+- google login (session profile and ask username for register)
 
 
 
