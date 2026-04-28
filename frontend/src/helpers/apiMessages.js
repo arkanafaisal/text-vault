@@ -234,6 +234,19 @@ const apiMessages = {
       
       return `Failed to load public data (Code: ${status}).`;
     }
+  },
+
+  feedback: {
+    send: async (response) => {
+      // Ini akan otomatis menangani 429 (Rate Limit), 500, dan 400
+      const common = await handleCommonMessages(response);
+      if (common) return common;
+      
+      const status = response.status;
+      if (status === 200 || status === 201) return "Thank you for your feedback!";
+      
+      return `Failed to send feedback (Code: ${status}).`;
+    }
   }
 };
 

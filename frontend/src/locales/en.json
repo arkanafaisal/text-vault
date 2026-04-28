@@ -86,5 +86,12 @@
     "username": "Username",
     "email": "Email",
     "notAvailable": "N/A"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "desc": "Have a suggestion or found a bug? Let us know to help us make TextVault better.",
+    "placeholder": "Your feedback...",
+    "btn": "Send",
+    "success": "Thank you for your feedback!"
   }
 }

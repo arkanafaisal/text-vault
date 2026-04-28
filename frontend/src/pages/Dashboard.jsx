@@ -9,6 +9,7 @@ import AddDataModal from '../components/dashboard/AddDataModal';
 import DataDetailsModal from '../components/dashboard/DataDetailsModal';
 import { useDashboard } from '../hooks/useDashboard';
 import { VALIDATION } from '../utils/constants'; // <-- 1. IMPORT KONSTANTA
+import FeedbackFooter from '../components/common/FeedbackFooter';
 
 export default function Dashboard({ isDarkMode, toggleTheme }) {
   const { t } = useTranslation();
@@ -157,6 +158,8 @@ export default function Dashboard({ isDarkMode, toggleTheme }) {
         </div>
       </main>
 
+      <FeedbackFooter />
+      
       <DataDetailsModal 
         item={selectedItem} 
         onClose={handleCloseModal} 

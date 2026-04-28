@@ -22,6 +22,9 @@ updates:
 - fix copy button in dashboard & public card (mobile & tablet) 
 - readjust rate limit
 - invalid JSON request handler
+- remove frontend folder, rename frontend2 to frontend (and build config)
+- update landing page footer
+- add feedback feature on dashboard and public
 
 
 ~ v3.0.0 - 27/04/2026 :
@@ -69,7 +72,6 @@ updates:
 
 
 to-do:
-- change footer, feedback
 - alert server error + button open modal report admin
 - delete user
 - tags input
@@ -91,7 +93,6 @@ to-do:
 - docker compose for frontend only
 - change package json project name, folder name, repo name
 
-- remove frontend folder, rename frontend2 to frontend (and build config)
 - review constant variable to table schema
 - smoothscroll public page to bottom (untl section header hidden) at /public after data found
 - re-test api speed after cache

@@ -14,6 +14,10 @@ export const VALIDATION = {
     // Jika nanti butuh batas jumlah tag atau panjang string per tag
     MAX_TAGS_COUNT: 5, 
     MAX_TAG_LENGTH: 12, 
+  },
+  FEEDBACK: {
+    MIN_MESSAGE: 10,
+    MAX_MESSAGE: 300,
   }
 };
 

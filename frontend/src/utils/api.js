@@ -282,6 +282,21 @@ const api = {
       
       return { success, message, data, httpCode };
     }
+  },
+  
+  feedback: {
+    send: async ({ message }) => {
+      const response = await fetcher('feedback/', { 
+        method: 'POST', 
+        body: { message } 
+      }, false); // <-- false: Mengirim tanpa token (akses publik)
+      
+      const httpCode = response.status;
+      const success = response.ok;
+      const responseMessage = await apiMessages.feedback.send(response);
+      
+      return { success, message: responseMessage, data: null, httpCode };
+    }
   }
 };
 

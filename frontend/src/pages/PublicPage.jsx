@@ -5,6 +5,7 @@ import Navbar from '../components/public/Navbar';
 import PublicDataCard from '../components/public/PublicDataCard'; // <-- Import komponen baru
 import { usePublicPage } from '../hooks/usePublicPage';
 import { VALIDATION } from '../utils/constants';
+import FeedbackFooter from '../components/common/FeedbackFooter';
 
 export default function PublicPage({ isDarkMode, toggleTheme }) {
   
@@ -84,6 +85,8 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
           ) : null}
         </div>
       </main>
+
+      <FeedbackFooter />
     </div>
   );
 }
