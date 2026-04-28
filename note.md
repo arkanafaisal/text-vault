@@ -18,7 +18,11 @@ feature
 
 
 updates:
-~ v3.0 - 27/04/2026 :
+~ v3.0.1 - 28/04/2026 :
+- fix copy button in dashboard & public card (mobile & tablet) 
+
+
+~ v3.0.0 - 27/04/2026 :
 - change subdomain to textvault2
 - refactor error message logging
 - fix subdomain url on mailer function
@@ -53,7 +57,7 @@ updates:
 - use constant variable
 - review docker compose prod
 - validate input tags
-- add copy in dashboard (PC) 
+- add copy in dashboard 
 
 
 
@@ -70,9 +74,10 @@ to-do:
 - testing, logging
 - input validation (length, regex, required) 
 - modify ui for long word possibility
-- sticky public page input form
 - fix updatedAt miss value
 - request json invalid handler
+- sticky public page input form
+- redesign public data card
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
@@ -101,11 +106,6 @@ to-do:
 - learn more about zero downtime migration 
 - extract App.jsx logic
 - google login (session profile and ask username for register)
-
-
-
-done:
-
 
 
 stored prompt:

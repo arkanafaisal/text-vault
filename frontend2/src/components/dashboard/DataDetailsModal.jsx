@@ -98,7 +98,7 @@ export default function DataDetailsModal({ item, onClose, onDataUpdated, onDataD
                         {detailedItem.content && (
                           <button 
                             onClick={() => handleCopy(detailedItem.content)}
-                            className="absolute top-3 right-3 p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-all cursor-pointer opacity-0 group-hover:opacity-100 shadow-sm"
+                            className="absolute top-3 right-3 p-2 bg-[var(--background)] hover:bg-[var(--secondary)] border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-all cursor-pointer lg:opacity-0 lg:group-hover:opacity-100 shadow-sm"
                             title="Copy to Clipboard"
                           >
                             <Copy className="w-4 h-4 md:w-5 md:h-5" />

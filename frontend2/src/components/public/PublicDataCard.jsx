@@ -51,7 +51,7 @@ export default function PublicDataCard({ item, onCopy }) {
                   <p className="text-sm md:text-base leading-relaxed text-[var(--foreground)] whitespace-pre-wrap">{item.content}</p>
                   <button 
                     onClick={() => onCopy(item.content)}
-                    className="absolute top-3 right-3 p-2 bg-[var(--secondary)] hover:bg-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100 shadow-sm"
+                    className="absolute top-3 right-3 p-2 bg-[var(--secondary)] hover:bg-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] rounded-lg transition-colors cursor-pointer lg:opacity-0 lg:group-hover:opacity-100 shadow-sm"
                   >
                     <Copy className="w-4 h-4" />
                   </button>

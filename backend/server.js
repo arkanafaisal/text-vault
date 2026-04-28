@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 app.use(cors({
-  origin: process.env.NODE_ENV === "development"? ['http://127.0.0.1:5173', 'http://localhost:5173'] : 'https://databox.arkanafaisal.my.id',
+  origin: process.env.NODE_ENV === "development"? ['http://127.0.0.1:5173', 'http://localhost:5173'] : `https://${process.env.PROJECT_NAME}.arkanafaisal.my.id`,
   credentials: true,
   allowedHeaders: ['Content-Type', 'accessToken'],   // opsional, header yg diizinkan
   preflightContinue: false,
