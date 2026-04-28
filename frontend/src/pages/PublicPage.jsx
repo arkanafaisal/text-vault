@@ -1,24 +1,19 @@
 // src/pages/PublicPage.jsx
 import React from 'react';
-import { Globe, Search, User, Key, Loader2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next'; // <-- IMPORT
+import { Globe, Search, User, Key, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'; // <-- TAMBAH ICON
+import { useTranslation } from 'react-i18next';
 import Navbar from '../components/public/Navbar'; 
 import PublicDataCard from '../components/public/PublicDataCard'; 
+import FeedbackFooter from '../components/common/FeedbackFooter'; // <-- PASTIKAN ADA
 import { usePublicPage } from '../hooks/usePublicPage';
 import { VALIDATION } from '../utils/constants';
-import FeedbackFooter from '../components/common/FeedbackFooter';
 
 export default function PublicPage({ isDarkMode, toggleTheme }) {
-  const { t } = useTranslation(); // <-- HOOK
+  const { t } = useTranslation();
   
   const {
-    formData,
-    data,
-    isLoading,
-    hasSearched,
-    handleInputChange,
-    handleSearch,
-    handleCopy
+    formData, data, isLoading, hasSearched, page, hasNextPage,
+    handleInputChange, handleSearch, handleCopy, handleNextPage, handlePrevPage
   } = usePublicPage();
 
   return (
@@ -72,11 +67,40 @@ export default function PublicPage({ isDarkMode, toggleTheme }) {
             </div>
           ) : hasSearched ? (
             data.length > 0 ? (
-              <div className="flex flex-wrap gap-2 md:gap-3">
-                {data.map(item => (
-                  <PublicDataCard key={item.id} item={item} onCopy={handleCopy} />
-                ))}
-              </div>
+              <>
+                <div className="flex flex-wrap gap-2 md:gap-3">
+                  {data.map(item => (
+                    <PublicDataCard key={item.id} item={item} onCopy={handleCopy} />
+                  ))}
+                </div>
+
+                {/* UI PAGINASI */}
+                {(page > 1 || hasNextPage) && (
+                  <div className="mt-10 flex items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-2">
+                    <button
+                      onClick={handlePrevPage}
+                      disabled={page === 1 || isLoading}
+                      className="flex items-center gap-1 px-4 py-2 bg-[var(--card)] border border-[var(--border-strong)] text-[var(--foreground)] text-sm font-bold rounded-xl hover:bg-[var(--secondary)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      {t('dashboard.paginationPrev')}
+                    </button>
+                    
+                    <div className="px-4 py-2 bg-[var(--secondary)] border border-[var(--border)] rounded-xl text-sm font-bold text-[var(--foreground)] shadow-inner">
+                      {t('dashboard.paginationPage')} {page}
+                    </div>
+
+                    <button
+                      onClick={handleNextPage}
+                      disabled={!hasNextPage || isLoading}
+                      className="flex items-center gap-1 px-4 py-2 bg-[var(--card)] border border-[var(--border-strong)] text-[var(--foreground)] text-sm font-bold rounded-xl hover:bg-[var(--secondary)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    >
+                      {t('dashboard.paginationNext')}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="w-full py-12 flex flex-col items-center justify-center text-[var(--muted-foreground)] border-2 border-dashed border-[var(--border-strong)] rounded-[2rem] bg-[var(--card)]/50 px-6 text-center">
                 <Globe className="w-12 h-12 mb-3 opacity-20" />

@@ -28,10 +28,11 @@ const search = Joi.string().trim().max(128)
 const sort = Joi.valid('oldest', 'updated', 'newest')
 const page = Joi.number().min(1).default(1)
 
-
 export const query = Joi.object({
     sort: sort.default('newest'),
     visibility,
     search: search.empty(''),
     page
 })
+
+export const publicPagination = Joi.object({ page })

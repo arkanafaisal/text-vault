@@ -8,6 +8,7 @@ import { getPublicData } from '../model/data-model.js'
 import * as redisHelper from '../utils/redis-helper.js'
 import { getIdByUsernamePublickey } from '../model/user-model.js'
 import { decryptHelper } from '../utils/crypto.js'
+import { publicPagination } from '../schema/data-schema.js'
 
 
 export const publicController = {}
@@ -17,6 +18,7 @@ publicController.getData = asyncHandler(async (req, res) => {
 
   const body = validateRequest({ schema: publicData, target: req.body, res });
   if (!body) return;
+  const query = validateRequest({ schema: publicPagination, target: req.query, res })
 
   const userId = await getIdByUsernamePublickey(body);
   if (!userId) {
@@ -25,7 +27,7 @@ publicController.getData = asyncHandler(async (req, res) => {
 
   // const start = performance.now();
 
-  const { ok, data } = await redisHelper.get('publicData', userId);
+  const { ok, data } = await redisHelper.get('publicData', `${userId}:${query.page}`);
 
   if (ok) {
     // console.log("cache_hit");
@@ -42,11 +44,11 @@ publicController.getData = asyncHandler(async (req, res) => {
   // console.log("cache_miss");
 
   // const dbStart = performance.now();
-  const datas = await getPublicData({ userId });
+  const datas = await getPublicData({ userId, ...query });
   // console.log("db_ms:", performance.now() - dbStart);
 
   // const setStart = performance.now();
-  await redisHelper.set('publicData', userId, datas);
+  await redisHelper.set('publicData', `${userId}:${query.page}`, datas);
   // console.log("redis_set_ms:", performance.now() - setStart);
 
   if (datas.length === 0) {

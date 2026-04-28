@@ -47,8 +47,10 @@ export async function getById({ userId, id }) {
     return data
 }
 
-export async function getPublicData({ userId }) {
-    const [rows] = await db.query('SELECT title, content, iv, tag from data WHERE userId = ? AND visibility = "public" ORDER BY createdAt DESC', [userId])
+export async function getPublicData({ userId, page }) {
+    const PAGE_SIZE = 10
+    const paginationQuery = `LIMIT ${PAGE_SIZE + 1} OFFSET ${(page - 1) * PAGE_SIZE}`
+    const [rows] = await db.query(`SELECT title, content, iv, tag from data WHERE userId = ? AND visibility = "public" ORDER BY createdAt DESC ${paginationQuery}`, [userId])
     return rows
 }
 

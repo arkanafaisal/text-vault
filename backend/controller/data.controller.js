@@ -93,7 +93,7 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     if(body.title){await redisHelper.delPattern('allData', req.user.id)}
-    if((body.title || body.content) && visibility === 'public'){await redisHelper.del('publicData', req.user.id)}
+    if((body.title || body.content) && visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
 
     await incrbyRateLimit('updateCommon', req.ip)
     return res.sendStatus(200)
@@ -117,7 +117,7 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
 
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     await redisHelper.delPattern('allData', req.user.id)
-    await redisHelper.del('publicData', req.user.id)
+    await redisHelper.delPattern('publicData', req.user.id)
 
     await incrbyRateLimit('updateStatus', req.ip)
     return res.sendStatus(200)
@@ -131,7 +131,7 @@ dataController.delete = asyncHandler(async (req, res)=>{
 
     await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
     await redisHelper.delPattern('allData', req.user.id)
-    if(visibility === 'public'){await redisHelper.del('publicData', req.user.id)}
+    if(visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
 
     await incrbyRateLimit('deleteData', req.ip)
     return res.sendStatus(200)

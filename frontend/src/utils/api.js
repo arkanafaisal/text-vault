@@ -263,11 +263,14 @@ const api = {
   },
   
   public: {
-    getData: async ({ username, publicKey }) => {
-      const response = await fetcher('public/data', { 
+    getData: async ({ username, publicKey, page = 1 }) => {
+      // Hanya kirim query ?page=X jika halaman lebih dari 1
+      const url = page > 1 ? `public/data?page=${page}` : 'public/data';
+      
+      const response = await fetcher(url, { 
         method: 'POST', 
         body: { username, publicKey } 
-      }, false); // <-- false: Tidak butuh accessToken
+      }, false);
       
       const httpCode = response.status;
       const success = response.ok;
@@ -276,7 +279,6 @@ const api = {
       let data = [];
       if (success) {
         const parsedData = await response.clone().json().catch(() => null);
-        // Sesuaikan dengan struktur JSON backend Anda, asumsikan data ada di dalam array atau properti .data
         data = Array.isArray(parsedData) ? parsedData : (parsedData?.data || []);
       }
       
