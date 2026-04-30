@@ -83,6 +83,10 @@ to do:
 - tags input
 - sticky public page input form
 - testing, logging
+- cover all error potential
+- redis ok check consistency
+- global layer rate limit (identify by url path and method)
+- warn level for id access token not found in db
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness

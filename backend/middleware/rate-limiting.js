@@ -32,9 +32,9 @@ const rl = {
     sendEmailVerification: { ttl: 60, limit: 10, increaseBy: 5 }, // Strict. 1 success per hour to prevent third-party email spam.
 
     // --- PUBLIC ROUTER ---
-    publicData: { ttl: 10, limit: 100, increaseBy: 5 },
+    getPublicData: { ttl: 10, limit: 100, increaseBy: 5 },
 
-    postFeedback: { ttl: 30, limit: 5 }
+    createFeedback: { ttl: 30, limit: 5 }
 }
 
 export function limit(feature){

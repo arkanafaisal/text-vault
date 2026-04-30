@@ -7,27 +7,35 @@ export const publicKey = Joi.string().trim().max(255).required()
 
 export const token = Joi.string().trim().lowercase().length(64).hex().required()
 
-export const insert = Joi.object({
-    username: username.required(),
-    password
-})
+export const auth = {
+    register: { body: Joi.object({ username: username.required(), password }) },
+    login: { 
+        body: Joi.object({
+            identifier: Joi.alternatives().try(
+            email,
+            username.lowercase()
+            ).required(),
+            password
+        })
+    },
+    verifyEmail: { params: Joi.object({ token }) },
+    forgotPassword: { body: Joi.object({ email: email.required() }) },
+    resetPassword: {
+        params: Joi.object({ token }),
+        body: Joi.object({ password })
+    }
+}
 
-export const login = Joi.object({
-    identifier: Joi.alternatives().try(
-      email,
-      username.lowercase()
-    ).required(),
-    password
-})
+export const user = {
+    updateUsername: { body: Joi.object({ username: username.required() }) },
+    updatePassword: { body: Joi.object({ oldPassword: password, newPassword: password }) },
+    updatePublicKey: { body: Joi.object({ publicKey }) },
+    sendEmailVerification: { body: Joi.object({ email: email.required() }) },
+    delete: { body: Joi.object({ username: username.required() }) }
+}
 
-export const updateUsername = Joi.object({ username: username.required() })
-export const updateEmail = Joi.object({email: email.required()})
-export const updatePassword = Joi.object({oldPassword: password, newPassword: password})
-export const updatePublicKey = Joi.object({ publicKey })
-export const tokenParams = Joi.object({ token })
-export const forgotPassword = Joi.object({ email: email.required() })
-export const resetPassword = Joi.object({ password })
+export const publicUser = {
+    get: { body: Joi.object({ username: username.lowercase().required(), publicKey }) }
+}
+
 export const checkUsername = Joi.object({ username: username.required() })
-
-export const publicData = Joi.object({ username: username.lowercase().required(), publicKey })
-export const deleteUser = Joi.object({ username: username.required() })

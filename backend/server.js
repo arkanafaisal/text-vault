@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 // import 'dotenv/config'
+import { logger } from './config/logger.js'
 
 
 const app = express()
@@ -18,10 +19,20 @@ app.use(cors({
   optionsSuccessStatus: 204
 }))
 
-const PORT = process.env.PORT 
-const server = app.listen(PORT, ()=>{console.log(`Server running on port ${PORT}`)})
 
-
+app.use((req, res, next) => {
+  if(!(req.url.startsWith('/api'))){ return next() }
+  const start = Date.now();
+  res.on('finish', () => {
+    logger.info({
+      method: req.method,
+      path: req.url,
+      status: res.statusCode,
+      duration: Date.now() - start
+    });
+  });
+  next();
+});
 
   
 
@@ -37,7 +48,7 @@ app.use('/api/data', dataRouter);
 app.use('/api/public', publicRouter);
 app.use('/api/feedback', feedbackRouter);
 
-import { errorHandler } from './middleware/errorHandler.js';
+import { errorHandler } from './middleware/error-handler.js';
 app.use(errorHandler)
 
 
@@ -55,3 +66,20 @@ app.use((req, res, next) => {
   if (req.path.startsWith('/api')) return next();
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
+
+
+
+const PORT = process.env.PORT 
+const server = app.listen(PORT, ()=>{ logger.info(`server running on ${PORT}`) })
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+function shutdown() {
+  logger.info('shutting down...');
+
+  server.close(() => {
+    logger.info('server closed');
+    process.exit(0);
+  });
+}

@@ -1,33 +1,26 @@
 import asyncHandler from 'express-async-handler'
-import { logging } from '../utils/logging.js'
-import { validateRequest } from '../utils/requestValidation.js'
-
-import { publicData } from '../schema/user-schema.js'
-import { getPublicData } from '../model/data-model.js'
 
 import * as redisHelper from '../utils/redis-helper.js'
 import { getIdByUsernamePublickey } from '../model/user-model.js'
+import { getPublicData } from '../model/data-model.js'
 import { decryptHelper } from '../utils/crypto.js'
-import { publicPagination } from '../schema/data-schema.js'
+import { logger } from '../config/logger.js'
 
 
 export const publicController = {}
 
-publicController.getData = asyncHandler(async (req, res) => {
-  logging('/public/data');
+publicController.get = asyncHandler(async (req, res) => {
+  const { username, publicKey } = req.validated.body
+  const { page } = req.validated.query
 
-  const body = validateRequest({ schema: publicData, target: req.body, res });
-  if (!body) return;
-  const query = validateRequest({ schema: publicPagination, target: req.query, res })
-
-  const userId = await getIdByUsernamePublickey(body);
+  const userId = await getIdByUsernamePublickey({ username, publicKey });
   if (!userId) {
     return res.status(400).json({ error: "wrong username or public key" });
   }
 
   // const start = performance.now();
 
-  const { ok, data } = await redisHelper.get('publicData', `${userId}:${query.page}`);
+  const { ok, data } = await redisHelper.get('publicData', `${userId}:${page}`);
 
   if (ok) {
     // console.log("cache_hit");
@@ -44,11 +37,11 @@ publicController.getData = asyncHandler(async (req, res) => {
   // console.log("cache_miss");
 
   // const dbStart = performance.now();
-  const datas = await getPublicData({ userId, ...query });
+  const datas = await getPublicData({ userId, page });
   // console.log("db_ms:", performance.now() - dbStart);
 
   // const setStart = performance.now();
-  await redisHelper.set('publicData', `${userId}:${query.page}`, datas);
+  await redisHelper.set('publicData', `${userId}:${page}`, datas);
   // console.log("redis_set_ms:", performance.now() - setStart);
 
   if (datas.length === 0) {

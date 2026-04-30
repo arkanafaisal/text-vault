@@ -1,3 +1,4 @@
+import { logger } from "../config/logger.js"
 import redis from "../config/redis.js"
 
 const base = process.env.PROJECT_NAME
@@ -12,37 +13,51 @@ const redisType = {
     data: {prefix: base + ':cache:data:', ttl: 60 * 10},
     publicData: {prefix: base + ':cache:public_data:', ttl: 60 * 60 * 6},
 }
+const cacheTypes = ['profile', 'allData', 'data', 'publicData']
+
+function getPrefix(type){
+    const prefix = redisType[type]?.prefix
+
+    if(!prefix){throw new Error('redis type error')}
+
+    return prefix
+}
 
 export async function get(type, key){
     try {
-        const rawData = await redis.get(redisType[type].prefix + key)
+        const prefix = getPrefix(type)
+        const rawData = await redis.get(prefix + key)
         if(!rawData){return {ok: false}}
-
-        if(process.env.NODE_ENV === 'development'){console.log('cache used')}
         
+        logger.trace({ key: prefix + key }, 'redis cache used')
         return {ok: true, data: JSON.parse(rawData)}
     } catch(err) {
-        console.error("Redis GET error:", err.message)
-        return {ok: false} 
+        if(cacheTypes.includes(type)){
+            logger.debug(err, "redis cache GET error")
+            return {ok: false} 
+        }
+
+        logger.error(err, "redis GET error")
+        throw err
     }
 }
 
 export async function set(type, key, data){
     try {
-        await redis.set(redisType[type].prefix + key, JSON.stringify(data), {"EX": redisType[type].ttl})
+        await redis.set(getPrefix(type) + key, JSON.stringify(data), {"EX": redisType[type].ttl})
         return {ok: true} 
     } catch (err) {
-        console.error("Redis SET error:", err.message)
+        if(cacheTypes.includes(type)){logger.debug(err, "redis cache SET error")}
         return {ok: false}
     }
 }
 
 export async function del(type, key){
     try {
-        await redis.del(redisType[type].prefix + key)
+        await redis.del(getPrefix(type) + key)
         return {ok: true} 
     } catch (err) {
-        console.error("Redis DEL error:", err.message)
+        logger.warn(err, 'redis DEL error')
         return {ok: false}
     }
 }
@@ -50,15 +65,18 @@ export async function del(type, key){
 
 
 export async function delPattern(type, key) {
-    const pattern = redisType[type].prefix + key + '*'
+    const pattern = getPrefix(type) + key + '*'
     let cursor = '0'
-
-    do {
-        const { keys, cursor: nextCursor } = await redis.scan(cursor, { MATCH: pattern, COUNT: 50 })
-        cursor = nextCursor
-
-        if (keys.length) {
-            await redis.del(keys)
-        }
-    } while (cursor !== '0')
+    try {
+        do {
+            const { keys, cursor: nextCursor } = await redis.scan(cursor, { MATCH: pattern, COUNT: 50 })
+            cursor = nextCursor
+    
+            if (keys.length) {
+                await redis.del(keys)
+            }
+        } while (cursor !== '0')
+    } catch (err) {
+        logger.debug(err, 'redis DEL error')
+    }
 }

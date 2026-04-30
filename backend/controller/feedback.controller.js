@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler"
-import { logging } from "../utils/logging.js"
+import { logger } from "../config/logger.js"
 
 import * as FeedbackModel from '../model/feedback-model.js'
 import * as FeedbackSchema from '../schema/feedback-schema.js'
@@ -12,13 +12,11 @@ export const feedbackController = {}
 
 
 feedbackController.create = asyncHandler(async (req, res)=>{
-    logging('/feedback')
+    const { message } = req.validated.body
 
-    const body = validateRequest({ schema: FeedbackSchema.create, target: req.body, res })
-    if(!body){return}
+    
+    const insertId = await FeedbackModel.create({ message })
 
-    const insertId = await FeedbackModel.create(body)
-    if(!insertId){return res.sendStatus(500)}
-
+    logger.info({ip: req.ip}, 'feedback created')
     return res.sendStatus(200)
 })

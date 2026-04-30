@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 
 export async function insert({ displayName, username, password }) {
     const [{insertId}] = await db.query('INSERT INTO users (displayName, username, password) VALUES (?, ?, ?)', [displayName, username, password])
+    if(!insertId){throw new Error('ER_NO_INSERT_ID')}
+    
     return insertId
 }
 
@@ -75,7 +77,7 @@ export async function updatePassword({ id, password }) {
 }
 
 
-export async function deleteUser({ id, username }) {
+export async function del({ id, username }) {
     const [{ affectedRows }] = await db.query('DELETE FROM users WHERE id = ? AND username = ?', [id, username])
     return affectedRows
 }

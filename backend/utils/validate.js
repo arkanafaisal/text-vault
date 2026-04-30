@@ -26,7 +26,7 @@ export function validate(schema, body){
                 message = `${field} is invalid`
         }
 
-        console.log(message)
+        // console.log(message)
 
 
         return { ok:false, message }
