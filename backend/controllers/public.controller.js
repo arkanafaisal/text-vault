@@ -1,11 +1,11 @@
 import asyncHandler from 'express-async-handler'
 
-import * as redisHelper from '../utils/redis-helper.js'
-import { getIdByUsernamePublickey } from '../model/user-model.js'
-import { getPublicData } from '../model/data-model.js'
-import { decryptHelper } from '../utils/crypto.js'
-import { logger } from '../config/logger.js'
-import { incrementRL } from '../middleware/rate-limiting.js'
+import * as redisHelper from '../helpers/redis.helper.js'
+import { getIdByUsernamePublickey } from '../models/user.model.js'
+import { getPublicData } from '../models/data.model.js'
+import { decryptHelper } from '../utils/crypto.util.js'
+import { logger } from '../libs/logger.lib.js'
+import { incrementRL } from '../middlewares/rate-limiter.middleware.js'
 
 
 export const publicController = {}

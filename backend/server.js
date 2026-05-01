@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 // import 'dotenv/config'
-import { logger } from './config/logger.js'
+import { logger } from './libs/logger.lib.js'
 
 
 const app = express()
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   res.on('finish', () => {
     logger.info({
       method: req.method,
-      path: req.url,
+      url: req.originalUrl,
       status: res.statusCode,
       duration: Date.now() - start
     });
@@ -34,13 +34,11 @@ app.use((req, res, next) => {
   next();
 });
 
-  
-
-import { userRouter } from './router/user.router.js';
-import { authRouter } from './router/auth.router.js';
-import { dataRouter } from './router/data.router.js';
-import { publicRouter } from './router/public.router.js';
-import { feedbackRouter } from './router/feedback.router.js';
+import { userRouter } from './routes/user.route.js';
+import { authRouter } from './routes/auth.route.js';
+import { dataRouter } from './routes/data.route.js';
+import { publicRouter } from './routes/public.route.js';
+import { feedbackRouter } from './routes/feedback.route.js';
 
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
@@ -48,9 +46,8 @@ app.use('/api/data', dataRouter);
 app.use('/api/public', publicRouter);
 app.use('/api/feedback', feedbackRouter);
 
-import { errorHandler } from './middleware/error-handler.js';
+import { errorHandler } from './middlewares/error-handler.middleware.js';
 app.use(errorHandler)
-
 
 
 
@@ -69,7 +66,7 @@ app.use((req, res, next) => {
 
 
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT
 const server = app.listen(PORT, ()=>{ logger.info(`server running on ${PORT}`) })
 
 process.on('SIGINT', shutdown);

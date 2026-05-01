@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import "dotenv/config";
-import { logger } from "../config/logger.js";
+import { logger } from "../libs/logger.lib.js";
 
 const algorithm = "aes-256-gcm";
 

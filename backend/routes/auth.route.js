@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { rl } from '../middleware/rate-limit.js';
-import { validate } from '../middleware/validate.js';
-import { authController } from '../controller/auth.controller.js';
+import { rl } from '../middlewares/rate-limiter.middleware.js';
+import { validate } from '../middlewares/validator.middleware.js';
+import { authController } from '../controllers/auth.controller.js';
 
 
 

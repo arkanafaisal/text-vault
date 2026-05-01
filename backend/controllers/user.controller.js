@@ -2,14 +2,12 @@ import { randomBytes, createHash } from "crypto"
 import bcrypt from "bcrypt"
 import asyncHandler from "express-async-handler"
 
-import * as UserModel from '../model/user-model.js'
-import * as UserSchema from '../schema/user-schema.js'
-import * as redisHelper from '../utils/redis-helper.js'
+import * as UserModel from '../models/user.model.js'
+import * as redisHelper from '../helpers/redis.helper.js'
 
-import { incrementRL } from "../middleware/rate-limiting.js"
-import { sendMail } from "../utils/mailer.js";
-import { response } from "../utils/response.js"; 
-import { logger } from "../config/logger.js"
+import { incrementRL } from "../middlewares/rate-limiter.middleware.js"
+import { sendMail } from "../utils/mailer.util.js"; 
+import { logger } from "../libs/logger.lib.js"
 
 export const userController = {}
 

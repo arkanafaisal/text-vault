@@ -1,5 +1,5 @@
-import { logger } from "../config/logger.js"
-import redis from "../config/redis.js"
+import { logger } from "../libs/logger.lib.js"
+import redis from "../libs/redis.lib.js"
 
 const base = process.env.PROJECT_NAME
 const redisType = {

@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { rl } from '../middleware/rate-limit.js';
-import { authenticate } from '../middleware/auth.js';
-import { validate } from '../middleware/validate.js';
-import { userController } from '../controller/user.controller.js';
+import { rl } from '../middlewares/rate-limiter.middleware.js';
+import { authenticate } from '../middlewares/auth.middleware.js';
+import { validate } from '../middlewares/validator.middleware.js';
+import { userController } from '../controllers/user.controller.js';
 
 export const userRouter = express.Router()
 

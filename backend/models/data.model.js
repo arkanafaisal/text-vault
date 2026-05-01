@@ -1,4 +1,4 @@
-import db from "../config/db.js"
+import db from "../libs/db.lib.js"
 
 
 export async function create({ userId, title, content, iv, tag, tags }) {

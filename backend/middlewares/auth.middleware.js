@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { logger } from '../config/logger.js'
+import { logger } from '../libs/logger.lib.js'
 
 export async function authenticate(req, res, next) {
     const accessToken = req.headers.accesstoken

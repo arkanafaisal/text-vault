@@ -1,7 +1,7 @@
-import { auth, user, publicUser } from '../schema/user-schema.js'
-import { data, publicData } from '../schema/data-schema.js'
-import { feedback } from '../schema/feedback-schema.js'
-import { validate as validateHelper } from '../utils/validate.js'
+import { auth, user, publicUser } from '../schemas/user.schema.js'
+import { data, publicData } from '../schemas/data.schema.js'
+import { feedback } from '../schemas/feedback.schema.js'
+import { validate as validateHelper } from '../utils/joi-formatter.util.js'
 
 const schemas = {
     register: auth.register,

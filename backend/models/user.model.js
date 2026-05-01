@@ -1,4 +1,4 @@
-import db from "../config/db.js"
+import db from "../libs/db.lib.js"
 import bcrypt from 'bcrypt'
 
 export async function insert({ displayName, username, password }) {

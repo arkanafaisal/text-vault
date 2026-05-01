@@ -1,8 +1,7 @@
 import asyncHandler from "express-async-handler"
-import { logger } from "../config/logger.js"
+import { logger } from "../libs/logger.lib.js"
 
-import * as FeedbackModel from '../model/feedback-model.js'
-import * as FeedbackSchema from '../schema/feedback-schema.js'
+import * as FeedbackModel from '../models/feedback.model.js'
 
 
 
