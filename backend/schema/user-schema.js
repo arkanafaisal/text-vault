@@ -37,5 +37,3 @@ export const user = {
 export const publicUser = {
     get: { body: Joi.object({ username: username.lowercase().required(), publicKey }) }
 }
-
-const checkUsername = Joi.object({ username: username.required() })

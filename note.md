@@ -95,6 +95,7 @@ to do:
 - invalid logger time
 - ratelimit error handler
 - http level caching
+- route config ( define rl and request schema )
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
