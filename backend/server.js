@@ -34,6 +34,53 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+import db from './libs/db.lib.js';
+import redis from './libs/redis.lib.js';
+
+app.get('/health', async (req, res)=>{
+  const now = Date.now()
+  let payload = {
+    status: 'ok',
+    uptime: now - serverStartTime,
+    timestamp: now,
+    environment: process.env.NODE_ENV,
+    services: {}
+  }
+  try {
+    await withTimeout(db.query('SELECT 1'), 500)
+    payload.services.db = 'ok'
+  } catch (error) {
+    payload.services.db = 'fail'
+  }
+  
+  try {
+    await withTimeout(redis.ping(), 500)
+    payload.services.redis = 'ok'
+  } catch (error) {
+    payload.services.redis = 'fail'
+  }
+
+  payload.status = (payload.services.db === 'ok' && payload.services.redis === 'ok') ? 'ok' : 'degraded'
+
+  return res.json(payload)
+})
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), ms)
+    )
+  ])
+}
+
+
+
+
+
+
 import { userRouter } from './routes/user.route.js';
 import { authRouter } from './routes/auth.route.js';
 import { dataRouter } from './routes/data.route.js';
@@ -66,7 +113,16 @@ app.use((req, res, next) => {
 
 
 
+
+
+
+
+
+
+
+
 const PORT = process.env.PORT
+const serverStartTime = Date.now()
 const server = app.listen(PORT, ()=>{ logger.info(`server running on ${PORT}`) })
 
 process.on('SIGINT', shutdown);
