@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { rl } from '../middleware/rate-limiting.js';
+import { rl } from '../middleware/rate-limit.js';
 import { authenticate } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { userController } from '../controller/user.controller.js';

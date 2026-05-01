@@ -53,7 +53,7 @@ export async function incrbyRateLimit(key, ip, incr = null){
     const config = rlSchemas[key]
     if (!config) throw new Error(`invalid rl mapping: ${key}`)
 
-    const redisKey = `databox:rl:${key}:${ip}`
+    const redisKey = `${process.env.PROJECT_NAME}:rl:${key}:${ip}`
         
     incr = incr || config.increaseBy
     const windowMs = config.ttl * 60000

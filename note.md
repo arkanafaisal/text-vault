@@ -19,8 +19,9 @@ feature
 
 updates:
 v3.0.2 —— 01/05/2026
-- implemented validate middleware  
-- 
+- implemented custom validate middleware
+- standarized file & function name
+- implemented auto-mapped rate limit from method + path
 
 
 v3.0.1 —— 28/04/2026
