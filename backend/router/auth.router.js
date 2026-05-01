@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { authController } from '../controller/auth.controller.js';
-import { validate } from '../middleware/validate.js';
 import { rl } from '../middleware/rate-limiting.js';
+import { validate } from '../middleware/validate.js';
+import { authController } from '../controller/auth.controller.js';
 
 
 

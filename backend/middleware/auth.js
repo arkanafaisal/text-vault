@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { logger } from '../config/logger.js'
 
-export default async function verifyToken(req, res, next) {
+export async function authenticate(req, res, next) {
     const accessToken = req.headers.accesstoken
     if (!accessToken) {
         logger.debug('access token missing')

@@ -1,8 +1,8 @@
 import express from 'express'
 
 import { rl } from '../middleware/rate-limiting.js'
-import { feedbackController } from '../controller/feedback.controller.js'
 import { validate } from '../middleware/validate.js' 
+import { feedbackController } from '../controller/feedback.controller.js'
 
 export const feedbackRouter = express.Router()
 
