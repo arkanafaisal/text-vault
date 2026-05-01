@@ -18,6 +18,11 @@ feature
 
 
 updates:
+v3.0.2 —— 01/05/2026
+- implemented validate middleware  
+- 
+
+
 v3.0.1 —— 28/04/2026
 - added feedback feature (dashboard & public)
 - added public data pagination
@@ -87,6 +92,9 @@ to do:
 - redis ok check consistency
 - global layer rate limit (identify by url path and method)
 - warn level for id access token not found in db
+- invalid logger time
+- ratelimit error handler
+- http level caching
  
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness

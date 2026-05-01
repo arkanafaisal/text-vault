@@ -1,22 +1,19 @@
 import express from 'express';
 
 import { authController } from '../controller/auth.controller.js';
-import { limit } from '../middleware/rate-limiting.js';
 import { validate } from '../middleware/validate.js';
-
+import { rl } from '../middleware/rate-limiting.js';
 
 
 
 export const authRouter = express.Router();
 
+authRouter.post('/register',                rl,   validate('register'),        authController.register);
+authRouter.post('/login',                   rl,   validate('login'),           authController.login);
+authRouter.post('/logout',                  rl,                                authController.logout)
+authRouter.post('/refresh',                 rl,                                authController.refresh);
 
 
-authRouter.post('/register',                    limit('register'),          validate('register'),        authController.register);
-authRouter.post('/login',                       limit('login'),             validate('login'),           authController.login);
-authRouter.post('/logout',                      limit('logout'),                                                authController.logout)
-authRouter.post('/refresh',                     limit('refresh'),                                               authController.refresh);
-
-
-authRouter.post('/verify-email/:token',         limit("verifyEmail"),       validate('verifyEmail'),     authController.verifyEmail)
-authRouter.post("/forgot-password",             limit("forgotPassword"),    validate('forgotPassword'),  authController.forgotPassword)
-authRouter.post("/reset-password/:token",       limit("resetPassword"),     validate('resetPassword'),   authController.resetPassword)
+authRouter.post('/verify-email/:token',     rl,   validate('verifyEmail'),     authController.verifyEmail)
+authRouter.post("/forgot-password",         rl,   validate('forgotPassword'),  authController.forgotPassword)
+authRouter.post("/reset-password/:token",   rl,   validate('resetPassword'),   authController.resetPassword)

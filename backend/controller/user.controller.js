@@ -6,7 +6,7 @@ import * as UserModel from '../model/user-model.js'
 import * as UserSchema from '../schema/user-schema.js'
 import * as redisHelper from '../utils/redis-helper.js'
 
-import { incrbyRateLimit } from "../middleware/rate-limiting.js"
+import { incrementRL } from "../middleware/rate-limiting.js"
 import { sendMail } from "../utils/mailer.js";
 import { response } from "../utils/response.js"; 
 import { logger } from "../config/logger.js"
@@ -32,7 +32,7 @@ userController.updateUsername = asyncHandler(async (req, res) => {
     const {affectedRows, changedRows} = await UserModel.updateUsername({displayName, username: username.toLowerCase(), id: req.user.id})
     if(affectedRows === 0){return res.sendStatus(401)}
 
-    await incrbyRateLimit('updateUsername', req.ip)
+    await incrementRL(req)
     if(changedRows === 0){
         logger.info({ userId: req.user.id, username }, 'update username success')
         return res.sendStatus(200)
@@ -57,7 +57,7 @@ userController.updatePassword = asyncHandler(async (req, res) => {
     const hashed = await bcrypt.hash(newPassword, 10)
     const affectedRows = await UserModel.updatePassword({ password: hashed, id: req.user.id })
     if(affectedRows === 0){return res.sendStatus(401)}
-    await incrbyRateLimit('updatePassword', req.ip)
+    await incrementRL(req)
 
     logger.info({ userId: req.user.id }, 'update password success')
     return res.sendStatus(200)
@@ -70,7 +70,7 @@ userController.updatePublicKey = asyncHandler(async (req, res) => {
     const {affectedRows, changedRows} = await UserModel.updatePublicKey({publicKey, id: req.user.id})
     if(affectedRows === 0){return res.sendStatus(401)}
 
-    await incrbyRateLimit('updatePublicKey', req.ip)
+    await incrementRL(req)
     if(changedRows === 0){
         logger.info({ userId: req.user.id }, 'update publicKey success')
         return res.sendStatus(200)
@@ -105,7 +105,7 @@ userController.sendEmailVerification = asyncHandler(async (req, res) => {
 
     await sendMail.verifyEmail({email, token})
 
-    await incrbyRateLimit('sendEmailVerification', req.ip)
+    await incrementRL(req)
 
     logger.info({ userId: req.user.id }, 'request email verification success')
     return res.sendStatus(200)
@@ -121,7 +121,9 @@ userController.delete = asyncHandler(async (req, res) => {
     await redisHelper.del('profile', req.user.id)
     await redisHelper.delPattern('allData', req.user.id)
     await redisHelper.delPattern('publicData', req.user.id)
-
+    
+    await incrementRL(req)
+    
     logger.info({ userId: req.user.id, username }, 'delete user success')
     return res.sendStatus(200)
 })

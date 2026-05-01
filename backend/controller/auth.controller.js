@@ -8,7 +8,7 @@ import * as UserModel from '../model/user-model.js'
 import * as redisHelper from '../utils/redis-helper.js'
 
 import { sendMail } from '../utils/mailer.js';
-import { incrbyRateLimit } from '../middleware/rate-limiting.js';
+import { incrementRL } from '../middleware/rate-limiting.js';
 
 import { response } from '../utils/response.js';
 import { logger } from '../config/logger.js';
@@ -39,7 +39,7 @@ authController.register = asyncHandler(async (req, res)=>{
     }
     res.cookie("refreshToken", refreshToken, refreshTokenOption)
     
-    await incrbyRateLimit('register', req.ip)
+    await incrementRL(req)
     logger.info({ userId: insertId, ip: req.ip }, 'user registered')
     return res.status(201).json({accessToken})
 })
@@ -61,7 +61,7 @@ authController.login = asyncHandler(async (req, res)=>{
     }
     res.cookie('refreshToken', refreshToken, refreshTokenOption)
 
-    await incrbyRateLimit('login', req.ip)
+    await incrementRL(req)
 
     logger.info({ userId: id, ip: req.ip }, 'login success')
     return res.status(200).json({accessToken})
@@ -142,7 +142,7 @@ authController.verifyEmail = asyncHandler(async (req, res) => {
 
     await redisHelper.del('profile', payload.id)
 
-    await incrbyRateLimit('verifyEmail', req.ip)
+    await incrementRL(req)
 
     
     logger.info(payload, 'verify email success')
@@ -156,7 +156,7 @@ authController.forgotPassword = asyncHandler(async (req, res) => {
 
     const id = await UserModel.getIdByEmail({ email })
     if(!id){
-        await incrbyRateLimit('forgotPassword', req.ip)
+        await incrementRL(req)
         logger.debug({ email }, 'forgot password email not found')
         return res.sendStatus(200)
     }
@@ -172,7 +172,7 @@ authController.forgotPassword = asyncHandler(async (req, res) => {
     
     await sendMail.resetPassword({email, token})
     
-    await incrbyRateLimit('forgotPassword', req.ip)
+    await incrementRL(req)
     
     logger.info({ email }, 'forgot password link sent')
     return res.sendStatus(200)
@@ -201,7 +201,7 @@ authController.resetPassword = asyncHandler(async (req, res) => {
         return res.sendStatus(400)
     }
 
-    await incrbyRateLimit('resetPassword', req.ip)
+    await incrementRL(req)
 
     logger.info({ id: payload.id }, 'reset password success')
     return res.sendStatus(200)

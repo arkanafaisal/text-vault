@@ -8,7 +8,7 @@ import { response } from '../utils/response.js';
 import { validate } from '../utils/validate.js';
 import { logger } from '../config/logger.js'
 import asyncHandler from 'express-async-handler'
-import { incrbyRateLimit } from '../middleware/rate-limiting.js'
+import { incrementRL } from '../middleware/rate-limiting.js'
 import { encrypt, decrypt, decryptHelper } from '../utils/crypto.js'
 
 
@@ -24,7 +24,7 @@ dataController.getMyData = asyncHandler(async (req, res)=>{
     }
 
 
-    const rows = await DataModel.getAll({ userId: req.user.id, search, visibility, sort, page })
+    const rows = await DataModel.getAll({ userId: req.user.id, query: { search, visibility, sort, page } })
     if(!(search || visibility !== undefined || page !== 1)){
         await redisHelper.set('allData', `${req.user.id}:${sort}:${page}`, rows)
     }
@@ -60,7 +60,7 @@ dataController.create = asyncHandler(async (req, res)=>{
     if(!insertId){return res.sendStatus(401)}
 
     await redisHelper.delPattern('allData', req.user.id)
-    await incrbyRateLimit('createData', req.ip)
+    await incrementRL(req)
 
     logger.info({ id: insertId, userId: req.user.id }, 'create data success')
     return res.status(201).json({id: insertId, visibility: 'private', title, tags})
@@ -90,7 +90,7 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     if(title){await redisHelper.delPattern('allData', req.user.id)}
     if((title || content) && visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
 
-    await incrbyRateLimit('updateCommon', req.ip)
+    await incrementRL(req)
 
     logger.info({ id, userId: req.user.id }, 'update common data success')
     return res.sendStatus(200)
@@ -116,7 +116,7 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
     await redisHelper.delPattern('allData', req.user.id)
     await redisHelper.delPattern('publicData', req.user.id)
 
-    await incrbyRateLimit('updateStatus', req.ip)
+    await incrementRL(req)
 
     logger.info({ id, userId: req.user.id }, "update status data success")
     return res.sendStatus(200)
@@ -132,7 +132,7 @@ dataController.delete = asyncHandler(async (req, res)=>{
     await redisHelper.delPattern('allData', req.user.id)
     if(visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
 
-    await incrbyRateLimit('deleteData', req.ip)
+    await incrementRL(req)
 
     logger.info({ id, userId: req.user.id }, "delete data success")
     return res.sendStatus(200)

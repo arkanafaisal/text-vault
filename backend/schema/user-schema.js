@@ -1,11 +1,11 @@
 import Joi from "joi"
 
-export const username = Joi.string().trim().max(30).pattern(/^[a-zA-Z0-9]+$/)
-export const email = Joi.string().trim().lowercase().email().max(255)
-export const password = Joi.string().trim().min(6).max(255).required()
-export const publicKey = Joi.string().trim().max(255).required()
+const username = Joi.string().trim().max(30).pattern(/^[a-zA-Z0-9]+$/)
+const email = Joi.string().trim().lowercase().email().max(255)
+const password = Joi.string().trim().min(6).max(255).required()
+const publicKey = Joi.string().trim().max(255).required()
 
-export const token = Joi.string().trim().lowercase().length(64).hex().required()
+const token = Joi.string().trim().lowercase().length(64).hex().required()
 
 export const auth = {
     register: { body: Joi.object({ username: username.required(), password }) },
@@ -38,4 +38,4 @@ export const publicUser = {
     get: { body: Joi.object({ username: username.lowercase().required(), publicKey }) }
 }
 
-export const checkUsername = Joi.object({ username: username.required() })
+const checkUsername = Joi.object({ username: username.required() })
