@@ -3,7 +3,6 @@ import { logger } from "../config/logger.js"
 
 import * as FeedbackModel from '../model/feedback-model.js'
 import * as FeedbackSchema from '../schema/feedback-schema.js'
-import { validateRequest } from "../utils/requestValidation.js"
 
 
 

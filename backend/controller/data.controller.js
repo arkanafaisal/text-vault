@@ -7,7 +7,6 @@ import * as redisHelper from '../utils/redis-helper.js'
 import { response } from '../utils/response.js';
 import { validate } from '../utils/validate.js';
 import { logger } from '../config/logger.js'
-import { validateRequest } from '../utils/requestValidation.js'
 import asyncHandler from 'express-async-handler'
 import { incrbyRateLimit } from '../middleware/rate-limiting.js'
 import { encrypt, decrypt, decryptHelper } from '../utils/crypto.js'
@@ -17,18 +16,17 @@ export const dataController = {};
 
 
 dataController.getMyData = asyncHandler(async (req, res)=>{
-    const query = validateRequest({ schema: DataSchema.query, target: req.query, res })
-    if(!query){return}
+    const { search, visibility, sort, page } = req.validated.query
     
-    if(!(query.search || query.visibility !== undefined || query.page !== 1)){
-        const {ok, data} = await redisHelper.get('allData', `${req.user.id}:${query.sort}:${query.page}`)
+    if(!(search || visibility !== undefined || page !== 1)){
+        const {ok, data} = await redisHelper.get('allData', `${req.user.id}:${sort}:${page}`)
         if(ok){return res.status(200).json(data)}
     }
 
 
-    const rows = await DataModel.getAll({ userId: req.user.id, query })
-    if(!(query.search || query.visibility !== undefined || query.page !== 1)){
-        await redisHelper.set('allData', `${req.user.id}:${query.sort}:${query.page}`, rows)
+    const rows = await DataModel.getAll({ userId: req.user.id, search, visibility, sort, page })
+    if(!(search || visibility !== undefined || page !== 1)){
+        await redisHelper.set('allData', `${req.user.id}:${sort}:${page}`, rows)
     }
 
     return res.status(200).json(rows)

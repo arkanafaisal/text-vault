@@ -1,7 +1,7 @@
 import { auth, user, publicUser } from '../schema/user-schema.js'
 import { data, publicData } from '../schema/data-schema.js'
 import { feedback } from '../schema/feedback-schema.js'
-import { validate } from '../utils/validate.js'
+import { validate as validateHelper } from '../utils/validate.js'
 
 const schemas = {
     register: auth.register,
@@ -48,7 +48,7 @@ validateSchemas()
 
 
 
-export function validateRequest(schemaType) {
+export function validate(schemaType) {
     return (req, res, next)=>{
         if(!Object.hasOwn(schemas, schemaType)){throw new Error('invalid schema type')}
         const schema = schemas[schemaType]
@@ -57,7 +57,7 @@ export function validateRequest(schemaType) {
         for(const field of fields){
             if(!schema[field]){continue}
 
-            const { ok, message, value } = validate(schema[field], req[field])
+            const { ok, message, value } = validateHelper(schema[field], req[field])
             if(!ok){return res.status(400).json({ err: message })}
 
             req.validated[field] = value

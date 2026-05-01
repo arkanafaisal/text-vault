@@ -9,7 +9,6 @@ import * as redisHelper from '../utils/redis-helper.js'
 import { incrbyRateLimit } from "../middleware/rate-limiting.js"
 import { sendMail } from "../utils/mailer.js";
 import { response } from "../utils/response.js"; 
-import { validateRequest } from "../utils/requestValidation.js"
 import { logger } from "../config/logger.js"
 
 export const userController = {}
