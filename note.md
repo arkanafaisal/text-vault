@@ -19,9 +19,11 @@ feature
 
 updates:
 v3.0.2 —— 01/05/2026
-- implemented custom validate middleware
-- standarized file & function name
-- implemented auto-mapped rate limit from method + path
+- implemented logging (pino)
+- implemented custom validation middleware
+- implemented auto-mapped rate limiting (method + path)
+- added server health-check endpoint
+- standardized file & function naming
 
 
 v3.0.1 —— 28/04/2026
@@ -88,10 +90,9 @@ to do:
 - alert server error + button open modal report admin
 - tags input
 - sticky public page input form
-- testing, logging
+- testing
 - cover all error potential
 - redis ok check consistency
-- global layer rate limit (identify by url path and method)
 - warn level for id access token not found in db
 - invalid logger time
 - ratelimit error handler
