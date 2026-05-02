@@ -3,20 +3,19 @@ import redis from "../libs/redis.lib.js"
 
 const base = process.env.PROJECT_NAME
 const redisType = {
-    "cache": {prefix: 'databox:cache:', ttl: 60 * 10},
-    "tokens": {prefix: base + ':tokens:', ttl: 60 * 60 * 168},
-    "verify_email": {prefix: base + ':verify_email:', ttl: 60 * 15},
-    "reset_password": {prefix: base + ':reset_password:', ttl: 60 * 15},
+    "tokens": {prefix: ':tokens:', ttl: 60 * 60 * 168},
+    "verify_email": {prefix: ':verify_email:', ttl: 60 * 15},
+    "reset_password": {prefix: ':reset_password:', ttl: 60 * 15},
 
-    profile: {prefix: base + ':cache:profile:', ttl: 60 * 60},
-    allData: {prefix: base + ':cache:all_data:', ttl: 60 * 10},
-    data: {prefix: base + ':cache:data:', ttl: 60 * 10},
-    publicData: {prefix: base + ':cache:public_data:', ttl: 60 * 60 * 6},
+    profile: {prefix: ':cache:profile:', ttl: 60 * 60},
+    allData: {prefix: ':cache:all_data:', ttl: 60 * 10},
+    data: {prefix: ':cache:data:', ttl: 60 * 10},
+    publicData: {prefix: ':cache:public_data:', ttl: 60 * 60 * 6},
 }
 const cacheTypes = ['profile', 'allData', 'data', 'publicData']
 
 function getPrefix(type){
-    const prefix = redisType[type]?.prefix
+    const prefix = base + redisType[type]?.prefix
 
     if(!prefix){throw new Error('redis type error')}
 
