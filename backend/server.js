@@ -38,8 +38,9 @@ app.use((req, res, next) => {
 
 import db from './libs/db.lib.js';
 import redis from './libs/redis.lib.js';
+import { rl } from './middlewares/rate-limiter.middleware.js';
 
-app.get('/health', async (req, res)=>{
+app.get('/health', rl, async (req, res)=>{
   const now = Date.now()
   let payload = {
     status: 'ok',
