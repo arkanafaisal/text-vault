@@ -5,7 +5,6 @@ import { getIdByUsernamePublickey } from '../models/user.model.js'
 import { getPublicData } from '../models/data.model.js'
 import { decryptHelper } from '../utils/crypto.util.js'
 import { logger } from '../libs/logger.lib.js'
-import { incrementRL } from '../middlewares/rate-limiter.middleware.js'
 
 
 export const publicController = {}
@@ -33,7 +32,7 @@ publicController.get = asyncHandler(async (req, res) => {
       decryptedData.push(decrypted) 
     }
     
-    await incrementRL(req)
+
     return res.status(200).json(decryptedData);
   }
 
@@ -62,6 +61,6 @@ publicController.get = asyncHandler(async (req, res) => {
 
   // console.log("response_ms:", performance.now() - start);
 
-  await incrementRL(req)
+  
   return res.status(200).json(decryptedData);
 });

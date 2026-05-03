@@ -4,7 +4,6 @@ import * as DataModel from '../models/data.model.js'
 import * as redisHelper from '../helpers/redis.helper.js'
 
 import { logger } from '../libs/logger.lib.js'
-import { incrementRL } from '../middlewares/rate-limiter.middleware.js'
 import { encrypt, decrypt, decryptHelper } from '../utils/crypto.util.js'
 
 
@@ -56,7 +55,7 @@ dataController.create = asyncHandler(async (req, res)=>{
     if(!insertId){return res.sendStatus(401)}
 
     await redisHelper.invalidate('allData', req.user.id)
-    await incrementRL(req)
+
 
     logger.info({ id: insertId, userId: req.user.id }, 'create data success')
     return res.status(201).json({id: insertId, visibility: 'private', title, tags})
@@ -86,7 +85,6 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     if(title){await redisHelper.invalidate('allData', req.user.id)}
     if((title || content) && visibility === 'public'){await redisHelper.invalidate('publicData', req.user.id)}
 
-    await incrementRL(req)
 
     logger.info({ id, userId: req.user.id }, 'update common data success')
     return res.sendStatus(200)
@@ -111,8 +109,7 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
     await redisHelper.invalidate('data', `${req.user.id}:${req.params.id}`)
     await redisHelper.invalidate('allData', req.user.id)
     await redisHelper.invalidate('publicData', req.user.id)
-
-    await incrementRL(req)
+    
 
     logger.info({ id, userId: req.user.id }, "update status data success")
     return res.sendStatus(200)
@@ -128,7 +125,6 @@ dataController.delete = asyncHandler(async (req, res)=>{
     await redisHelper.invalidate('allData', req.user.id)
     if(visibility === 'public'){await redisHelper.invalidate('publicData', req.user.id)}
 
-    await incrementRL(req)
 
     logger.info({ id, userId: req.user.id }, "delete data success")
     return res.sendStatus(200)

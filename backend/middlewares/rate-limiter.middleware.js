@@ -5,8 +5,8 @@ const rlSchemas = {
     'GET:/health': { ttl: 1, limit: 60 },
 
     // --- AUTH ROUTER ---
-    'POST:/api/auth/register': { ttl: 60, limit: 10, increaseBy: 3 },
-    'POST:/api/auth/login': { ttl: 15, limit: 10, increaseBy: 3 }, // 10 attempts. Success fills 1/3 the bucket to prevent rapid re-logins.
+    'POST:/api/auth/register': { ttl: 60, limit: 9, increaseBy: 2 },
+    'POST:/api/auth/login': { ttl: 15, limit: 12, increaseBy: 3 }, // 10 attempts. Success fills 1/3 the bucket to prevent rapid re-logins.
     'POST:/api/auth/logout': { ttl: 15, limit: 30 }, // No success penalty. Low risk.
     'POST:/api/auth/refresh': { ttl: 15, limit: 60 }, // Generous for background token refreshing.
     'POST:/api/auth/verify-email/:token': { ttl: 60, limit: 10, increaseBy: 10 }, // 10 attempts for mistyped codes. 1 success per hour.
@@ -18,25 +18,25 @@ const rlSchemas = {
     // --- DATA ROUTER ---
     'GET:/api/data/me': { ttl: 1, limit: 30 },
     'GET:/api/data/:id': {ttl: 1, limit: 20},
-    'POST:/api/data/': { ttl: 20, limit: 80, increaseBy: 5},
-    'PUT:/api/data/:id': { ttl: 20, limit: 80, increaseBy: 5},
-    'PATCH:/api/data/:id/status': { ttl: 30, limit: 60, increaseBy: 5},
-    'DELETE:/api/data/:id': { ttl: 20, limit: 40, increaseBy: 5},
+    'POST:/api/data/': { ttl: 20, limit: 80, increaseBy: 4},
+    'PUT:/api/data/:id': { ttl: 20, limit: 80, increaseBy: 4},
+    'PATCH:/api/data/:id/status': { ttl: 30, limit: 60, increaseBy: 4},
+    'DELETE:/api/data/:id': { ttl: 20, limit: 40, increaseBy: 4},
 
 
 
     // --- USER ROUTER ---
     'GET:/api/users/me': { ttl: 1, limit: 60 }, // High limit for UI navigation.
     'PATCH:/api/users/me/username': { ttl: 60, limit: 10, increaseBy: 10 }, // Rare action. 1 success per hour to prevent name squatting/confusion.
-    'PATCH:/api/users/me/public-key': { ttl: 5, limit: 20, increaseBy: 5 }, // Users might toggle this on/off to test their public link.
-    'PATCH:/api/users/me/email': { ttl: 60, limit: 10, increaseBy: 5 }, 
-    'PATCH:/api/users/me/password': { ttl: 60, limit: 10, increaseBy: 5 }, // Security sensitive. 1 success per hour.
+    'PATCH:/api/users/me/public-key': { ttl: 5, limit: 20, increaseBy: 4 }, // Users might toggle this on/off to test their public link.
+    'PATCH:/api/users/me/email': { ttl: 60, limit: 10, increaseBy: 4 }, 
+    'PATCH:/api/users/me/password': { ttl: 60, limit: 10, increaseBy: 4 }, // Security sensitive. 1 success per hour.
     'DELETE:/api/users/me': { ttl: 60, limit: 10, increaseBy: 10 },
 
 
 
     // --- PUBLIC ROUTER ---
-    'POST:/api/public/data': { ttl: 10, limit: 100, increaseBy: 5 },
+    'POST:/api/public/data': { ttl: 10, limit: 100, increaseBy: 4 },
 
 
     
@@ -89,6 +89,10 @@ export async function rl(req, res, next) {
     if (count > rlSchemas[key].limit) {
         return res.sendStatus(429)
     }
+
+    res.on('finish', ()=>{
+        if(res.statusCode >= 200 && res.statusCode < 300 && rlSchemas[key].increaseBy){incrementRL(req)}
+    })
 
     next()
 }

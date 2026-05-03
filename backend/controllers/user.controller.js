@@ -5,7 +5,6 @@ import asyncHandler from "express-async-handler"
 import * as UserModel from '../models/user.model.js'
 import * as redisHelper from '../helpers/redis.helper.js'
 
-import { incrementRL } from "../middlewares/rate-limiter.middleware.js"
 import { sendMail } from "../utils/mailer.util.js"; 
 import { logger } from "../libs/logger.lib.js"
 
@@ -29,14 +28,13 @@ userController.updateUsername = asyncHandler(async (req, res) => {
     const displayName = username
     const {affectedRows, changedRows} = await UserModel.updateUsername({displayName, username: username.toLowerCase(), id: req.user.id})
     if(affectedRows === 0){return res.sendStatus(401)}
-
-    await incrementRL(req)
     if(changedRows === 0){
         logger.info({ userId: req.user.id, username }, 'update username success')
         return res.sendStatus(200)
     }
 
     await redisHelper.invalidate('profile', req.user.id)
+
 
     logger.info({ userId: req.user.id, username }, 'update username success')
     return res.sendStatus(200)
@@ -54,7 +52,7 @@ userController.updatePassword = asyncHandler(async (req, res) => {
     const hashed = await bcrypt.hash(newPassword, 10)
     const affectedRows = await UserModel.updatePassword({ password: hashed, id: req.user.id })
     if(affectedRows === 0){return res.sendStatus(401)}
-    await incrementRL(req)
+
 
     logger.info({ userId: req.user.id }, 'update password success')
     return res.sendStatus(200)
@@ -66,8 +64,6 @@ userController.updatePublicKey = asyncHandler(async (req, res) => {
 
     const {affectedRows, changedRows} = await UserModel.updatePublicKey({publicKey, id: req.user.id})
     if(affectedRows === 0){return res.sendStatus(401)}
-
-    await incrementRL(req)
     if(changedRows === 0){
         logger.info({ userId: req.user.id }, 'update publicKey success')
         return res.sendStatus(200)
@@ -75,6 +71,7 @@ userController.updatePublicKey = asyncHandler(async (req, res) => {
 
     await redisHelper.invalidate('profile', req.user.id)
     
+
     logger.info({ userId: req.user.id }, 'update publicKey success')
     return res.sendStatus(200)
 })
@@ -101,8 +98,7 @@ userController.sendEmailVerification = asyncHandler(async (req, res) => {
 
     await sendMail.verifyEmail({email, token})
 
-    await incrementRL(req)
-
+    
     logger.info({ userId: req.user.id }, 'request email verification success')
     return res.sendStatus(200)
 })
@@ -118,7 +114,6 @@ userController.delete = asyncHandler(async (req, res) => {
     await redisHelper.invalidate('allData', req.user.id)
     await redisHelper.invalidate('publicData', req.user.id)
     
-    await incrementRL(req)
     
     logger.info({ userId: req.user.id, username }, 'delete user success')
     return res.sendStatus(200)
