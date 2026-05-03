@@ -27,16 +27,10 @@ authController.register = asyncHandler(async (req, res)=>{
     const hashed = await bcrypt.hash(password, 10)
     const insertId = await UserModel.insert({ displayName: username, username: username.toLowerCase(), password: hashed })
 
+    const ok = await issueRefreshToken({ id: insertId, res })
+    if(!ok){return res.sendStatus(500)}
     const accessToken = jwt.sign({ id: insertId }, jwtSecret, {expiresIn: "10m"})
-    const refreshToken = randomUUID()
 
-    const {ok:ok3} = await redisHelper.set("tokens", refreshToken, { id: insertId })
-    if(!ok3){
-        logger.error({ userId: insertId }, 'Redis refresh token SET failed')
-        return res.sendStatus(500)
-    }
-    res.cookie("refreshToken", refreshToken, refreshTokenOption)
-    
 
     logger.info({ userId: insertId, ip: req.ip }, 'user registered')
     return res.status(201).json({accessToken})
@@ -49,15 +43,9 @@ authController.login = asyncHandler(async (req, res)=>{
     const id = await UserModel.authenticateUser({ identifier, password })
     if(!id){return res.status(400).json({error: "wrong username, email or password"})}
     
+    const ok = await issueRefreshToken({ id, res })
+    if(!ok){return res.sendStatus(500)}
     const accessToken = jwt.sign({ id }, jwtSecret, {expiresIn: '10m'})
-    const refreshToken = randomUUID()
-
-    const {ok:ok2} = await redisHelper.set('tokens', refreshToken, { id })
-    if(!ok2){
-        logger.error({ userId: id }, 'Redis refresh token SET failed')
-        return res.sendStatus(500)
-    }
-    res.cookie('refreshToken', refreshToken, refreshTokenOption)
 
 
     logger.info({ userId: id, ip: req.ip }, 'login success')
@@ -199,3 +187,17 @@ authController.resetPassword = asyncHandler(async (req, res) => {
     logger.info({ id: payload.id }, 'reset password success')
     return res.sendStatus(200)
 })
+
+
+async function issueRefreshToken({ id, res }) {
+    const refreshToken = randomUUID()
+
+    const {ok:ok2} = await redisHelper.set('tokens', refreshToken, { id })
+    if(!ok2){
+        logger.error({ userId: id }, 'Redis refresh token SET failed')
+        return false
+    }
+
+    res.cookie('refreshToken', refreshToken, refreshTokenOption)
+    return true
+}
