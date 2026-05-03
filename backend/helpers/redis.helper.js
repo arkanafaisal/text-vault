@@ -1,7 +1,8 @@
+import { projectName } from "../configs/env.config.js"
 import { logger } from "../libs/logger.lib.js"
 import redis from "../libs/redis.lib.js"
 
-const base = process.env.PROJECT_NAME
+const base = projectName
 const redisType = {
     "tokens": {level: 1, prefix: ':tokens:', ttl: 60 * 60 * 168},
     "verify_email": {level: 2, prefix: ':verify_email:', ttl: 60 * 15},

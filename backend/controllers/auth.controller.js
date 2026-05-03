@@ -9,12 +9,13 @@ import * as redisHelper from '../helpers/redis.helper.js'
 import { sendMail } from '../utils/mailer.util.js';
 
 import { logger } from '../libs/logger.lib.js';
+import { isDev, jwtSecret } from '../configs/env.config.js';
 
 export const authController = {}
 
 const refreshTokenOption = {
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "development"? 'none' : 'Lax',
+    sameSite: isDev? 'none' : 'Lax',
     secure: true,
     path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000
@@ -26,7 +27,7 @@ authController.register = asyncHandler(async (req, res)=>{
     const hashed = await bcrypt.hash(password, 10)
     const insertId = await UserModel.insert({ displayName: username, username: username.toLowerCase(), password: hashed })
 
-    const accessToken = jwt.sign({ id: insertId }, process.env.JWT_SECRET, {expiresIn: "10m"})
+    const accessToken = jwt.sign({ id: insertId }, jwtSecret, {expiresIn: "10m"})
     const refreshToken = randomUUID()
 
     const {ok:ok3} = await redisHelper.set("tokens", refreshToken, { id: insertId })
@@ -48,7 +49,7 @@ authController.login = asyncHandler(async (req, res)=>{
     const id = await UserModel.authenticateUser({ identifier, password })
     if(!id){return res.status(400).json({error: "wrong username, email or password"})}
     
-    const accessToken = jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: '10m'})
+    const accessToken = jwt.sign({ id }, jwtSecret, {expiresIn: '10m'})
     const refreshToken = randomUUID()
 
     const {ok:ok2} = await redisHelper.set('tokens', refreshToken, { id })
@@ -102,7 +103,7 @@ authController.refresh = asyncHandler(async (req, res) => {
         return res.sendStatus(401)
     }
 
-    const accessToken = jwt.sign({id: payload.id}, process.env.JWT_SECRET, {expiresIn: '10m'})
+    const accessToken = jwt.sign({id: payload.id}, jwtSecret, {expiresIn: '10m'})
 
 
     logger.debug({ userId: payload.id }, 'access token created')

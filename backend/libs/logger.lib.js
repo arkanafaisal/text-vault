@@ -1,11 +1,9 @@
 import pino from 'pino'
+import { isDev, logLevel } from '../configs/env.config.js'
 
-
-
-const isDev = process.env.NODE_ENV === 'development'
 
 export const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
+  level: logLevel || 'info',
   base: isDev
     ? null      // remove pid, hostname
     : undefined,

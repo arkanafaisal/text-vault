@@ -21,6 +21,7 @@ updates:
 v3.0.3 —— 03/05/2026
 - implemented delayed double delete cache (prevent stale cache)
 - refactored redis-helper functions
+- moved rate limit increment from controller to middleware.
 - added rate limit on health endpoint
 
 

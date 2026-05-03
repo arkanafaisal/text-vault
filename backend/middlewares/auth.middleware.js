@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { logger } from '../libs/logger.lib.js'
+import { jwtSecret } from '../configs/env.config.js';
 
 export async function authenticate(req, res, next) {
     const accessToken = req.headers.accesstoken
@@ -9,7 +10,7 @@ export async function authenticate(req, res, next) {
     }
 
     try{
-        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET)
+        const decoded = jwt.verify(accessToken, jwtSecret)
         req.user = decoded
         next();
     } catch(err){

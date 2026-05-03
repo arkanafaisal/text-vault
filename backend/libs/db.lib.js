@@ -1,10 +1,8 @@
 import mysql from 'mysql2/promise'
+import { dbConfig } from '../configs/env.config.js';
 
 const db = mysql.createPool({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DB,
+  ...dbConfig,
 
   waitForConnections: true,
   connectionLimit: 10,

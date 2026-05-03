@@ -1,3 +1,4 @@
+import { projectName } from "../configs/env.config.js"
 import redis from "../libs/redis.lib.js"
 
 const rlSchemas = {
@@ -55,7 +56,7 @@ export async function incrbyRateLimit(key, ip, incr = null){
     const config = rlSchemas[key]
     if (!config) throw new Error(`invalid rl mapping: ${key}`)
 
-    const redisKey = `${process.env.PROJECT_NAME}:rl:${key}:${ip}`
+    const redisKey = `${projectName}:rl:${key}:${ip}`
         
     incr = incr || config.increaseBy
     const windowMs = config.ttl * 60000

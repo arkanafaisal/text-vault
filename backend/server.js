@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 // import 'dotenv/config'
 import { logger } from './libs/logger.lib.js'
+import { env, isDev, port, projectName } from './configs/env.config.js';
 
 
 const app = express()
@@ -12,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 app.use(cors({
-  origin: process.env.NODE_ENV === "development"? ['http://127.0.0.1:5173', 'http://localhost:5173'] : `https://${process.env.PROJECT_NAME}.arkanafaisal.my.id`,
+  origin: isDev? ['http://127.0.0.1:5173', 'http://localhost:5173'] : `https://${projectName}.arkanafaisal.my.id`,
   credentials: true,
   allowedHeaders: ['Content-Type', 'accessToken'],   // opsional, header yg diizinkan
   preflightContinue: false,
@@ -46,7 +47,7 @@ app.get('/health', rl, async (req, res)=>{
     status: 'ok',
     uptime: now - serverStartTime,
     timestamp: now,
-    environment: process.env.NODE_ENV,
+    environment: env,
     services: {}
   }
   try {
@@ -122,7 +123,7 @@ app.use((req, res, next) => {
 
 
 
-const PORT = process.env.PORT
+const PORT = port
 const serverStartTime = Date.now()
 const server = app.listen(PORT, ()=>{ logger.info(`server running on ${PORT}`) })
 

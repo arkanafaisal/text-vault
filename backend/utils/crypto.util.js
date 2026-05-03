@@ -1,14 +1,10 @@
 import crypto from "crypto";
-import "dotenv/config";
 import { logger } from "../libs/logger.lib.js";
+import { encryptionKey } from "../configs/env.config.js";
 
 const algorithm = "aes-256-gcm";
 
-if (!process.env.ENCRYPTION_KEY) {
-  throw new Error('ENCRYPTION_KEY missing')
-}
-
-const key = Buffer.from(process.env.ENCRYPTION_KEY, "hex")
+const key = Buffer.from(encryptionKey, "hex")
 
 if (key.length !== 32) {
   throw new Error('Invalid ENCRYPTION_KEY length (must be 32 bytes)')
