@@ -3,68 +3,80 @@ import redis from "../libs/redis.lib.js"
 
 const base = process.env.PROJECT_NAME
 const redisType = {
-    "tokens": {prefix: ':tokens:', ttl: 60 * 60 * 168},
-    "verify_email": {prefix: ':verify_email:', ttl: 60 * 15},
-    "reset_password": {prefix: ':reset_password:', ttl: 60 * 15},
+    "tokens": {level: 1, prefix: ':tokens:', ttl: 60 * 60 * 168},
+    "verify_email": {level: 2, prefix: ':verify_email:', ttl: 60 * 15},
+    "reset_password": {level: 2, prefix: ':reset_password:', ttl: 60 * 15},
 
-    profile: {prefix: ':cache:profile:', ttl: 60 * 60},
-    allData: {prefix: ':cache:all_data:', ttl: 60 * 10},
-    data: {prefix: ':cache:data:', ttl: 60 * 10},
-    publicData: {prefix: ':cache:public_data:', ttl: 60 * 60 * 6},
+    profile: {level: 3, prefix: ':cache:profile:', ttl: 60 * 60},
+    allData: {level: 4, prefix: ':cache:all_data:', ttl: 60 * 10},
+    data: {level: 3, prefix: ':cache:data:', ttl: 60 * 10},
+    publicData: {level: 4, prefix: ':cache:public_data:', ttl: 60 * 60 * 6},
 }
 const cacheTypes = ['profile', 'allData', 'data', 'publicData']
 
-function getPrefix(type){
+
+function getKey(type, key){
     const prefix = base + redisType[type]?.prefix
 
-    if(!prefix){throw new Error('redis type error')}
+    if(!prefix){throw new Error('redis type invalid')}
 
-    return prefix
+    return prefix + key
 }
 
 export async function get(type, key){
+    const level = redisType[type].level
     try {
-        const prefix = getPrefix(type)
-        const rawData = await redis.get(prefix + key)
+        const rawData = await redis.get(getKey(type, key))
         if(!rawData){return {ok: false}}
         
-        logger.trace({ key: prefix + key }, 'redis cache used')
+        if(level >= 3){logger.trace({ key: getKey(type, key) }, 'redis cache used')}
         return {ok: true, data: JSON.parse(rawData)}
     } catch(err) {
-        if(cacheTypes.includes(type)){
-            logger.debug(err, "redis cache GET error")
+        if(level >= 3){
+            logger.debug({ err }, "redis GET cache failed")
             return {ok: false} 
         }
 
-        logger.error(err, "redis GET error")
+        const message = `redis GET ${level === 1? 'session' : 'token'} error`
+        logger.error({ err }, message)
         throw err
     }
 }
 
 export async function set(type, key, data){
     try {
-        await redis.set(getPrefix(type) + key, JSON.stringify(data), {"EX": redisType[type].ttl})
+        await redis.set(getKey(type, key), JSON.stringify(data), {"EX": redisType[type].ttl})
         return {ok: true} 
     } catch (err) {
-        if(cacheTypes.includes(type)){logger.debug(err, "redis cache SET error")}
-        return {ok: false}
+        if(redisType[type].level >= 3){
+            logger.debug({ err }, "redis SET cache error")
+            return {ok: false}
+        }
+
+        let retrySuccess = true
+        await retry(()=>redis.set(getKey(type, key), JSON.stringify(data), {"EX": redisType[type].ttl}), 3, 100).catch(()=>{retrySuccess = false})
+        return {ok: retrySuccess}
     }
 }
 
 export async function del(type, key){
     try {
-        await redis.del(getPrefix(type) + key)
-        return {ok: true} 
+        await redis.del(getKey(type, key))
     } catch (err) {
-        logger.warn(err, 'redis DEL error')
-        return {ok: false}
+        const level = redisType[type].level
+        if(level >= 3){
+            logger.warn({ err }, 'redis DEL cache failed')
+            redis.del(getKey(type, key)).catch(()=>{})
+        } else {
+            const message = `redis DEL ${level === 1? 'session' : 'token'} error`
+            logger.error({ err }, message)
+            await retry(()=>redis.del(getKey(type, key)), 3, 200)
+        }
     }
 }
 
-
-
 export async function delPattern(type, key) {
-    const pattern = getPrefix(type) + key + '*'
+    const pattern = getKey(type, key) + '*'
     let cursor = '0'
     try {
         do {
@@ -76,6 +88,61 @@ export async function delPattern(type, key) {
             }
         } while (cursor !== '0')
     } catch (err) {
-        logger.debug(err, 'redis DEL error')
+        logger.debug({ err }, 'redis DEL cache failed')
+    }
+}
+
+
+
+export async function invalidate(type, key) {
+    const level = redisType[type].level
+    if(level === 4){
+        await delPattern(type, key)
+        retry(()=>delPattern(type, key), 1, 500).catch(()=>{})
+        
+    } else if(level === 3){
+        await del(type, key)
+        retry(()=>del(type, key), 1, 500).catch(()=>{})
+
+    } else {
+        throw new Error(`wrong call: invalidate is not for type ${type}`)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms))
+}
+
+async function retry(fn, count, delay = 100) {
+    let attempt = 1
+        
+    while (attempt <= count) {
+        try {
+        return await fn()
+        } catch (err) {
+        if (attempt === count){
+            logger.error({ err }, `redis action retry failed (${count} times)`)
+            throw err
+        }
+        attempt++
+        await sleep(delay)
+        }
     }
 }

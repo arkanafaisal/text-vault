@@ -36,8 +36,7 @@ userController.updateUsername = asyncHandler(async (req, res) => {
         return res.sendStatus(200)
     }
 
-    await redisHelper.del('profile', req.user.id)
-    await redisHelper.delPattern('publicData', req.user.id)
+    await redisHelper.invalidate('profile', req.user.id)
 
     logger.info({ userId: req.user.id, username }, 'update username success')
     return res.sendStatus(200)
@@ -74,8 +73,7 @@ userController.updatePublicKey = asyncHandler(async (req, res) => {
         return res.sendStatus(200)
     }
 
-    await redisHelper.del('profile', req.user.id)
-    await redisHelper.delPattern('publicData', req.user.id)
+    await redisHelper.invalidate('profile', req.user.id)
     
     logger.info({ userId: req.user.id }, 'update publicKey success')
     return res.sendStatus(200)
@@ -116,9 +114,9 @@ userController.delete = asyncHandler(async (req, res) => {
     const affectedRows = await UserModel.del({ id: req.user.id, username })
     if(!affectedRows){return res.sendStatus(400)}
 
-    await redisHelper.del('profile', req.user.id)
-    await redisHelper.delPattern('allData', req.user.id)
-    await redisHelper.delPattern('publicData', req.user.id)
+    await redisHelper.invalidate('profile', req.user.id)
+    await redisHelper.invalidate('allData', req.user.id)
+    await redisHelper.invalidate('publicData', req.user.id)
     
     await incrementRL(req)
     

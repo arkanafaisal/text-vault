@@ -74,7 +74,7 @@ authController.logout = asyncHandler(async (req, res) => {
         return res.sendStatus(200)
     }
 
-    await redisHelper.del('tokens', refreshToken)
+    await redisHelper.del('tokens', refreshToken).catch(()=>{})
     res.clearCookie("refreshToken", refreshTokenOption)
     logger.debug({ ip: req.ip }, 'logout success')
 
@@ -97,7 +97,7 @@ authController.refresh = asyncHandler(async (req, res) => {
     
     const isExist = await UserModel.validateUserId({id: payload.id})
     if(!isExist){
-        await redisHelper.del('tokens', refreshToken)
+        await redisHelper.del('tokens', refreshToken).catch(()=>{})
         res.clearCookie("refreshToken", refreshTokenOption)
 
         logger.warn('refresh token user not found')
@@ -128,7 +128,7 @@ authController.verifyEmail = asyncHandler(async (req, res) => {
     const {affectedRows, changedRows} = await UserModel.updateEmail(payload)
     await redisHelper.del('verify_email', tokenHash)
     if(affectedRows === 0){
-        await redisHelper.del('profile', payload.id)
+        await redisHelper.invalidate('profile', payload.id)
 
         logger.warn('verify email token user not found')
         return res.sendStatus(400)
@@ -138,7 +138,7 @@ authController.verifyEmail = asyncHandler(async (req, res) => {
         return res.sendStatus(200)
     }
 
-    await redisHelper.del('profile', payload.id)
+    await redisHelper.invalidate('profile', payload.id)
 
     await incrementRL(req)
 

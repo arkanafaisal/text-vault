@@ -55,7 +55,7 @@ dataController.create = asyncHandler(async (req, res)=>{
     const insertId = await DataModel.create({ title, tags, ...enc, userId: req.user.id })
     if(!insertId){return res.sendStatus(401)}
 
-    await redisHelper.delPattern('allData', req.user.id)
+    await redisHelper.invalidate('allData', req.user.id)
     await incrementRL(req)
 
     logger.info({ id: insertId, userId: req.user.id }, 'create data success')
@@ -82,9 +82,9 @@ dataController.updateCommon = asyncHandler(async (req, res)=>{
     }
     if(changedRows === 0){return res.status(400).json({error: "there's nothing to change"})}
     
-    await redisHelper.del('data', `${req.user.id}:${id}`)
-    if(title){await redisHelper.delPattern('allData', req.user.id)}
-    if((title || content) && visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
+    await redisHelper.invalidate('data', `${req.user.id}:${id}`)
+    if(title){await redisHelper.invalidate('allData', req.user.id)}
+    if((title || content) && visibility === 'public'){await redisHelper.invalidate('publicData', req.user.id)}
 
     await incrementRL(req)
 
@@ -108,9 +108,9 @@ dataController.updateStatus = asyncHandler(async (req, res)=>{
     }
     if(changedRows === 0){return res.status(400).json({error: "there's nothing to change"})}
 
-    await redisHelper.del('data', `${req.user.id}:${req.params.id}`)
-    await redisHelper.delPattern('allData', req.user.id)
-    await redisHelper.delPattern('publicData', req.user.id)
+    await redisHelper.invalidate('data', `${req.user.id}:${req.params.id}`)
+    await redisHelper.invalidate('allData', req.user.id)
+    await redisHelper.invalidate('publicData', req.user.id)
 
     await incrementRL(req)
 
@@ -124,9 +124,9 @@ dataController.delete = asyncHandler(async (req, res)=>{
     const {affectedRows, visibility} = await DataModel.del({ id, userId: req.user.id })
     if(affectedRows === 0){return res.sendStatus(404)}
 
-    await redisHelper.del('data', `${req.user.id}:${id}`)
-    await redisHelper.delPattern('allData', req.user.id)
-    if(visibility === 'public'){await redisHelper.delPattern('publicData', req.user.id)}
+    await redisHelper.invalidate('data', `${req.user.id}:${id}`)
+    await redisHelper.invalidate('allData', req.user.id)
+    if(visibility === 'public'){await redisHelper.invalidate('publicData', req.user.id)}
 
     await incrementRL(req)
 

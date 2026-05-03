@@ -18,6 +18,11 @@ feature
 
 
 updates:
+v3.0.3 —— 03/05/2026
+- implemented delayed double delete cache (prevent stale cache)
+- refactored redis-helper functions
+
+
 v3.0.2 —— 01/05/2026
 - implemented logging (pino)
 - implemented custom validation middleware
