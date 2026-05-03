@@ -2,7 +2,7 @@ import redis from "../libs/redis.lib.js"
 
 const rlSchemas = {
 
-    'GET:/health': { ttl: 60, limit: 60 },
+    'GET:/health': { ttl: 1, limit: 60 },
 
     // --- AUTH ROUTER ---
     'POST:/api/auth/register': { ttl: 60, limit: 10, increaseBy: 3 },
