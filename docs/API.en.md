@@ -5,7 +5,7 @@
 This documentation contains the data contract specifications for the Frontend and Backend integration of the **Textvault** application. All requests to the server and responses from the server use the JSON format.
 
 * **Base URL (Development):** http://localhost:3000
-* **Base URL (Production):** [https://api.textvault.arkanafaisal.my.id](https://api.textvault.arkanafaisal.my.id) *(The /api prefix applies to functional routes)*
+* **Base URL (Production):** [https://textvault.arkanafaisal.my.id](https://textvault.arkanafaisal.my.id) *(The /api prefix applies to functional routes)*
 
 ---
 

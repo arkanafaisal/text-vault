@@ -5,7 +5,7 @@
 Dokumentasi ini memuat spesifikasi kontrak data untuk integrasi Frontend dan Backend aplikasi **Textvault**. Seluruh *request* ke server dan balasan (*response*) dari server menggunakan format JSON.
 
 * **Base URL (Development):** http://localhost:3000
-* **Base URL (Production):** https://api.textvault.arkanafaisal.my.id *(Prefix /api berlaku untuk rute fungsional)*
+* **Base URL (Production):** https://textvault.arkanafaisal.my.id *(Prefix /api berlaku untuk rute fungsional)*
 
 ---
 
