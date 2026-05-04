@@ -21,6 +21,8 @@ updates:
 v3.0.4 —— 03/06/2026
 - fixed password source in reset password
 - added db and redis connection teardown on shutdown
+- added maximum value validation on page query
+- added unique validation on tags property
 
 
 v3.0.3 —— 03/05/2026
@@ -114,8 +116,6 @@ to do:
 - Bearer token notation
 - bot/hacker rate limit penalty
 - use GET method for /public/data
-- add maximum value on page query
-- add Joi unique in tags validation 
 
 
 - copy from dashboard bento (hit getContent to get the data content)

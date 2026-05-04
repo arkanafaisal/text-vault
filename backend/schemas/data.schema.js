@@ -5,13 +5,13 @@ const id = Joi.number().min(1).required()
 const title = Joi.string().trim().max(31)
 const content = Joi.string().max(1000)
 const visibility = Joi.string().valid('private', 'public')
-const tags = Joi.array().items(Joi.string().trim().max(12)).max(5)
+const tags = Joi.array().items(Joi.string().trim().max(12)).max(5).unique((a, b) => a.trim().toLowerCase() === b.trim().toLowerCase())
 const expiresAt = Joi.date()
 
 
 const search = Joi.string().trim().max(128)
 const sort = Joi.valid('oldest', 'updated', 'newest')
-const page = Joi.number().min(1).default(1)
+const page = Joi.number().min(1).max(50).default(1)
 
 
 export const data = {
