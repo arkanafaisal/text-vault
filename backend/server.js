@@ -130,11 +130,14 @@ const server = app.listen(PORT, ()=>{ logger.info(`server running on ${PORT}`) }
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-function shutdown() {
+async function shutdown() {
   logger.info('shutting down...');
 
-  server.close(() => {
-    logger.info('server closed');
-    process.exit(0);
-  });
+  server.close();
+
+  await db.end();
+  await redis.quit();
+
+  logger.info('server closed');
+  process.exit(0);
 }
