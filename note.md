@@ -23,6 +23,7 @@ v3.0.4 —— 03/06/2026
 - added db and redis connection teardown on shutdown
 - added maximum value validation on page query
 - added unique validation on tags property
+- added api documentation (english & indonesia)
 - added docker compose on frontend
 
 
