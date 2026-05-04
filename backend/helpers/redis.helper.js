@@ -13,7 +13,6 @@ const redisType = {
     data: {level: 3, prefix: ':cache:data:', ttl: 60 * 10},
     publicData: {level: 4, prefix: ':cache:public_data:', ttl: 60 * 60 * 6},
 }
-const cacheTypes = ['profile', 'allData', 'data', 'publicData']
 
 
 function getKey(type, key){
