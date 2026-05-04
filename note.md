@@ -18,6 +18,11 @@ feature
 
 
 updates:
+v3.0.4 —— 03/06/2026
+- fixed password source in reset password
+- added db and redis connection teardown on shutdown
+
+
 v3.0.3 —— 03/05/2026
 - implemented delayed double delete cache (prevent stale cache)
 - refactored redis-helper functions
@@ -106,7 +111,13 @@ to do:
 - ratelimit error handler
 - http level caching
 - route config ( define rl and request schema )
- 
+- Bearer token notation
+- bot/hacker rate limit penalty
+- use GET method for /public/data
+- add maximum value on page query
+- add Joi unique in tags validation 
+
+
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
 - frontend encrypting choice ( random key + derive password )
