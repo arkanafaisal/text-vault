@@ -165,7 +165,7 @@ authController.forgotPassword = asyncHandler(async (req, res) => {
 
 authController.resetPassword = asyncHandler(async (req, res) => {
     const { token } = req.validated.params
-    const { password } = req.validated.params
+    const { password } = req.validated.body
 
     const tokenHash = createHash('sha256').update(token).digest('hex')
 
