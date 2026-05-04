@@ -23,6 +23,7 @@ v3.0.4 —— 03/06/2026
 - added db and redis connection teardown on shutdown
 - added maximum value validation on page query
 - added unique validation on tags property
+- added docker compose on frontend
 
 
 v3.0.3 —— 03/05/2026
@@ -107,10 +108,6 @@ to do:
 - sticky public page input form
 - testing
 - cover all error potential
-- redis ok check consistency
-- warn level for id access token not found in db
-- invalid logger time
-- ratelimit error handler
 - http level caching
 - route config ( define rl and request schema )
 - Bearer token notation
@@ -121,12 +118,10 @@ to do:
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
 - frontend encrypting choice ( random key + derive password )
-- server health tracker
 - word count tracker
 - profile modal state url
 - window.location.href push, possible to do undo redo
 - skeleton loading
-- docker compose for frontend only
 
 - tutorial / help
 - review constant variable to table schema
