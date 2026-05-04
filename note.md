@@ -116,6 +116,7 @@ to do:
 - use GET method for /public/data
 
 
+- i18n (english indonesia)
 - copy from dashboard bento (hit getContent to get the data content)
 - review responsiveness
 - frontend encrypting choice ( random key + derive password )
@@ -125,17 +126,13 @@ to do:
 - skeleton loading
 
 - tutorial / help
-- review constant variable to table schema
 - smoothscroll public page to bottom (untl section header hidden) at /public after data found
-- re-test api speed after cache
-- validation middleware, rename authMiddleware
-- i18n (english indonesia)
 - mysql charset/collation (case & accent sensitive)
 - self destruct (ttl & one read only)
 - axios
 - express ts 
 - kubernetes
-- learn more about zero downtime migration 
+- learn zero downtime migration 
 - extract App.jsx logic
 - google login (session profile and ask username for register)
 
