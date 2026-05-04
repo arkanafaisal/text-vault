@@ -58,7 +58,7 @@ export function validate(schemaType) {
             if(!schema[field]){continue}
 
             const { ok, message, value } = validateHelper(schema[field], req[field])
-            if(!ok){return res.status(400).json({ err: message })}
+            if(!ok){return res.status(400).json({ error: message })}
 
             req.validated[field] = value
         }
