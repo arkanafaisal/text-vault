@@ -114,6 +114,8 @@ to do:
 - Bearer token notation
 - bot/hacker rate limit penalty
 - use GET method for /public/data
+- Joi error message formatter
+- auto lowercase tags (for search)
 
 
 - i18n (english indonesia)
