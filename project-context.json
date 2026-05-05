@@ -3,7 +3,8 @@
     "name": "Textvault",
     "core_purpose": "A secure web application designed to instantly transfer text, links, and code snippets across devices without relying on slow, chat-history-dependent tools like WhatsApp Web[cite: 1].",
     "target_users": "Users needing quick data transfer between personal devices or secure public access on shared computers (like campus PCs or cybercafes)[cite: 1].",
-    "access_modes": "Features two primary modes: a Private Vault for encrypted personal data accessible via login, and a Public Access system where specific notes can be unlocked globally using a combination of the creator's username and a designated publicKey[cite: 1]."
+    "access_modes": "Features two primary modes: a Private Vault for encrypted personal data accessible via login, and a Public Access system where specific notes can be unlocked globally using a combination of the creator's username and a designated publicKey[cite: 1].",
+    "live_deployment": "The production application is actively served at https://textvault.arkanafaisal.my.id[cite: 1]."
   },
   "frontend_architecture": {
     "framework": "React 19 built with Vite, emphasizing modern, fast tooling and the React Compiler plugin[cite: 1].",
@@ -23,6 +24,10 @@
     "framework": "Node.js (v20) using Express.js 5.x, heavily utilizing express-async-handler to natively catch and route promise rejections without try-catch bloat[cite: 1].",
     "layered_architecture": "Follows a strict, MVC-inspired directory separation to enforce modularity: 'configs' (environment validation), 'controllers' (request orchestration), 'flyway' (SQL migrations), 'helpers' (Redis/cache abstractions), 'libs' (third-party initializations like MySQL pool), 'middlewares' (interceptors like rate limiters), 'models' (raw SQL queries), 'schemas' (Joi payload validation), 'scripts' (one-off data manipulations), and 'utils' (stateless functions like crypto and mailer)[cite: 1].",
     "environment_configuration": "Implements a 'fail-fast' early validation system. The custom 'requireEnv' wrapper checks process.env variables at initialization and immediately throws a fatal error if required keys are missing, intentionally crashing the Node.js process before port binding to prevent silent production failures[cite: 1].",
+    "observability_and_lifecycle": {
+      "health_endpoint": "Exposes a robust `GET /health` endpoint protected by a rate limiter. It executes a `SELECT 1` query against MySQL and a `.ping()` to Redis (wrapped in 500ms timeouts) to return an accurate 'ok' or 'degraded' status payload[cite: 1].",
+      "graceful_shutdown": "Listens for SIGINT and SIGTERM signals to execute an asynchronous teardown process. This ensures the Express server closes cleanly, the MySQL connection pool drains (`db.end()`), and the Redis client quits safely before the Node process exits[cite: 1]."
+    },
     "api_style": "RESTful JSON architecture. Structured with clear route segregation (users, auth, data, public, feedback) and strict validation layers[cite: 1].",
     "middleware_pipeline": [
       "Rate Limiter: A custom Redis-backed middleware executing Lua scripts for atomic increments (eval). This prevents race conditions under high concurrency and maps unique TTLs, limits, and success penalties per endpoint[cite: 1].",
@@ -55,7 +60,7 @@
     "deployment_flow": "The application relies entirely on a containerized Docker Compose environment, serving the built React frontend directly through the Node.js/Express backend to ensure a unified deployment pipeline."
   },
   "engineering_highlights_and_trade_offs": {
-    "fail_fast_reliability": "By choosing to crash the server synchronously on startup if environment variables are missing, the architecture prevents devops errors from becoming obscure runtime bugs[cite: 1].",
+    "system_observability_and_safety": "By combining a 'fail-fast' startup mechanism (crashing on missing env vars), an active health-check endpoint (pinging DB/Redis), and a graceful teardown process (listening for SIGTERM to flush connections), the backend is engineered for high reliability in containerized orchestration environments[cite: 1].",
     "lua_script_rate_limiting": "A major highlight is the custom rate limiter. Instead of basic incrementing, it passes a Lua script to Redis. This ensures that the INCRBY and PEXPIRE commands are executed atomically, entirely eliminating race conditions where concurrent requests could bypass the limit block before the expiration is set[cite: 1].",
     "bundle_size_optimization": "A deliberate trade-off was made against developer convenience by avoiding standard libraries (React Router, React Toastify). Writing custom event-driven routing and toast notifications significantly reduces the frontend's final bundle weight[cite: 1].",
     "server_side_encryption_overhead": "Textvault prioritizes extreme privacy over performance by employing AES-256-GCM. The trade-off is the computational overhead of decrypting payloads in Node.js on every GET request before sending it to the client, trading CPU cycles for the guarantee that the raw database is unreadable[cite: 1].",
