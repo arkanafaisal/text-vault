@@ -1,0 +1,64 @@
+{
+  "project_identity": {
+    "name": "Textvault",
+    "core_purpose": "A secure web application designed to instantly transfer text, links, and code snippets across devices without relying on slow, chat-history-dependent tools like WhatsApp Web[cite: 1].",
+    "target_users": "Users needing quick data transfer between personal devices or secure public access on shared computers (like campus PCs or cybercafes)[cite: 1].",
+    "access_modes": "Features two primary modes: a Private Vault for encrypted personal data accessible via login, and a Public Access system where specific notes can be unlocked globally using a combination of the creator's username and a designated publicKey[cite: 1]."
+  },
+  "frontend_architecture": {
+    "framework": "React 19 built with Vite, emphasizing modern, fast tooling and the React Compiler plugin[cite: 1].",
+    "styling_approach": "Tailwind CSS v4 utilized for utility-first styling. The UI implements a sophisticated CSS variable-based theming system (light/dark mode) that seamlessly handles background reductions and contrast enhancements for modern UI aesthetics[cite: 1].",
+    "responsiveness": "Fully responsive across mobile, tablet, and PC environments using Tailwind's mobile-first breakpoints (sm:, md:, lg:). Complex elements like DataDetailsModal dynamically switch from full-screen mobile views to constrained, floating overlay modals on larger screens[cite: 1].",
+    "state_management": "Relies heavily on native React Hooks (useState, useEffect) and abstracts complex business logic into custom hooks (e.g., useDashboard, useAuth, useProfile, usePublicPage). This prevents component bloat and enforces a strict separation of concerns[cite: 1].",
+    "pagination_handling": "Frontend manages pagination state via custom hooks tracking current page and 'hasNextPage' booleans. UI implements explicit 'Prev' and 'Next' navigation that triggers API refetches with updated query parameters rather than relying on infinite scroll[cite: 1].",
+    "routing_strategy": "Intentionally avoids heavy routing libraries like react-router-dom. Instead, it implements a custom, lightweight routing solution using the native HTML5 History API and listening to 'popstate' events within App.jsx to minimize bundle size[cite: 1].",
+    "complex_ux_logic": [
+      "Custom Toast Notification System: Built entirely with vanilla JS CustomEvents dispatching to a centralized ToastContainer, avoiding heavy third-party toaster libraries[cite: 1].",
+      "Search Debouncing: The dashboard search input utilizes a 2000ms debounce timer (via setTimeout) combined with a visual progress bar animation to prevent API spamming while maintaining responsive feedback[cite: 1].",
+      "Dynamic Typography: Implements helper functions that dynamically calculate CSS font-size classes based on the character length of note titles, ensuring text always fits its bounding box[cite: 1].",
+      "Internationalization: Utilizes react-i18next with an English locale setup for standardized translation management[cite: 1]."
+    ]
+  },
+  "backend_and_system_architecture": {
+    "framework": "Node.js (v20) using Express.js 5.x, heavily utilizing express-async-handler to natively catch and route promise rejections without try-catch bloat[cite: 1].",
+    "layered_architecture": "Follows a strict, MVC-inspired directory separation to enforce modularity: 'configs' (environment validation), 'controllers' (request orchestration), 'flyway' (SQL migrations), 'helpers' (Redis/cache abstractions), 'libs' (third-party initializations like MySQL pool), 'middlewares' (interceptors like rate limiters), 'models' (raw SQL queries), 'schemas' (Joi payload validation), 'scripts' (one-off data manipulations), and 'utils' (stateless functions like crypto and mailer)[cite: 1].",
+    "environment_configuration": "Implements a 'fail-fast' early validation system. The custom 'requireEnv' wrapper checks process.env variables at initialization and immediately throws a fatal error if required keys are missing, intentionally crashing the Node.js process before port binding to prevent silent production failures[cite: 1].",
+    "api_style": "RESTful JSON architecture. Structured with clear route segregation (users, auth, data, public, feedback) and strict validation layers[cite: 1].",
+    "middleware_pipeline": [
+      "Rate Limiter: A custom Redis-backed middleware executing Lua scripts for atomic increments (eval). This prevents race conditions under high concurrency and maps unique TTLs, limits, and success penalties per endpoint[cite: 1].",
+      "Validator: Uses Joi schemas to strictly sanitize and validate req.body, req.query, and req.params before they reach the controller[cite: 1].",
+      "Error Handler: A centralized error classification system that intercepts MySQL errors (e.g., ER_DUP_ENTRY for 409 Conflict), Node errors, network timeouts, and JSON syntax errors, logging them accurately while standardizing client responses[cite: 1]."
+    ],
+    "core_workflows": {
+      "authentication": "JWT-based. Access tokens are sent via headers, while long-lived refresh tokens are stored securely in HttpOnly, secure cookies and mapped in Redis for session invalidation[cite: 1].",
+      "email_verification_and_recovery": "Automated email workflows (verification and password resets) managed via nodemailer. Security is enforced by generating 32-byte hex tokens, hashing them via SHA-256, and storing the hash in Redis with a strict 15-minute TTL before emailing the unhashed token to the user[cite: 1]."
+    },
+    "security_measures": {
+      "data_encryption": "Implements server-side AES-256-GCM encryption. User text content is encrypted into a buffer with a generated initialization vector (IV) and authentication tag before hitting the database, ensuring that raw data is unreadable even in the event of a database breach[cite: 1]."
+    },
+    "logging": "Custom JSON logging configured via Pino, optimized for production with process metadata stripped, while maintaining human-readable pretty-printing in development[cite: 1]."
+  },
+  "database_design": {
+    "system": "MySQL, utilizing mysql2/promise for connection pooling (connectionLimit: 10)[cite: 1].",
+    "migrations": "Version-controlled SQL migrations managed via Flyway. The project tracks 16 discrete migration steps, detailing evolution such as dropping specific Google ID constraints and migrating the locked data status to a visibility ENUM[cite: 1].",
+    "entities_and_relationships": {
+      "users": "Stores id, displayName, username (unique), email, bcrypt-hashed password, and publicKey[cite: 1].",
+      "data": "The core notes table. References userId (foreign key with cascading deletes). Stores title, content (encrypted payload), iv, tag (GCM auth tag), tags (stored as a JSON array), and visibility ENUM ('private' or 'public')[cite: 1].",
+      "feedback": "A simple table storing user-submitted messages and creation timestamps[cite: 1]."
+    },
+    "pagination_implementation": "Database queries specifically utilize SQL LIMIT and OFFSET clauses calculated dynamically from the 'page' parameter passed down from controllers to models. Queries request 'LIMIT + 1' to determine if a subsequent page exists for the frontend[cite: 1]."
+  },
+  "devops_and_infrastructure": {
+    "containerization": "Utilizes multi-stage Dockerfiles to build the Vite frontend, copy the static assets into the Node backend, and serve both from Express. Flyway is containerized separately to run database migrations automatically on startup.",
+    "reverse_proxy": "Managed by Caddy, configured via a Caddyfile to proxy external requests to the backend service running on port 3001, providing automatic HTTPS.",
+    "caching_strategy": "Redis handles multiple caching layers: session tokens, profile data, and encrypted data payloads. The application uses a 'delayed double delete' invalidation pattern with retry mechanisms to prevent stale cache reads during concurrent database updates.",
+    "deployment_flow": "The application relies entirely on a containerized Docker Compose environment, serving the built React frontend directly through the Node.js/Express backend to ensure a unified deployment pipeline."
+  },
+  "engineering_highlights_and_trade_offs": {
+    "fail_fast_reliability": "By choosing to crash the server synchronously on startup if environment variables are missing, the architecture prevents devops errors from becoming obscure runtime bugs[cite: 1].",
+    "lua_script_rate_limiting": "A major highlight is the custom rate limiter. Instead of basic incrementing, it passes a Lua script to Redis. This ensures that the INCRBY and PEXPIRE commands are executed atomically, entirely eliminating race conditions where concurrent requests could bypass the limit block before the expiration is set[cite: 1].",
+    "bundle_size_optimization": "A deliberate trade-off was made against developer convenience by avoiding standard libraries (React Router, React Toastify). Writing custom event-driven routing and toast notifications significantly reduces the frontend's final bundle weight[cite: 1].",
+    "server_side_encryption_overhead": "Textvault prioritizes extreme privacy over performance by employing AES-256-GCM. The trade-off is the computational overhead of decrypting payloads in Node.js on every GET request before sending it to the client, trading CPU cycles for the guarantee that the raw database is unreadable[cite: 1].",
+    "resilient_cache_invalidation": "The Redis helper abstracts standard CRUD operations with built-in retry logic. If a cache invalidation fails (e.g., network blip), the system will automatically retry with a delay, minimizing the risk of users seeing stale data after an update[cite: 1]."
+  }
+}
