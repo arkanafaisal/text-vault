@@ -1,0 +1,34 @@
+name: textvault
+
+services:
+  backup:
+    image: databack/mysql-backup
+    environment:
+      DB_SERVER: ${MYSQL_HOST}
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
+      DB_NAMES: ${MYSQL_DB}
+
+      DB_DUMP_FREQ: 1440
+      DB_DUMP_BEGIN: 0200
+      DB_CLEANUP_TIME: 10080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./backups:/backup
+    restart: unless-stopped
+
+
+  rclone:
+    image: rclone/rclone
+    volumes:
+      - ./backups:/data
+      - ./rclone.conf:/config/rclone/rclone.conf
+    command: >
+      sh -c "
+        while true; do
+          rclone sync /data gdrive:db-backups;
+          sleep 3600;
+        done
+      "
+    restart: unless-stopped
