@@ -1,3 +1,5 @@
+name: textvault
+
 services:
   app:
     build:

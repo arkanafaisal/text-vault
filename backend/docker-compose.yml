@@ -1,5 +1,7 @@
+name: textvault-dev
+
 services:
-  app:
+  backend:
     build:
       context: .
       target: app
