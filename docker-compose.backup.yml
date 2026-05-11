@@ -24,8 +24,9 @@ services:
     volumes:
       - ./backups:/data
       - ./rclone.conf:/config/rclone/rclone.conf
+    entrypoint: /bin/sh
     command: >
-      sh -c "
+      -c "
         while true; do
           rclone sync /data gdrive:db-backups;
           sleep 3600;
