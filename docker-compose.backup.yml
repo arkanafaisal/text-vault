@@ -3,11 +3,18 @@ name: textvault
 services:
   backup:
     image: databack/mysql-backup
-    command: dump mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@host.docker.internal:3306/${MYSQL_DB} local:///backup
+    command: dump
     environment:
-      DB_DUMP_FREQ: 1440
-      DB_DUMP_BEGIN: 0200
-      DB_CLEANUP_TIME: 10080
+      DB_DUMP_TARGET: "file:///backup"
+
+      DB_SERVER: ${MYSQL_HOST}
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
+      DB_NAMES: ${MYSQL_DB}
+
+      DB_DUMP_FREQ: "1440"
+      DB_DUMP_BEGIN: "0200"
+      DB_CLEANUP_TIME: "10080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
