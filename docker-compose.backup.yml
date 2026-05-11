@@ -3,6 +3,7 @@ name: textvault
 services:
   backup:
     image: databack/mysql-backup
+    command: dump
     environment:
       DB_SERVER: ${MYSQL_HOST}
       DB_USER: ${MYSQL_USER}
