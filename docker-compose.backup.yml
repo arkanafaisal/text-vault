@@ -26,7 +26,7 @@ services:
     image: rclone/rclone
     volumes:
       - ./backups:/data
-      - ./rclone.conf:/config/rclone/rclone.conf
+      - ./rclone:/config/rclone
     entrypoint: /bin/sh
     command: >
       -c "

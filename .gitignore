@@ -14,5 +14,9 @@ backend/node_modules/
 frontend/package-lock.json
 backend/package-lock.json
 
+
+backups/
+rclone/
+
 local-note.md
 repomix-output.xml
